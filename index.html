@@ -287,6 +287,7 @@
   .demo-table td {
     font-family: ui-monospace, Consolas, monospace; font-size: 0.7rem;
     color: var(--ink-muted); padding: 5px 6px; border-bottom: 1px solid var(--line);
+    overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
   }
   .demo-table td.ok { color: var(--ok); font-weight: 600; }
   .demo-table td.warn { color: var(--accent-2); font-weight: 600; }
@@ -306,10 +307,139 @@
   .demo-checklist div {
     font-family: ui-monospace, Consolas, monospace; font-size: 0.72rem;
     color: var(--ink-muted); display: flex; gap: 8px;
+    border-left: 2px solid var(--line); padding: 3px 0 3px 8px;
   }
+  .demo-checklist div.ok { border-left-color: var(--ok); }
+  .demo-checklist div.bad { border-left-color: var(--bad); }
   .demo-term { font-family: ui-monospace, Consolas, monospace; font-size: 0.72rem; }
   .demo-term .cmd { color: var(--accent); margin-bottom: 6px; }
   .demo-term .out { color: var(--ink-muted); }
+
+  /* ---------- demo: layout de app real (sidebar + contenido) ---------- */
+  .demo-app { display: flex; align-items: flex-start; }
+  .demo-tabs.side {
+    flex-direction: column; gap: 2px; flex-shrink: 0; min-width: 96px;
+    border-right: 1px solid var(--line); margin: 0 12px 0 0; padding-right: 10px;
+  }
+  .demo-tabs.side span {
+    display: flex; align-items: center; gap: 7px;
+    padding: 6px 8px; border-radius: 3px; text-align: left;
+    border-left: 2px solid transparent; white-space: nowrap;
+  }
+  .demo-tabs.side span::before {
+    content: ""; width: 6px; height: 6px; border-radius: 50%;
+    background: var(--line-strong); flex-shrink: 0;
+  }
+  .demo-tabs.side span.active { border-left-color: var(--accent); background: var(--accent-soft); }
+  .demo-tabs.side span.active::before { background: var(--accent); }
+  .demo-app .demo-main { flex: 1; min-width: 0; }
+
+  /* ---------- demo: fila de mini-tarjetas (KPIs, estados) ---------- */
+  .demo-cardrow { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 10px; }
+  .demo-minicard {
+    flex: 1; min-width: 82px; border: 1px solid var(--line); border-radius: 4px;
+    padding: 8px 10px; background: var(--surface);
+  }
+  .demo-minicard .t {
+    font-family: ui-monospace, Consolas, monospace; font-size: 0.62rem;
+    color: var(--ink-faint); text-transform: uppercase; letter-spacing: 0.04em; margin-bottom: 4px;
+  }
+  .demo-minicard .v { font-family: ui-monospace, Consolas, monospace; font-size: 0.9rem; font-weight: 700; color: var(--ink); }
+  .demo-minicard .v.ok { color: var(--ok); }
+  .demo-minicard .v.warn { color: var(--accent-2); }
+  .demo-minicard .v.bad { color: var(--bad); }
+  .demo-minicard .sub { font-size: 0.64rem; color: var(--ink-faint); margin-top: 2px; }
+
+  /* ---------- demo: badges de estado (pill) ---------- */
+  .badge {
+    display: inline-flex; align-items: center; gap: 4px; padding: 2px 8px;
+    border-radius: 10px; font-size: 0.62rem; font-family: ui-monospace, Consolas, monospace; font-weight: 600;
+  }
+  .badge::before { content: "●"; font-size: 0.5rem; }
+  .badge.ok { background: color-mix(in srgb, var(--ok) 16%, transparent); color: var(--ok); }
+  .badge.warn { background: color-mix(in srgb, var(--accent-2) 16%, transparent); color: var(--accent-2); }
+  .badge.bad { background: color-mix(in srgb, var(--bad) 16%, transparent); color: var(--bad); }
+
+  /* ---------- demo: chat (asistente IA) ---------- */
+  .demo-chat { display: flex; flex-direction: column; gap: 9px; }
+  .demo-chat .msg { display: flex; gap: 8px; align-items: flex-start; }
+  .demo-chat .msg.user { flex-direction: row-reverse; }
+  .demo-chat .avatar {
+    width: 22px; height: 22px; border-radius: 50%; flex-shrink: 0;
+    display: flex; align-items: center; justify-content: center;
+    font-family: ui-monospace, Consolas, monospace; font-size: 0.6rem; font-weight: 700;
+    background: var(--surface-2); color: var(--ink-muted);
+  }
+  .demo-chat .msg.user .avatar { background: var(--accent-soft); color: var(--accent); }
+  .demo-chat .bubble {
+    max-width: 82%; padding: 7px 10px; border-radius: 9px; font-size: 0.76rem;
+    background: var(--surface-2); color: var(--ink-muted); line-height: 1.4;
+  }
+  .demo-chat .msg.user .bubble { background: var(--accent-soft); color: var(--ink); }
+
+  /* ---------- demo: línea de tiempo (histórico) ---------- */
+  .demo-timeline { display: flex; flex-direction: column; padding-left: 14px; border-left: 1px solid var(--line); }
+  .demo-timeline .tl-item { position: relative; padding: 0 0 14px 14px; }
+  .demo-timeline .tl-item:last-child { padding-bottom: 0; }
+  .demo-timeline .tl-item::before {
+    content: ""; position: absolute; left: -19px; top: 2px; width: 8px; height: 8px; border-radius: 50%;
+    background: var(--line-strong); border: 2px solid var(--surface-2);
+  }
+  .demo-timeline .tl-item.ok::before { background: var(--ok); }
+  .demo-timeline .tl-item.warn::before { background: var(--accent-2); }
+  .demo-timeline .tl-date { font-family: ui-monospace, Consolas, monospace; font-size: 0.64rem; color: var(--ink-faint); margin-bottom: 2px; }
+  .demo-timeline .tl-body { font-size: 0.78rem; color: var(--ink-muted); }
+
+  /* ---------- demo: comparación lado a lado ---------- */
+  .demo-compare { display: flex; gap: 8px; }
+  .demo-compare .side { flex: 1; border: 1px solid var(--line); border-radius: 4px; padding: 8px 10px; }
+  .demo-compare .side .t { font-family: ui-monospace, Consolas, monospace; font-size: 0.62rem; color: var(--ink-faint); text-transform: uppercase; letter-spacing: 0.04em; margin-bottom: 6px; }
+  .demo-compare .row { display: flex; justify-content: space-between; font-family: ui-monospace, Consolas, monospace; font-size: 0.72rem; color: var(--ink-muted); padding: 2px 0; }
+  .demo-compare .row.diff { color: var(--accent-2); font-weight: 700; }
+
+  /* ---------- demo: dona (composición) ---------- */
+  .demo-donut {
+    width: 58px; height: 58px; border-radius: 50%; flex-shrink: 0;
+    background: conic-gradient(var(--accent) 0% var(--pct, 86%), var(--line) var(--pct, 86%) 100%);
+    display: flex; align-items: center; justify-content: center;
+  }
+  .demo-donut .hole {
+    width: 40px; height: 40px; border-radius: 50%; background: var(--surface-2);
+    display: flex; align-items: center; justify-content: center;
+    font-family: ui-monospace, Consolas, monospace; font-weight: 700; font-size: 0.7rem; color: var(--ink);
+  }
+  .demo-chart-axis { display: flex; gap: 6px; margin-top: 3px; }
+  .demo-chart-axis span {
+    flex: 1; text-align: center; font-family: ui-monospace, Consolas, monospace;
+    font-size: 0.6rem; color: var(--ink-faint);
+  }
+  .demo-filterbar {
+    display: flex; align-items: center; gap: 8px; margin-bottom: 12px;
+    font-family: ui-monospace, Consolas, monospace; font-size: 0.68rem; color: var(--ink-faint);
+  }
+  .demo-filterbar .crumb { color: var(--ink-muted); }
+  .demo-filterbar .crumb.on { color: var(--accent); font-weight: 600; }
+
+  /* ---------- demo: chips de archivo (pipeline) ---------- */
+  .demo-filechip {
+    display: flex; align-items: center; gap: 8px; border: 1px solid var(--line); border-radius: 4px;
+    padding: 7px 10px; font-family: ui-monospace, Consolas, monospace; font-size: 0.7rem;
+    color: var(--ink-muted); margin-bottom: 6px;
+  }
+  .demo-filechip .ico {
+    width: 18px; height: 18px; border-radius: 3px; background: var(--accent-soft); color: var(--accent);
+    display: flex; align-items: center; justify-content: center; font-size: 0.6rem; font-weight: 700; flex-shrink: 0;
+  }
+  .demo-filechip .name { flex: 1; }
+  .demo-filechip .size { color: var(--ink-faint); }
+
+  /* ---------- demo: plano SVG (visor) ---------- */
+  .demo-plan { width: 100%; height: auto; border: 1px solid var(--line); border-radius: 4px; background: var(--surface); margin-bottom: 10px; }
+  .demo-plan .room { fill: var(--surface-2); stroke: var(--line-strong); stroke-width: 1; }
+  .demo-plan .room-label { fill: var(--ink-faint); font-family: ui-monospace, Consolas, monospace; }
+  .demo-plan .route { fill: none; stroke: var(--accent); stroke-width: 2; stroke-linecap: round; stroke-dasharray: 4 3; }
+  .demo-plan .pin-start { fill: var(--accent); }
+  .demo-plan .pin-end { fill: var(--accent-2); }
 
   .tech-detail { margin-top: 14px; }
   .tech-detail summary {
@@ -553,43 +683,56 @@
         <p class="desc">Migración completa de Streamlit a una arquitectura Flask con métricas en tiempo real vía Server-Sent Events, sin frameworks de build.</p>
         <div class="demo">
           <div class="demo-bar"><span class="dot"></span><span class="dot"></span><span class="dot"></span><span class="demo-url">localhost:5100 — Panel de Control</span></div>
-          <div class="demo-body">
-            <div class="demo-tabs">
+          <div class="demo-body demo-app">
+            <div class="demo-tabs side">
               <span class="active" data-tab="bots">Bots</span><span data-tab="monitor">Monitor</span><span data-tab="optimizador">Optimizador</span><span data-tab="excel">Excel</span><span data-tab="hospital">Hospital</span><span data-tab="jarvis">JARVIS</span>
             </div>
-            <div class="demo-panel active" data-panel="bots">
-              <div class="demo-line"><span>Bot "Consolidado A" — <span class="ok">completado</span></span><span>00:42</span></div>
-              <div class="demo-line"><span>Bot "Reporte B" — corriendo</span><span class="warn">62%</span></div>
-              <div class="demo-progress"><div class="fill" style="width:62%"></div></div>
-            </div>
-            <div class="demo-panel" data-panel="monitor">
-              <div class="demo-line"><span>Bomba agua caliente — Torre A</span><span class="ok">Normal</span></div>
-              <div class="demo-line"><span>Grupo electrógeno — respaldo</span><span class="ok">Normal</span></div>
-              <div class="demo-line"><span>Caldera Pabellón 3</span><span class="warn">Revisar ppm</span></div>
-            </div>
-            <div class="demo-panel" data-panel="optimizador">
-              <div class="demo-line"><span>Ronda de aseo Zona B — actual</span><span>3.0 h</span></div>
-              <div class="demo-line"><span>Ruta optimizada sugerida</span><span class="ok">1.5 h</span></div>
-              <div class="demo-progress"><div class="fill" style="width:50%"></div></div>
-            </div>
-            <div class="demo-panel" data-panel="excel">
-              <table class="demo-table">
-                <tr><th>Fila</th><th>Regla</th><th>Estado</th></tr>
-                <tr><td>142</td><td>Categoría asignada</td><td class="ok">OK</td></tr>
-                <tr><td>187</td><td>Stock ≥ 0</td><td class="bad">Error</td></tr>
-              </table>
-            </div>
-            <div class="demo-panel" data-panel="hospital">
-              <div class="demo-checklist">
-                <div><span class="ok">✓</span> Certificación pabellón 4 al día</div>
-                <div><span class="ok">✓</span> Dureza de agua dentro de rango</div>
-                <div><span class="bad">✕</span> Mantención preventiva ascensor B pendiente</div>
+            <div class="demo-main">
+              <div class="demo-panel active" data-panel="bots">
+                <div class="demo-cardrow">
+                  <div class="demo-minicard"><div class="t">Activos</div><div class="v">3</div></div>
+                  <div class="demo-minicard"><div class="t">Completados hoy</div><div class="v ok">12</div></div>
+                  <div class="demo-minicard"><div class="t">Con error</div><div class="v bad">2</div></div>
+                </div>
+                <div class="demo-line"><span>Bot "Consolidado A" — <span class="ok">completado</span></span><span>00:42</span></div>
+                <div class="demo-line"><span>Bot "Reporte B" — corriendo</span><span class="warn">62%</span></div>
+                <div class="demo-progress"><div class="fill" style="width:62%"></div></div>
               </div>
-            </div>
-            <div class="demo-panel" data-panel="jarvis">
-              <div class="demo-term">
-                <div class="cmd">¿Cuántos bots corrieron hoy?</div>
-                <div class="out">14 bots ejecutados, 12 completados y 2 con error — el detalle está en la pestaña Bots.</div>
+              <div class="demo-panel" data-panel="monitor">
+                <div class="demo-cardrow">
+                  <div class="demo-minicard"><div class="t">Equipos OK</div><div class="v ok">21</div></div>
+                  <div class="demo-minicard"><div class="t">Por revisar</div><div class="v warn">1</div></div>
+                </div>
+                <div class="demo-line"><span>Bomba agua caliente — Torre A</span><span class="badge ok">Normal</span></div>
+                <div class="demo-line"><span>Grupo electrógeno — respaldo</span><span class="badge ok">Normal</span></div>
+                <div class="demo-line"><span>Caldera Pabellón 3</span><span class="badge warn">Revisar ppm</span></div>
+              </div>
+              <div class="demo-panel" data-panel="optimizador">
+                <div class="demo-compare">
+                  <div class="side"><div class="t">Ronda actual</div><div class="row">Zona B — aseo<span>3.0 h</span></div></div>
+                  <div class="side"><div class="t">Ruta sugerida</div><div class="row diff">Zona B — aseo<span>1.5 h</span></div></div>
+                </div>
+                <div class="demo-progress" style="margin-top:10px;"><div class="fill" style="width:50%"></div></div>
+              </div>
+              <div class="demo-panel" data-panel="excel">
+                <table class="demo-table">
+                  <tr><th>Fila</th><th>Regla</th><th>Estado</th></tr>
+                  <tr><td>142</td><td>Categoría asignada</td><td class="ok">OK</td></tr>
+                  <tr><td>187</td><td>Stock ≥ 0</td><td class="bad">Error</td></tr>
+                </table>
+              </div>
+              <div class="demo-panel" data-panel="hospital">
+                <div class="demo-checklist">
+                  <div><span class="ok">✓</span> Certificación pabellón 4 al día</div>
+                  <div><span class="ok">✓</span> Dureza de agua dentro de rango</div>
+                  <div><span class="bad">✕</span> Mantención preventiva ascensor B pendiente</div>
+                </div>
+              </div>
+              <div class="demo-panel" data-panel="jarvis">
+                <div class="demo-chat">
+                  <div class="msg user"><div class="avatar">M</div><div class="bubble">¿Cuántos bots corrieron hoy?</div></div>
+                  <div class="msg"><div class="avatar">IA</div><div class="bubble">14 bots ejecutados, 12 completados y 2 con error — el detalle está en la pestaña Bots.</div></div>
+                </div>
               </div>
             </div>
           </div>
@@ -616,6 +759,8 @@
         <div class="demo" id="demoPipeline">
           <div class="demo-bar"><span class="dot"></span><span class="dot"></span><span class="dot"></span><span class="demo-url">localhost:5000 — Consolidación</span></div>
           <div class="demo-body">
+            <div class="demo-filechip"><span class="ico">A</span><span class="name">solicitudes_origen_A.xlsx</span><span class="size">4.2 MB</span></div>
+            <div class="demo-filechip"><span class="ico">B</span><span class="name">solicitudes_origen_B.csv</span><span class="size">1.8 MB</span></div>
             <div class="demo-actions"><button class="demo-play" type="button" data-play="pipeline">▶ Ejecutar</button></div>
             <div class="demo-steps">
               <div class="step">1. Cargar planilla origen A</div>
@@ -653,10 +798,11 @@
         <div class="demo">
           <div class="demo-bar"><span class="dot"></span><span class="dot"></span><span class="dot"></span><span class="demo-url">Resumen Ejecutivo — Power BI</span></div>
           <div class="demo-body">
-            <div class="demo-kpis">
-              <div class="kpi"><span class="n">1.248</span><span class="d">Programados</span></div>
-              <div class="kpi"><span class="n ok">86%</span><span class="d">Realizados</span></div>
-              <div class="kpi"><span class="n warn">174</span><span class="d">Pendientes</span></div>
+            <div class="demo-filterbar"><span class="crumb on">Resumen Ejecutivo</span><span class="crumb">▾ Julio 2026</span><span class="crumb">▾ Todas las unidades</span></div>
+            <div class="demo-cardrow" style="align-items:center;">
+              <div class="demo-donut" style="--pct:86%;"><div class="hole">86%</div></div>
+              <div class="demo-minicard"><div class="t">Programados</div><div class="v">1.248</div></div>
+              <div class="demo-minicard"><div class="t">Pendientes</div><div class="v warn">174</div></div>
             </div>
             <div class="demo-chart">
               <div class="col" style="height:40%"></div>
@@ -666,6 +812,7 @@
               <div class="col" style="height:30%"></div>
               <div class="col" style="height:64%"></div>
             </div>
+            <div class="demo-chart-axis"><span>Ene</span><span>Feb</span><span>Mar</span><span>Abr</span><span>May</span><span>Jun</span></div>
           </div>
         </div>
         <div class="tags">
@@ -696,22 +843,32 @@
             </div>
             <div class="demo-panel active" data-panel="validar">
               <div class="demo-checklist">
-                <div><span class="ok">✓</span> Stock total cuadra con hoja maestra</div>
-                <div><span class="bad">✕</span> Zona A: 3 filas sin categoría asignada</div>
-                <div><span class="ok">✓</span> Cruce con informe auditor — 0 diferencias</div>
+                <div class="ok"><span class="ok">✓</span> Stock total cuadra con hoja maestra</div>
+                <div class="bad"><span class="bad">✕</span> Zona A: 3 filas sin categoría asignada</div>
+                <div class="ok"><span class="ok">✓</span> Cruce con informe auditor — 0 diferencias</div>
               </div>
             </div>
             <div class="demo-panel" data-panel="comparar">
-              <table class="demo-table">
-                <tr><th>Zona</th><th>Excel</th><th>Auditor</th><th>Dif.</th></tr>
-                <tr><td>Zona A</td><td>420</td><td>420</td><td class="ok">0</td></tr>
-                <tr><td>Zona B</td><td>318</td><td>311</td><td class="warn">7</td></tr>
-              </table>
+              <div class="demo-compare">
+                <div class="side">
+                  <div class="t">Excel operativo</div>
+                  <div class="row">Zona A<span>420</span></div>
+                  <div class="row diff">Zona B<span>318</span></div>
+                </div>
+                <div class="side">
+                  <div class="t">Informe auditor (OCR)</div>
+                  <div class="row">Zona A<span>420</span></div>
+                  <div class="row diff">Zona B<span>311</span></div>
+                </div>
+              </div>
+              <div class="demo-line" style="margin-top:8px;"><span>Diferencia total detectada</span><span class="warn">7 unidades — Zona B</span></div>
             </div>
             <div class="demo-panel" data-panel="historico">
-              <div class="demo-line"><span>Revisión Junio 2026</span><span class="ok">0 diferencias</span></div>
-              <div class="demo-line"><span>Revisión Mayo 2026</span><span class="warn">7 diferencias</span></div>
-              <div class="demo-line"><span>Revisión Abril 2026</span><span class="ok">0 diferencias</span></div>
+              <div class="demo-timeline">
+                <div class="tl-item ok"><div class="tl-date">Junio 2026</div><div class="tl-body">0 diferencias — conciliado</div></div>
+                <div class="tl-item warn"><div class="tl-date">Mayo 2026</div><div class="tl-body">7 diferencias — Zona B revisada</div></div>
+                <div class="tl-item ok"><div class="tl-date">Abril 2026</div><div class="tl-body">0 diferencias — conciliado</div></div>
+              </div>
             </div>
           </div>
         </div>
@@ -738,10 +895,10 @@
           <div class="demo-bar"><span class="dot"></span><span class="dot"></span><span class="dot"></span><span class="demo-url">SQL Server Agent — Jobs</span></div>
           <div class="demo-body">
             <table class="demo-table">
-              <tr><th>Job</th><th>Última corrida</th><th>Estado</th></tr>
-              <tr><td>Actualiza_Tablas_Trabajo</td><td>03:56</td><td class="ok">OK</td></tr>
-              <tr><td>Reconstruye_Índices</td><td>04:20</td><td class="ok">OK</td></tr>
-              <tr><td>Restaura_Backup</td><td>05:10</td><td class="warn">Deshabilitado</td></tr>
+              <tr><th>Job</th><th>Corrida</th><th>Estado</th></tr>
+              <tr><td>Tablas_Trabajo</td><td>03:56</td><td><span class="badge ok">OK</span></td></tr>
+              <tr><td>Reconstruye_Idx</td><td>04:20</td><td><span class="badge ok">OK</span></td></tr>
+              <tr><td>Restaura_Backup</td><td>05:10</td><td><span class="badge warn">Off</span></td></tr>
             </table>
           </div>
         </div>
@@ -765,10 +922,12 @@
         <p class="problem"><b>Problema:</b> automatizar tareas puntuales (crear archivos, revisar documentos) sin depender de suscripciones pagas.</p>
         <p class="desc">Configuración de un agente de IA con modelo en la nube gratuito como cerebro principal y un modelo local de respaldo, con acceso a herramientas de archivo desde línea de comandos.</p>
         <div class="demo">
-          <div class="demo-bar"><span class="dot"></span><span class="dot"></span><span class="dot"></span><span class="demo-url">Terminal</span></div>
-          <div class="demo-body demo-term">
-            <div class="cmd">$ ia "revisa el excel de stock y dime si hay filas duplicadas"</div>
-            <div class="out">Encontré 3 filas duplicadas en la hoja "Enero" (filas 12, 45, 88). ¿Las elimino?</div>
+          <div class="demo-bar"><span class="dot"></span><span class="dot"></span><span class="dot"></span><span class="demo-url">Asistente IA — Chat</span></div>
+          <div class="demo-body">
+            <div class="demo-chat">
+              <div class="msg user"><div class="avatar">M</div><div class="bubble">revisa el excel de stock y dime si hay filas duplicadas</div></div>
+              <div class="msg"><div class="avatar">IA</div><div class="bubble">Encontré 3 filas duplicadas en la hoja "Enero" (filas 12, 45, 88). ¿Las elimino?</div></div>
+            </div>
           </div>
         </div>
         <div class="tags">
@@ -790,6 +949,15 @@
               <span data-tab="sub1">SUB-1</span><span class="active" data-tab="piso1">Piso 1</span><span data-tab="piso3">Piso 3</span><span style="cursor:default;">…</span><span data-tab="piso11">Piso 11</span>
             </div>
             <div class="demo-panel" data-panel="sub1">
+              <svg class="demo-plan" viewBox="0 0 120 60">
+                <rect class="room" x="5" y="10" width="30" height="40" rx="2"/>
+                <text class="room-label" x="20" y="19" font-size="5" text-anchor="middle">Acceso</text>
+                <rect class="room" x="85" y="10" width="30" height="40" rx="2"/>
+                <text class="room-label" x="100" y="19" font-size="5" text-anchor="middle">Sala máq.</text>
+                <path class="route" d="M20,30 L100,30"/>
+                <circle class="pin-start" cx="20" cy="30" r="3"/>
+                <circle class="pin-end" cx="100" cy="30" r="3"/>
+              </svg>
               <div class="demo-steps">
                 <div class="step">Origen — Acceso subterráneo</div>
                 <div class="step">Camina hasta la Sala de máquinas</div>
@@ -797,6 +965,15 @@
               <div class="demo-line"><span>Puertas reconocidas en el piso</span><span class="ok">96</span></div>
             </div>
             <div class="demo-panel active" data-panel="piso1">
+              <svg class="demo-plan" viewBox="0 0 120 60">
+                <rect class="room" x="5" y="10" width="28" height="40" rx="2"/>
+                <text class="room-label" x="19" y="19" font-size="4.5" text-anchor="middle">Recepción</text>
+                <rect class="room" x="95" y="20" width="20" height="20" rx="2"/>
+                <text class="room-label" x="105" y="27" font-size="5" text-anchor="middle">Asc.</text>
+                <path class="route" d="M19,30 L105,30"/>
+                <circle class="pin-start" cx="19" cy="30" r="3"/>
+                <circle class="pin-end" cx="105" cy="30" r="3"/>
+              </svg>
               <div class="demo-steps">
                 <div class="step">Origen — Recepción (Torre A)</div>
                 <div class="step">Camina por el pasillo público hasta el ascensor</div>
@@ -805,6 +982,15 @@
               <div class="demo-line"><span>Puertas reconocidas en el piso</span><span class="ok">487</span></div>
             </div>
             <div class="demo-panel" data-panel="piso3">
+              <svg class="demo-plan" viewBox="0 0 120 60">
+                <rect class="room" x="5" y="15" width="20" height="30" rx="2"/>
+                <text class="room-label" x="15" y="24" font-size="5" text-anchor="middle">Asc.</text>
+                <rect class="room" x="90" y="0" width="28" height="30" rx="2"/>
+                <text class="room-label" x="104" y="9" font-size="5" text-anchor="middle">Box 4</text>
+                <path class="route" d="M15,30 L70,30 L70,15 L104,15"/>
+                <circle class="pin-start" cx="15" cy="30" r="3"/>
+                <circle class="pin-end" cx="104" cy="15" r="3"/>
+              </svg>
               <div class="demo-steps">
                 <div class="step">Bajas del ascensor — Piso 3</div>
                 <div class="step">Camina 12 metros a la izquierda</div>
@@ -813,6 +999,15 @@
               <div class="demo-line"><span>Puertas reconocidas en el piso</span><span class="ok">312</span></div>
             </div>
             <div class="demo-panel" data-panel="piso11">
+              <svg class="demo-plan" viewBox="0 0 120 60">
+                <rect class="room" x="5" y="15" width="20" height="30" rx="2"/>
+                <text class="room-label" x="15" y="24" font-size="4.5" text-anchor="middle">Asc. B</text>
+                <rect class="room" x="90" y="15" width="28" height="30" rx="2"/>
+                <text class="room-label" x="104" y="24" font-size="5" text-anchor="middle">Terraza</text>
+                <path class="route" d="M15,30 L104,30"/>
+                <circle class="pin-start" cx="15" cy="30" r="3"/>
+                <circle class="pin-end" cx="104" cy="30" r="3"/>
+              </svg>
               <div class="demo-steps">
                 <div class="step">Origen — Ascensor Torre B</div>
                 <div class="step">Llegaste — Terraza técnica</div>
