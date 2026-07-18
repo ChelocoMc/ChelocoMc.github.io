@@ -246,6 +246,18 @@
     padding: 4px 8px; border-radius: 2px; color: var(--ink-faint);
   }
   .demo-tabs span.active { background: var(--accent-soft); color: var(--accent); font-weight: 600; }
+  .demo-tabs span[data-tab] { cursor: pointer; }
+  .demo-tabs span[data-tab]:hover:not(.active) { color: var(--ink); }
+  .demo-panel { display: none; }
+  .demo-panel.active { display: block; }
+  .demo-actions { display: flex; justify-content: flex-end; margin-bottom: 8px; }
+  .demo-play {
+    font-family: ui-monospace, Consolas, monospace; font-size: 0.68rem;
+    padding: 4px 10px; border: 1px solid var(--line-strong); border-radius: 2px;
+    background: var(--surface); color: var(--accent); cursor: pointer;
+  }
+  .demo-play:hover:not(:disabled) { border-color: var(--accent); }
+  .demo-play:disabled { opacity: 0.5; cursor: default; }
   .demo-line {
     display: flex; justify-content: space-between; gap: 10px;
     font-family: ui-monospace, Consolas, monospace; font-size: 0.72rem;
@@ -255,14 +267,17 @@
   .demo-line .warn { color: var(--accent-2); }
   .demo-line .bad { color: var(--bad); }
   .demo-progress { height: 5px; background: var(--line); border-radius: 3px; overflow: hidden; margin: 6px 0 2px; }
-  .demo-progress .fill { height: 100%; background: var(--accent); }
+  .demo-progress .fill { height: 100%; background: var(--accent); transition: width 0.4s ease; }
   .demo-steps { display: flex; flex-direction: column; gap: 5px; margin-bottom: 8px; }
   .demo-steps .step {
     font-family: ui-monospace, Consolas, monospace; font-size: 0.72rem;
     color: var(--ink-faint); display: flex; gap: 8px;
   }
+  .demo-steps .step::before { content: "·"; }
   .demo-steps .step.done { color: var(--ok); }
+  .demo-steps .step.done::before { content: "✓"; }
   .demo-steps .step.active { color: var(--ink); font-weight: 600; }
+  .demo-steps .step.active::before { content: "▸"; }
   .demo-table { width: 100%; border-collapse: collapse; margin-top: 6px; }
   .demo-table th {
     font-family: ui-monospace, Consolas, monospace; font-size: 0.64rem;
@@ -539,10 +554,44 @@
         <div class="demo">
           <div class="demo-bar"><span class="dot"></span><span class="dot"></span><span class="dot"></span><span class="demo-url">localhost:5100 — Panel de Control</span></div>
           <div class="demo-body">
-            <div class="demo-tabs"><span class="active">Bots</span><span>Monitor</span><span>Optimizador</span><span>Excel</span><span>Hospital</span><span>JARVIS</span></div>
-            <div class="demo-line"><span>Bot "Consolidado A" — <span class="ok">completado</span></span><span>00:42</span></div>
-            <div class="demo-line"><span>Bot "Reporte B" — corriendo</span><span class="warn">62%</span></div>
-            <div class="demo-progress"><div class="fill" style="width:62%"></div></div>
+            <div class="demo-tabs">
+              <span class="active" data-tab="bots">Bots</span><span data-tab="monitor">Monitor</span><span data-tab="optimizador">Optimizador</span><span data-tab="excel">Excel</span><span data-tab="hospital">Hospital</span><span data-tab="jarvis">JARVIS</span>
+            </div>
+            <div class="demo-panel active" data-panel="bots">
+              <div class="demo-line"><span>Bot "Consolidado A" — <span class="ok">completado</span></span><span>00:42</span></div>
+              <div class="demo-line"><span>Bot "Reporte B" — corriendo</span><span class="warn">62%</span></div>
+              <div class="demo-progress"><div class="fill" style="width:62%"></div></div>
+            </div>
+            <div class="demo-panel" data-panel="monitor">
+              <div class="demo-line"><span>Bomba agua caliente — Torre A</span><span class="ok">Normal</span></div>
+              <div class="demo-line"><span>Grupo electrógeno — respaldo</span><span class="ok">Normal</span></div>
+              <div class="demo-line"><span>Caldera Pabellón 3</span><span class="warn">Revisar ppm</span></div>
+            </div>
+            <div class="demo-panel" data-panel="optimizador">
+              <div class="demo-line"><span>Ronda de aseo Zona B — actual</span><span>3.0 h</span></div>
+              <div class="demo-line"><span>Ruta optimizada sugerida</span><span class="ok">1.5 h</span></div>
+              <div class="demo-progress"><div class="fill" style="width:50%"></div></div>
+            </div>
+            <div class="demo-panel" data-panel="excel">
+              <table class="demo-table">
+                <tr><th>Fila</th><th>Regla</th><th>Estado</th></tr>
+                <tr><td>142</td><td>Categoría asignada</td><td class="ok">OK</td></tr>
+                <tr><td>187</td><td>Stock ≥ 0</td><td class="bad">Error</td></tr>
+              </table>
+            </div>
+            <div class="demo-panel" data-panel="hospital">
+              <div class="demo-checklist">
+                <div><span class="ok">✓</span> Certificación pabellón 4 al día</div>
+                <div><span class="ok">✓</span> Dureza de agua dentro de rango</div>
+                <div><span class="bad">✕</span> Mantención preventiva ascensor B pendiente</div>
+              </div>
+            </div>
+            <div class="demo-panel" data-panel="jarvis">
+              <div class="demo-term">
+                <div class="cmd">¿Cuántos bots corrieron hoy?</div>
+                <div class="out">14 bots ejecutados, 12 completados y 2 con error — el detalle está en la pestaña Bots.</div>
+              </div>
+            </div>
           </div>
         </div>
         <div class="tags">
@@ -564,20 +613,21 @@
         <h3>Pipeline de consolidación de datos</h3>
         <p class="problem"><b>Problema:</b> cruzar dos fuentes de solicitudes con nombres inconsistentes era manual, lento y sin trazabilidad.</p>
         <p class="desc">Pipeline en pandas con normalización difusa de texto (distancia de Levenshtein), clasificación automática de estados y barra de progreso por etapa.</p>
-        <div class="demo">
+        <div class="demo" id="demoPipeline">
           <div class="demo-bar"><span class="dot"></span><span class="dot"></span><span class="dot"></span><span class="demo-url">localhost:5000 — Consolidación</span></div>
           <div class="demo-body">
+            <div class="demo-actions"><button class="demo-play" type="button" data-play="pipeline">▶ Ejecutar</button></div>
             <div class="demo-steps">
-              <div class="step done">✓ 1. Cargar planilla origen A</div>
-              <div class="step done">✓ 2. Cargar planilla origen B</div>
-              <div class="step active">▸ 3. Normalizar nombres (fuzzy match)</div>
+              <div class="step">1. Cargar planilla origen A</div>
+              <div class="step">2. Cargar planilla origen B</div>
+              <div class="step">3. Normalizar nombres (fuzzy match)</div>
               <div class="step">4. Clasificar estado</div>
             </div>
-            <div class="demo-progress"><div class="fill" style="width:71%"></div></div>
+            <div class="demo-progress"><div class="fill" data-fill="pipeline" style="width:0%"></div></div>
             <table class="demo-table">
               <tr><th>Registro</th><th>Origen</th><th>Estado</th></tr>
-              <tr><td>Registro-0142</td><td>A</td><td class="ok">Coincide</td></tr>
-              <tr><td>Registro-0143</td><td>B</td><td class="warn">Revisar</td></tr>
+              <tr><td>Registro-0142</td><td>A</td><td data-cell="pipeline-1">—</td></tr>
+              <tr><td>Registro-0143</td><td>B</td><td data-cell="pipeline-2">—</td></tr>
             </table>
           </div>
         </div>
@@ -637,14 +687,31 @@
         <h3>Validación y auditoría de inventario</h3>
         <p class="problem"><b>Problema:</b> conciliar el inventario operativo contra auditorías externas era manual, y los errores pasaban desapercibidos.</p>
         <p class="desc">Dashboard que valida reglas de negocio sobre Excel, repara errores automáticamente vía automatización COM y compara contra el informe del auditor (con OCR), armando el borrador de correo con las diferencias.</p>
-        <div class="demo">
+        <div class="demo" id="demoAuditoria">
           <div class="demo-bar"><span class="dot"></span><span class="dot"></span><span class="dot"></span><span class="demo-url">localhost:5300 — Auditoría</span></div>
           <div class="demo-body">
-            <div class="demo-tabs"><span class="active">Validar Excel</span><span>Comparar PDF</span><span>Histórico</span></div>
-            <div class="demo-checklist">
-              <div><span class="ok">✓</span> Stock total cuadra con hoja maestra</div>
-              <div><span class="bad">✕</span> Zona A: 3 filas sin categoría asignada</div>
-              <div><span class="ok">✓</span> Cruce con informe auditor — 0 diferencias</div>
+            <div class="demo-actions"><button class="demo-play" type="button" data-play="auditoria">▶ Ejecutar</button></div>
+            <div class="demo-tabs">
+              <span class="active" data-tab="validar">Validar Excel</span><span data-tab="comparar">Comparar PDF</span><span data-tab="historico">Histórico</span>
+            </div>
+            <div class="demo-panel active" data-panel="validar">
+              <div class="demo-checklist">
+                <div><span class="ok">✓</span> Stock total cuadra con hoja maestra</div>
+                <div><span class="bad">✕</span> Zona A: 3 filas sin categoría asignada</div>
+                <div><span class="ok">✓</span> Cruce con informe auditor — 0 diferencias</div>
+              </div>
+            </div>
+            <div class="demo-panel" data-panel="comparar">
+              <table class="demo-table">
+                <tr><th>Zona</th><th>Excel</th><th>Auditor</th><th>Dif.</th></tr>
+                <tr><td>Zona A</td><td>420</td><td>420</td><td class="ok">0</td></tr>
+                <tr><td>Zona B</td><td>318</td><td>311</td><td class="warn">7</td></tr>
+              </table>
+            </div>
+            <div class="demo-panel" data-panel="historico">
+              <div class="demo-line"><span>Revisión Junio 2026</span><span class="ok">0 diferencias</span></div>
+              <div class="demo-line"><span>Revisión Mayo 2026</span><span class="warn">7 diferencias</span></div>
+              <div class="demo-line"><span>Revisión Abril 2026</span><span class="ok">0 diferencias</span></div>
             </div>
           </div>
         </div>
@@ -715,16 +782,43 @@
         <h3>Visor de planos 2D/3D con wayfinding</h3>
         <p class="problem"><b>Problema:</b> ubicar un recinto y llegar a él en un hospital enorme dependía de conocer los planos de memoria.</p>
         <p class="desc">Visor web (FastAPI + PyMuPDF) de los planos de cada piso: búsqueda en lenguaje natural, ruta guiada paso a paso entre recintos y pisos, y reconocimiento automático de puertas para que la ruta no atraviese muros.</p>
-        <div class="demo">
+        <div class="demo" id="demoVisor">
           <div class="demo-bar"><span class="dot"></span><span class="dot"></span><span class="dot"></span><span class="demo-url">visor-hospital — Cómo llegar</span></div>
           <div class="demo-body">
-            <div class="demo-tabs"><span>SUB-1</span><span class="active">Piso 1</span><span>Piso 2</span><span>…</span><span>Piso 11</span></div>
-            <div class="demo-steps">
-              <div class="step done">✓ Origen — Recepción (Torre A)</div>
-              <div class="step active">▸ Camina por el pasillo público hasta el ascensor</div>
-              <div class="step">Sube al Piso 3 · Destino: Toma de muestras</div>
+            <div class="demo-actions"><button class="demo-play" type="button" data-play="visor">▶ Ejecutar ruta</button></div>
+            <div class="demo-tabs">
+              <span data-tab="sub1">SUB-1</span><span class="active" data-tab="piso1">Piso 1</span><span data-tab="piso3">Piso 3</span><span style="cursor:default;">…</span><span data-tab="piso11">Piso 11</span>
             </div>
-            <div class="demo-line"><span>Puertas reconocidas en el piso</span><span class="ok">487</span></div>
+            <div class="demo-panel" data-panel="sub1">
+              <div class="demo-steps">
+                <div class="step">Origen — Acceso subterráneo</div>
+                <div class="step">Camina hasta la Sala de máquinas</div>
+              </div>
+              <div class="demo-line"><span>Puertas reconocidas en el piso</span><span class="ok">96</span></div>
+            </div>
+            <div class="demo-panel active" data-panel="piso1">
+              <div class="demo-steps">
+                <div class="step">Origen — Recepción (Torre A)</div>
+                <div class="step">Camina por el pasillo público hasta el ascensor</div>
+                <div class="step">Sube al Piso 3 · Destino: Toma de muestras</div>
+              </div>
+              <div class="demo-line"><span>Puertas reconocidas en el piso</span><span class="ok">487</span></div>
+            </div>
+            <div class="demo-panel" data-panel="piso3">
+              <div class="demo-steps">
+                <div class="step">Bajas del ascensor — Piso 3</div>
+                <div class="step">Camina 12 metros a la izquierda</div>
+                <div class="step">Llegaste — Toma de muestras, box 4</div>
+              </div>
+              <div class="demo-line"><span>Puertas reconocidas en el piso</span><span class="ok">312</span></div>
+            </div>
+            <div class="demo-panel" data-panel="piso11">
+              <div class="demo-steps">
+                <div class="step">Origen — Ascensor Torre B</div>
+                <div class="step">Llegaste — Terraza técnica</div>
+              </div>
+              <div class="demo-line"><span>Puertas reconocidas en el piso</span><span class="ok">54</span></div>
+            </div>
           </div>
         </div>
         <div class="tags">
@@ -918,6 +1012,113 @@
       c.style.transitionDelay = (i % 3) * 60 + 'ms';
       io.observe(c);
     });
+  })();
+
+  // Tabs y demos ejecutables de las tarjetas de proyectos (datos ficticios).
+  (function () {
+    function switchTab(demo, tabName) {
+      demo.querySelectorAll('.demo-tabs [data-tab]').forEach(function (t) {
+        t.classList.toggle('active', t.getAttribute('data-tab') === tabName);
+      });
+      demo.querySelectorAll('.demo-panel').forEach(function (p) {
+        p.classList.toggle('active', p.getAttribute('data-panel') === tabName);
+      });
+    }
+
+    document.querySelectorAll('.demo').forEach(function (demo) {
+      demo.querySelectorAll('.demo-tabs [data-tab]').forEach(function (tab) {
+        tab.addEventListener('click', function () {
+          switchTab(demo, tab.getAttribute('data-tab'));
+        });
+      });
+    });
+
+    function resetSteps(steps) {
+      steps.forEach(function (s) { s.classList.remove('active', 'done'); });
+    }
+
+    function runSteps(steps, onDone) {
+      resetSteps(steps);
+      var i = 0;
+      (function next() {
+        if (i > 0) steps[i - 1].classList.replace('active', 'done');
+        if (i >= steps.length) { if (onDone) onDone(); return; }
+        steps[i].classList.add('active');
+        i++;
+        setTimeout(next, 650);
+      })();
+    }
+
+    // Pipeline de consolidación (DATA-02): corre las 4 etapas con delay.
+    (function () {
+      var demo = document.getElementById('demoPipeline');
+      if (!demo) return;
+      var btn = demo.querySelector('[data-play="pipeline"]');
+      var steps = demo.querySelectorAll('.step');
+      var fill = demo.querySelector('[data-fill="pipeline"]');
+      var cell1 = demo.querySelector('[data-cell="pipeline-1"]');
+      var cell2 = demo.querySelector('[data-cell="pipeline-2"]');
+
+      function reset() {
+        resetSteps(steps);
+        fill.style.width = '0%';
+        cell1.textContent = '—'; cell1.className = '';
+        cell2.textContent = '—'; cell2.className = '';
+        btn.textContent = '▶ Ejecutar';
+      }
+      reset();
+
+      btn.addEventListener('click', function () {
+        if (btn.textContent.indexOf('Reiniciar') !== -1) { reset(); return; }
+        btn.disabled = true;
+        resetSteps(steps);
+        var i = 0;
+        (function tick() {
+          if (i > 0) {
+            steps[i - 1].classList.remove('active');
+            steps[i - 1].classList.add('done');
+            fill.style.width = (i * 25) + '%';
+            if (i === 3) { cell1.textContent = 'Coincide'; cell1.className = 'ok'; }
+            if (i === 4) { cell2.textContent = 'Revisar'; cell2.className = 'warn'; }
+          }
+          if (i >= steps.length) { btn.disabled = false; btn.textContent = '↺ Reiniciar'; return; }
+          steps[i].classList.add('active');
+          i++;
+          setTimeout(tick, 650);
+        })();
+      });
+    })();
+
+    // Auditoría de inventario (OPS-04): recorre las 3 pestañas automáticamente.
+    (function () {
+      var demo = document.getElementById('demoAuditoria');
+      if (!demo) return;
+      var btn = demo.querySelector('[data-play="auditoria"]');
+      var order = ['validar', 'comparar', 'historico'];
+      btn.addEventListener('click', function () {
+        btn.disabled = true;
+        var i = 0;
+        (function tick() {
+          switchTab(demo, order[i]);
+          i++;
+          if (i >= order.length) { btn.disabled = false; return; }
+          setTimeout(tick, 900);
+        })();
+      });
+    })();
+
+    // Visor de planos (WEB-07): ejecuta la ruta del piso actualmente activo.
+    (function () {
+      var demo = document.getElementById('demoVisor');
+      if (!demo) return;
+      var btn = demo.querySelector('[data-play="visor"]');
+      btn.addEventListener('click', function () {
+        var panel = demo.querySelector('.demo-panel.active');
+        var steps = panel.querySelectorAll('.step');
+        btn.disabled = true;
+        runSteps(steps, function () { btn.disabled = false; });
+      });
+    })();
   })();
 
   // Toggle de tema: alterna claro/oscuro y recuerda la preferencia.
