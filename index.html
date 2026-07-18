@@ -13,6 +13,8 @@
     --line: #C7CCC1;
     --line-strong: #A9AF9F;
     --shadow: 0 1px 0 rgba(27,36,32,0.06);
+    --ok: #2F7A52;
+    --bad: #B23B3B;
   }
   @media (prefers-color-scheme: dark) {
     :root {
@@ -28,6 +30,8 @@
       --line: #2C352F;
       --line-strong: #3A443D;
       --shadow: 0 1px 0 rgba(0,0,0,0.3);
+      --ok: #6FCB98;
+      --bad: #E27676;
     }
   }
   :root[data-theme="dark"] {
@@ -35,12 +39,14 @@
     --ink: #E7EAE3; --ink-muted: #9FA89F; --ink-faint: #6C766E;
     --accent: #5FBDB5; --accent-soft: #1E3230; --accent-2: #E0A868;
     --line: #2C352F; --line-strong: #3A443D; --shadow: 0 1px 0 rgba(0,0,0,0.3);
+    --ok: #6FCB98; --bad: #E27676;
   }
   :root[data-theme="light"] {
     --bg: #E9EBE6; --surface: #F5F6F2; --surface-2: #DFE2DA;
     --ink: #1B2420; --ink-muted: #4B564F; --ink-faint: #7B857D;
     --accent: #1F5F5B; --accent-soft: #DCE8E6; --accent-2: #B5722A;
     --line: #C7CCC1; --line-strong: #A9AF9F; --shadow: 0 1px 0 rgba(27,36,32,0.06);
+    --ok: #2F7A52; --bad: #B23B3B;
   }
 
   * { box-sizing: border-box; }
@@ -186,6 +192,81 @@
   }
   .result .tag-label { color: var(--ink-faint); }
   .result b { color: var(--accent); font-weight: 700; }
+
+  /* ---------- demo window (recreación ilustrativa, datos ficticios) ---------- */
+  .demo {
+    border: 1px solid var(--line-strong);
+    border-radius: 5px;
+    overflow: hidden;
+    margin: 14px 0 16px;
+    background: var(--surface-2);
+  }
+  .demo .demo-bar {
+    display: flex; align-items: center; gap: 6px;
+    padding: 7px 10px; background: var(--surface);
+    border-bottom: 1px solid var(--line);
+  }
+  .demo .demo-bar .dot { width: 7px; height: 7px; border-radius: 50%; background: var(--line-strong); }
+  .demo .demo-bar .demo-url {
+    font-family: ui-monospace, Consolas, monospace; font-size: 0.68rem;
+    color: var(--ink-faint); margin-left: 6px;
+  }
+  .demo .demo-body { padding: 13px 14px; }
+  .demo-tabs { display: flex; gap: 4px; flex-wrap: wrap; margin-bottom: 10px; }
+  .demo-tabs span {
+    font-family: ui-monospace, Consolas, monospace; font-size: 0.66rem;
+    padding: 4px 8px; border-radius: 2px; color: var(--ink-faint);
+  }
+  .demo-tabs span.active { background: var(--accent-soft); color: var(--accent); font-weight: 600; }
+  .demo-line {
+    display: flex; justify-content: space-between; gap: 10px;
+    font-family: ui-monospace, Consolas, monospace; font-size: 0.72rem;
+    color: var(--ink-muted); padding: 3px 0;
+  }
+  .demo-line .ok { color: var(--ok); }
+  .demo-line .warn { color: var(--accent-2); }
+  .demo-line .bad { color: var(--bad); }
+  .demo-progress { height: 5px; background: var(--line); border-radius: 3px; overflow: hidden; margin: 6px 0 2px; }
+  .demo-progress .fill { height: 100%; background: var(--accent); }
+  .demo-steps { display: flex; flex-direction: column; gap: 5px; margin-bottom: 8px; }
+  .demo-steps .step {
+    font-family: ui-monospace, Consolas, monospace; font-size: 0.72rem;
+    color: var(--ink-faint); display: flex; gap: 8px;
+  }
+  .demo-steps .step.done { color: var(--ok); }
+  .demo-steps .step.active { color: var(--ink); font-weight: 600; }
+  .demo-table { width: 100%; border-collapse: collapse; margin-top: 6px; }
+  .demo-table th {
+    font-family: ui-monospace, Consolas, monospace; font-size: 0.64rem;
+    text-transform: uppercase; letter-spacing: 0.05em; color: var(--ink-faint);
+    text-align: left; padding: 4px 6px; border-bottom: 1px solid var(--line);
+  }
+  .demo-table td {
+    font-family: ui-monospace, Consolas, monospace; font-size: 0.7rem;
+    color: var(--ink-muted); padding: 5px 6px; border-bottom: 1px solid var(--line);
+  }
+  .demo-table td.ok { color: var(--ok); font-weight: 600; }
+  .demo-table td.warn { color: var(--accent-2); font-weight: 600; }
+  .demo-table td.bad { color: var(--bad); font-weight: 600; }
+  .demo-kpis { display: flex; gap: 16px; margin-bottom: 12px; flex-wrap: wrap; }
+  .demo-kpis .kpi { display: flex; flex-direction: column; }
+  .demo-kpis .kpi .n {
+    font-family: ui-monospace, Consolas, monospace; font-size: 1.1rem; font-weight: 700;
+    color: var(--ink);
+  }
+  .demo-kpis .kpi .n.ok { color: var(--ok); }
+  .demo-kpis .kpi .n.warn { color: var(--accent-2); }
+  .demo-kpis .kpi .d { font-size: 0.64rem; color: var(--ink-faint); text-transform: uppercase; letter-spacing: 0.04em; }
+  .demo-chart { display: flex; align-items: flex-end; gap: 6px; height: 54px; }
+  .demo-chart .col { flex: 1; background: var(--accent); border-radius: 2px 2px 0 0; opacity: 0.85; }
+  .demo-checklist { display: flex; flex-direction: column; gap: 6px; }
+  .demo-checklist div {
+    font-family: ui-monospace, Consolas, monospace; font-size: 0.72rem;
+    color: var(--ink-muted); display: flex; gap: 8px;
+  }
+  .demo-term { font-family: ui-monospace, Consolas, monospace; font-size: 0.72rem; }
+  .demo-term .cmd { color: var(--accent); margin-bottom: 6px; }
+  .demo-term .out { color: var(--ink-muted); }
 
   .tech-detail { margin-top: 14px; }
   .tech-detail summary {
@@ -346,6 +427,7 @@
         <div class="label">Trabajo reciente</div>
         <h2>Proyectos</h2>
       </div>
+      <p style="font-size:0.82rem; color:var(--ink-faint); max-width:32ch; margin:0;">Vistas recreadas con datos ficticios — el original usa datos reales de cada institución.</p>
     </div>
     <div class="grid" id="cardGrid">
 
@@ -354,6 +436,15 @@
         <h3>Panel de control operacional</h3>
         <p class="problem"><b>Problema:</b> la herramienta interna se colgaba por bloqueos síncronos y ya no escalaba a nuevas funciones.</p>
         <p class="desc">Migración completa de Streamlit a una arquitectura Flask con métricas en tiempo real vía Server-Sent Events, sin frameworks de build.</p>
+        <div class="demo">
+          <div class="demo-bar"><span class="dot"></span><span class="dot"></span><span class="dot"></span><span class="demo-url">localhost:5100 — Panel de Control</span></div>
+          <div class="demo-body">
+            <div class="demo-tabs"><span class="active">Bots</span><span>Monitor</span><span>Optimizador</span><span>Excel</span><span>Hospital</span><span>JARVIS</span></div>
+            <div class="demo-line"><span>Bot "Consolidado A" — <span class="ok">completado</span></span><span>00:42</span></div>
+            <div class="demo-line"><span>Bot "Reporte B" — corriendo</span><span class="warn">62%</span></div>
+            <div class="demo-progress"><div class="fill" style="width:62%"></div></div>
+          </div>
+        </div>
         <div class="tags">
           <span class="tag">Python</span><span class="tag">Flask</span><span class="tag">SSE</span><span class="tag">Chart.js</span><span class="tag">RAG + LLM local</span>
         </div>
@@ -373,6 +464,23 @@
         <h3>Pipeline de consolidación de datos</h3>
         <p class="problem"><b>Problema:</b> cruzar dos fuentes de solicitudes con nombres inconsistentes era manual, lento y sin trazabilidad.</p>
         <p class="desc">Pipeline en pandas con normalización difusa de texto (distancia de Levenshtein), clasificación automática de estados y barra de progreso por etapa.</p>
+        <div class="demo">
+          <div class="demo-bar"><span class="dot"></span><span class="dot"></span><span class="dot"></span><span class="demo-url">localhost:5000 — Consolidación</span></div>
+          <div class="demo-body">
+            <div class="demo-steps">
+              <div class="step done">✓ 1. Cargar planilla origen A</div>
+              <div class="step done">✓ 2. Cargar planilla origen B</div>
+              <div class="step active">▸ 3. Normalizar nombres (fuzzy match)</div>
+              <div class="step">4. Clasificar estado</div>
+            </div>
+            <div class="demo-progress"><div class="fill" style="width:71%"></div></div>
+            <table class="demo-table">
+              <tr><th>Registro</th><th>Origen</th><th>Estado</th></tr>
+              <tr><td>Registro-0142</td><td>A</td><td class="ok">Coincide</td></tr>
+              <tr><td>Registro-0143</td><td>B</td><td class="warn">Revisar</td></tr>
+            </table>
+          </div>
+        </div>
         <div class="tags">
           <span class="tag">Python</span><span class="tag">pandas</span><span class="tag">Fuzzy matching</span><span class="tag">Flask</span>
         </div>
@@ -392,6 +500,24 @@
         <h3>Modelo de Business Intelligence</h3>
         <p class="problem"><b>Problema:</b> los reportes ejecutivos de cumplimiento vivían en Excel estático, sin actualización automática.</p>
         <p class="desc">Modelo semántico en Power BI (Power Query + DAX) conectado a SharePoint y SQL Server; depuración de errores de carga con parsers oficiales de M cuando la interfaz no daba pistas.</p>
+        <div class="demo">
+          <div class="demo-bar"><span class="dot"></span><span class="dot"></span><span class="dot"></span><span class="demo-url">Resumen Ejecutivo — Power BI</span></div>
+          <div class="demo-body">
+            <div class="demo-kpis">
+              <div class="kpi"><span class="n">1.248</span><span class="d">Programados</span></div>
+              <div class="kpi"><span class="n ok">86%</span><span class="d">Realizados</span></div>
+              <div class="kpi"><span class="n warn">174</span><span class="d">Pendientes</span></div>
+            </div>
+            <div class="demo-chart">
+              <div class="col" style="height:40%"></div>
+              <div class="col" style="height:70%"></div>
+              <div class="col" style="height:55%"></div>
+              <div class="col" style="height:90%"></div>
+              <div class="col" style="height:30%"></div>
+              <div class="col" style="height:64%"></div>
+            </div>
+          </div>
+        </div>
         <div class="tags">
           <span class="tag">Power BI</span><span class="tag">DAX</span><span class="tag">Power Query (M)</span><span class="tag">SQL Server</span>
         </div>
@@ -411,6 +537,17 @@
         <h3>Validación y auditoría de inventario</h3>
         <p class="problem"><b>Problema:</b> conciliar el inventario operativo contra auditorías externas era manual, y los errores pasaban desapercibidos.</p>
         <p class="desc">Dashboard que valida reglas de negocio sobre Excel, repara errores automáticamente vía automatización COM y compara contra el informe del auditor (con OCR), armando el borrador de correo con las diferencias.</p>
+        <div class="demo">
+          <div class="demo-bar"><span class="dot"></span><span class="dot"></span><span class="dot"></span><span class="demo-url">localhost:5300 — Auditoría</span></div>
+          <div class="demo-body">
+            <div class="demo-tabs"><span class="active">Validar Excel</span><span>Comparar PDF</span><span>Histórico</span></div>
+            <div class="demo-checklist">
+              <div><span class="ok">✓</span> Stock total cuadra con hoja maestra</div>
+              <div><span class="bad">✕</span> Zona A: 3 filas sin categoría asignada</div>
+              <div><span class="ok">✓</span> Cruce con informe auditor — 0 diferencias</div>
+            </div>
+          </div>
+        </div>
         <div class="tags">
           <span class="tag">Python</span><span class="tag">Excel COM</span><span class="tag">OCR (PyMuPDF)</span><span class="tag">Flask</span>
         </div>
@@ -430,6 +567,17 @@
         <h3>Mantenimiento de base de datos SQL Server</h3>
         <p class="problem"><b>Problema:</b> procesos automatizados nocturnos generaban cifras de reporting incorrectas y fallaban en silencio.</p>
         <p class="desc">Corrección de la lógica de negocio en los jobs (T-SQL) y reparación de un job de indexación que fallaba a diario por un error de configuración.</p>
+        <div class="demo">
+          <div class="demo-bar"><span class="dot"></span><span class="dot"></span><span class="dot"></span><span class="demo-url">SQL Server Agent — Jobs</span></div>
+          <div class="demo-body">
+            <table class="demo-table">
+              <tr><th>Job</th><th>Última corrida</th><th>Estado</th></tr>
+              <tr><td>Actualiza_Tablas_Trabajo</td><td>03:56</td><td class="ok">OK</td></tr>
+              <tr><td>Reconstruye_Índices</td><td>04:20</td><td class="ok">OK</td></tr>
+              <tr><td>Restaura_Backup</td><td>05:10</td><td class="warn">Deshabilitado</td></tr>
+            </table>
+          </div>
+        </div>
         <div class="tags">
           <span class="tag">SQL Server</span><span class="tag">T-SQL</span><span class="tag">SQL Agent</span>
         </div>
@@ -449,6 +597,13 @@
         <h3>Asistente de IA local</h3>
         <p class="problem"><b>Problema:</b> automatizar tareas puntuales (crear archivos, revisar documentos) sin depender de suscripciones pagas.</p>
         <p class="desc">Configuración de un agente de IA con modelo en la nube gratuito como cerebro principal y un modelo local de respaldo, con acceso a herramientas de archivo desde línea de comandos.</p>
+        <div class="demo">
+          <div class="demo-bar"><span class="dot"></span><span class="dot"></span><span class="dot"></span><span class="demo-url">Terminal</span></div>
+          <div class="demo-body demo-term">
+            <div class="cmd">$ ia "revisa el excel de stock y dime si hay filas duplicadas"</div>
+            <div class="out">Encontré 3 filas duplicadas en la hoja "Enero" (filas 12, 45, 88). ¿Las elimino?</div>
+          </div>
+        </div>
         <div class="tags">
           <span class="tag">LLM APIs</span><span class="tag">Ollama</span><span class="tag">CLI tooling</span>
         </div>
