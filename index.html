@@ -1,4 +1,32 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Marcelo Poblete — Automatización de datos & sistemas de gestión</title>
+<meta name="description" content="Especialista en automatización de datos y sistemas de gestión. Dashboards, pipelines de datos, Power BI, SQL Server y automatización con Python para operaciones reales del sector salud.">
+<meta name="author" content="Marcelo Poblete">
+<link rel="canonical" href="https://chelocomc.github.io/">
+<meta name="theme-color" content="#1F5F5B" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#121815" media="(prefers-color-scheme: dark)">
+
+<!-- Open Graph / Twitter: título, descripción e imagen al compartir el enlace -->
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://chelocomc.github.io/">
+<meta property="og:title" content="Marcelo Poblete — Automatización de datos & sistemas de gestión">
+<meta property="og:description" content="Convierto procesos manuales en sistemas que corren solos: dashboards, pipelines de datos, Power BI y SQL Server para operaciones reales.">
+<meta property="og:locale" content="es_CL">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Marcelo Poblete — Automatización de datos & sistemas de gestión">
+<meta name="twitter:description" content="Convierto procesos manuales en sistemas que corren solos: dashboards, pipelines de datos, Power BI y SQL Server.">
+
+<!-- Favicon: iniciales MP en SVG (sin archivo externo) -->
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='12' fill='%231F5F5B'/%3E%3Ctext x='50%25' y='54%25' font-family='Georgia,serif' font-size='30' font-weight='700' fill='%23F5F6F2' text-anchor='middle' dominant-baseline='middle'%3EMP%3C/text%3E%3C/svg%3E">
+
+<!-- Aplica el tema guardado antes de pintar, para evitar el parpadeo -->
+<script>
+  (function(){try{var t=localStorage.getItem('theme');if(t)document.documentElement.setAttribute('data-theme',t);}catch(e){}})();
+</script>
 <style>
   :root {
     --bg: #E9EBE6;
@@ -362,20 +390,38 @@
   @media (prefers-reduced-motion: reduce) {
     .card { transition: none; opacity: 1; transform: none; }
   }
+
+  /* ---------- theme toggle ---------- */
+  .theme-toggle {
+    display: inline-flex; align-items: center; justify-content: center;
+    width: 34px; height: 34px; flex-shrink: 0;
+    border: 1px solid var(--line-strong); border-radius: 3px;
+    background: var(--surface); color: var(--ink-muted);
+    cursor: pointer; font-size: 0.9rem; line-height: 1;
+    transition: border-color 0.15s ease, color 0.15s ease;
+  }
+  .theme-toggle:hover { border-color: var(--accent); color: var(--accent); }
+  .topbar-right { display: flex; align-items: center; gap: 18px; }
 </style>
+</head>
+<body>
 
 <header class="top">
   <div class="wrap topbar">
     <div class="brand">
       <span class="name">Marcelo Poblete</span>
     </div>
-    <nav class="links">
-      <a href="#proyectos">Proyectos</a>
-      <a href="#servicios">Servicios</a>
-      <a href="#habilidades">Habilidades</a>
-      <a href="#preguntas">Preguntas</a>
-      <a href="#contacto">Contacto</a>
-    </nav>
+    <div class="topbar-right">
+      <nav class="links">
+        <a href="#proyectos">Proyectos</a>
+        <a href="#servicios">Servicios</a>
+        <a href="#habilidades">Habilidades</a>
+        <a href="#preguntas">Preguntas</a>
+        <a href="#contacto">Contacto</a>
+      </nav>
+      <button class="theme-toggle" id="themeToggle" type="button"
+        aria-label="Cambiar tema claro/oscuro" title="Cambiar tema">◐</button>
+    </div>
   </div>
 </header>
 
@@ -390,7 +436,7 @@
       reportes ejecutivos y bases de datos que antes dependían de trabajo manual repetido cada mes.
     </p>
     <div class="status-strip">
-      <span class="chip accent">6 sistemas en producción</span>
+      <span class="chip accent">7 sistemas en producción</span>
       <span class="chip">Python · SQL Server · Power BI · Flask</span>
       <span class="chip">Sector salud pública</span>
     </div>
@@ -413,7 +459,7 @@
         <p>Mi punto fuerte es tomar un proceso manual (una planilla, un reporte, una conciliación) y convertirlo en algo que corre solo, se puede auditar y no depende de que una persona se acuerde de hacerlo cada mes. Eso implica Python y SQL, pero también entender el proceso de negocio lo suficientemente bien como para saber qué regla estaba mal antes de tocar el código.</p>
       </div>
       <div class="about-stats">
-        <div class="stat"><span class="d">Sistemas propios en producción activa</span><span class="n">6</span></div>
+        <div class="stat"><span class="d">Sistemas propios en producción activa</span><span class="n">7</span></div>
         <div class="stat"><span class="d">Registros re-validados en la corrección de un solo pipeline</span><span class="n">200.000+</span></div>
         <div class="stat"><span class="d">Errores de carga tras auditar un modelo de BI completo</span><span class="n">0</span></div>
         <div class="stat"><span class="d">Puertos / apps Flask corriendo en paralelo</span><span class="n">3</span></div>
@@ -610,6 +656,37 @@
         <div class="result"><span class="tag-label">Resultado —</span> asistente que ejecuta tareas reales sobre el sistema de archivos, con <b>respaldo local sin conexión</b>.</div>
       </article>
 
+      <article class="card">
+        <div class="refrow"><span class="ref">REF. WEB-07</span></div>
+        <h3>Visor de planos 2D/3D con wayfinding</h3>
+        <p class="problem"><b>Problema:</b> ubicar un recinto y llegar a él en un hospital enorme dependía de conocer los planos de memoria.</p>
+        <p class="desc">Visor web (FastAPI + PyMuPDF) de los planos de cada piso: búsqueda en lenguaje natural, ruta guiada paso a paso entre recintos y pisos, y reconocimiento automático de puertas para que la ruta no atraviese muros.</p>
+        <div class="demo">
+          <div class="demo-bar"><span class="dot"></span><span class="dot"></span><span class="dot"></span><span class="demo-url">visor-hospital — Cómo llegar</span></div>
+          <div class="demo-body">
+            <div class="demo-tabs"><span>SUB-1</span><span class="active">Piso 1</span><span>Piso 2</span><span>…</span><span>Piso 11</span></div>
+            <div class="demo-steps">
+              <div class="step done">✓ Origen — Recepción (Torre A)</div>
+              <div class="step active">▸ Camina por el pasillo público hasta el ascensor</div>
+              <div class="step">Sube al Piso 3 · Destino: Toma de muestras</div>
+            </div>
+            <div class="demo-line"><span>Puertas reconocidas en el piso</span><span class="ok">487</span></div>
+          </div>
+        </div>
+        <div class="tags">
+          <span class="tag">Python</span><span class="tag">FastAPI</span><span class="tag">PyMuPDF</span><span class="tag">OpenCV</span><span class="tag">A* / grafos</span><span class="tag">JavaScript</span>
+        </div>
+        <div class="result"><span class="tag-label">Resultado —</span> planos de <b>14 pisos</b> navegables, ruta guiada entre pisos y detección de puertas por visión por computador — reconocimiento en segundos por piso.</div>
+        <details class="tech-detail">
+          <summary>Detalle técnico</summary>
+          <ul>
+            <li><b>Ruteo real:</b> A* y un grafo de líneas centrales sobre los pasillos, con conectores (escaleras/ascensores) para armar rutas entre pisos; el trazo va por el medio del pasillo y describe el camino en lenguaje natural.</li>
+            <li><b>Pipeline de planos:</b> normalización del <span class="mono" style="font-size:0.82em">/Rotate</span> y el <span class="mono" style="font-size:0.82em">MediaBox</span> del PDF para que el texto extraído y la imagen renderizada coincidan; tiles cacheados y render HD según el zoom.</li>
+            <li><b>Reconocimiento de puertas:</b> el template matching no distinguía el arco de puerta del dibujo denso del plano (recall ~59%); se reemplazó por un clasificador HOG + regresión logística entrenado con las puertas marcadas a mano (recall ~95%), corriendo con el detector HOG nativo de OpenCV para barrer el plano completo en segundos.</li>
+          </ul>
+        </details>
+      </article>
+
     </div>
   </section>
 
@@ -773,4 +850,25 @@
       io.observe(c);
     });
   })();
+
+  // Toggle de tema: alterna claro/oscuro y recuerda la preferencia.
+  (function () {
+    var btn = document.getElementById('themeToggle');
+    if (!btn) return;
+    function actual() {
+      var attr = document.documentElement.getAttribute('data-theme');
+      if (attr) return attr;
+      return window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+    }
+    function pintar(t) { btn.textContent = t === 'dark' ? '☀' : '☾'; }
+    pintar(actual());
+    btn.addEventListener('click', function () {
+      var next = actual() === 'dark' ? 'light' : 'dark';
+      document.documentElement.setAttribute('data-theme', next);
+      try { localStorage.setItem('theme', next); } catch (e) {}
+      pintar(next);
+    });
+  })();
 </script>
+</body>
+</html>
