@@ -319,6 +319,25 @@
   .about-stats .stat .n { font-family: ui-monospace, Consolas, monospace; font-weight: 700; color: var(--accent); white-space: nowrap; }
   .about-stats .stat .d { font-size: 0.86rem; color: var(--ink-muted); }
 
+  /* ---------- experiencia / formación ---------- */
+  .exp { display: flex; flex-direction: column; }
+  .exp-item {
+    display: grid; grid-template-columns: 150px 1fr; gap: 24px;
+    padding: 24px 0; border-top: 1px solid var(--line);
+  }
+  .exp-item:last-child { border-bottom: 1px solid var(--line); }
+  .exp-item .when { padding-top: 3px; }
+  .exp-item h3 { font-size: 1.12rem; margin: 0 0 4px; font-weight: 600; }
+  .exp-item .org {
+    font-family: ui-monospace, Consolas, monospace; font-size: 0.78rem;
+    color: var(--accent-2); letter-spacing: 0.04em; margin-bottom: 12px;
+  }
+  .exp-item p { font-size: 0.95rem; color: var(--ink-muted); margin: 0 0 12px; max-width: 62ch; }
+  .exp-item ul { margin: 0; padding-left: 18px; }
+  .exp-item li { font-size: 0.9rem; color: var(--ink-muted); margin-bottom: 7px; }
+  .exp-item li:last-child { margin-bottom: 0; }
+  .exp-item li b { color: var(--ink); font-weight: 600; }
+
   /* ---------- services ---------- */
   .services-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 0; border-top: 1px solid var(--line); border-left: 1px solid var(--line); }
   .service { padding: 22px 24px; border-right: 1px solid var(--line); border-bottom: 1px solid var(--line); }
@@ -385,6 +404,7 @@
     .skill-row { grid-template-columns: 1fr; gap: 6px; }
     .contact { align-items: flex-start; }
     .about { grid-template-columns: 1fr; }
+    .exp-item { grid-template-columns: 1fr; gap: 8px; }
   }
 
   @media (prefers-reduced-motion: reduce) {
@@ -413,6 +433,7 @@
     </div>
     <div class="topbar-right">
       <nav class="links">
+        <a href="#experiencia">Experiencia</a>
         <a href="#proyectos">Proyectos</a>
         <a href="#servicios">Servicios</a>
         <a href="#habilidades">Habilidades</a>
@@ -455,7 +476,7 @@
     </div>
     <div class="about">
       <div>
-        <p>Trabajo día a día dentro de los sistemas de gestión de una institución de salud pública: ahí es donde nacieron los proyectos de este portafolio. No los diseñé como ejercicios — resuelven problemas reales que alguien tenía que resolver esa semana, con datos reales y consecuencias reales si fallaban.</p>
+        <p>Soy <b>Ingeniero en Automatización y Control Industrial</b> y trabajo día a día dentro de los sistemas de gestión de un hospital de alta complejidad, coordinando infraestructura crítica. Ahí es donde nacieron los proyectos de este portafolio: no los diseñé como ejercicios — resuelven problemas reales que alguien tenía que resolver esa semana, con datos reales y consecuencias reales si fallaban.</p>
         <p>Mi punto fuerte es tomar un proceso manual (una planilla, un reporte, una conciliación) y convertirlo en algo que corre solo, se puede auditar y no depende de que una persona se acuerde de hacerlo cada mes. Eso implica Python y SQL, pero también entender el proceso de negocio lo suficientemente bien como para saber qué regla estaba mal antes de tocar el código.</p>
       </div>
       <div class="about-stats">
@@ -463,6 +484,39 @@
         <div class="stat"><span class="d">Registros re-validados en la corrección de un solo pipeline</span><span class="n">200.000+</span></div>
         <div class="stat"><span class="d">Errores de carga tras auditar un modelo de BI completo</span><span class="n">0</span></div>
         <div class="stat"><span class="d">Puertos / apps Flask corriendo en paralelo</span><span class="n">3</span></div>
+      </div>
+    </div>
+  </section>
+
+  <section id="experiencia">
+    <div class="section-head">
+      <div>
+        <div class="label">Trayectoria</div>
+        <h2>Experiencia y formación</h2>
+      </div>
+    </div>
+    <div class="exp">
+      <div class="exp-item">
+        <div class="when label">Actualidad</div>
+        <div>
+          <h3>Coordinador de Mantenimiento y Servicios Generales</h3>
+          <div class="org">Concesionaria — Hospital Félix Bulnes (alta complejidad)</div>
+          <p>Coordino la continuidad operacional de sistemas e infraestructura crítica del hospital y, en paralelo, desarrollo las automatizaciones y tableros que optimizan esa operación. Es donde nacen los proyectos de este portafolio: problemas reales, con datos reales y consecuencias reales si fallan.</p>
+          <ul>
+            <li>Supervisión de <b>sistemas BMS</b> (Building Management System) y monitoreo de equipos industriales.</li>
+            <li>Coordinación de contingencias y mantenimiento preventivo/correctivo de infraestructura crítica (agua caliente sanitaria, certificación de pabellones, control de parámetros como dureza del agua y ppm).</li>
+            <li>Gestión técnica y de <b>niveles de servicio (SLA)</b> de subcontratos críticos: mantenimiento, logística y seguridad.</li>
+            <li>Desarrollo de <b>automatización de procesos (RPA)</b>, integración de datos y reportería (Power BI / Looker Studio) para el seguimiento de indicadores y la toma de decisiones.</li>
+          </ul>
+        </div>
+      </div>
+      <div class="exp-item">
+        <div class="when label">Formación</div>
+        <div>
+          <h3>Ingeniero en Automatización y Control Industrial</h3>
+          <div class="org">Título profesional</div>
+          <p>Base de ingeniería en automatización y control aplicada a operaciones reales: la combinación de gestión de infraestructura crítica con desarrollo de software y analítica de datos.</p>
+        </div>
       </div>
     </div>
   </section>
@@ -741,7 +795,11 @@
     <div class="skill-list">
       <div class="skill-row">
         <div class="cat">Backend &amp; datos</div>
-        <div class="items"><span>Python</span><span>Flask</span><span>pandas</span><span>APIs REST</span></div>
+        <div class="items"><span>Python</span><span>SQL</span><span>Flask</span><span>pandas</span><span>NumPy</span><span>APIs REST</span><span>Git / GitHub</span></div>
+      </div>
+      <div class="skill-row">
+        <div class="cat">Automatización &amp; RPA</div>
+        <div class="items"><span>Rocketbot</span><span>Playwright</span><span>Selenium</span><span>BeautifulSoup</span><span>PowerShell</span></div>
       </div>
       <div class="skill-row">
         <div class="cat">Bases de datos</div>
@@ -749,15 +807,23 @@
       </div>
       <div class="skill-row">
         <div class="cat">Business Intelligence</div>
-        <div class="items"><span>Power BI</span><span>DAX</span><span>Power Query (M)</span></div>
+        <div class="items"><span>Power BI</span><span>DAX</span><span>Power Query (M)</span><span>Looker Studio</span></div>
       </div>
       <div class="skill-row">
-        <div class="cat">Automatización</div>
-        <div class="items"><span>Excel COM / pywin32</span><span>OCR</span><span>Scripting de procesos</span></div>
+        <div class="cat">Automatización de Office</div>
+        <div class="items"><span>Excel COM / pywin32</span><span>OpenPyXL</span><span>xlwings</span><span>Office Scripts</span><span>OCR</span></div>
+      </div>
+      <div class="skill-row">
+        <div class="cat">Power Platform &amp; low-code</div>
+        <div class="items"><span>Power Apps</span><span>Power Automate</span><span>Copilot Studio</span><span>SharePoint</span><span>Google Sheets API</span></div>
       </div>
       <div class="skill-row">
         <div class="cat">IA aplicada</div>
-        <div class="items"><span>Integración de LLMs</span><span>Agentes con acceso a herramientas</span><span>Modelos locales (Ollama)</span></div>
+        <div class="items"><span>Integración de LLMs</span><span>Agentes con herramientas</span><span>Modelos locales (Ollama · Qwen · Llama 3)</span></div>
+      </div>
+      <div class="skill-row">
+        <div class="cat">Operaciones &amp; infraestructura</div>
+        <div class="items"><span>Sistemas BMS</span><span>Gestión de mantenimiento industrial</span><span>SLA de subcontratos</span></div>
       </div>
     </div>
   </section>
@@ -818,7 +884,10 @@
         <div class="label">Disponibilidad</div>
         <h2>¿Conversamos sobre tu proyecto?</h2>
         <p>Disponible para proyectos freelance (dashboards, automatización, Power BI) y para oportunidades como desarrollador o analista de datos.</p>
-        <a class="btn primary" href="mailto:marcelopoblete16@gmail.com">marcelopoblete16@gmail.com</a>
+        <div class="cta-row">
+          <a class="btn primary" href="mailto:marcelopoblete16@gmail.com">marcelopoblete16@gmail.com</a>
+          <a class="btn ghost" href="https://github.com/chelocomc" target="_blank" rel="noopener">GitHub</a>
+        </div>
       </div>
     </div>
   </section>
