@@ -1,0 +1,621 @@
+<title>Marcelo Poblete — Automatización de datos & sistemas de gestión</title>
+<style>
+  :root {
+    --bg: #E9EBE6;
+    --surface: #F5F6F2;
+    --surface-2: #DFE2DA;
+    --ink: #1B2420;
+    --ink-muted: #4B564F;
+    --ink-faint: #7B857D;
+    --accent: #1F5F5B;
+    --accent-soft: #DCE8E6;
+    --accent-2: #B5722A;
+    --line: #C7CCC1;
+    --line-strong: #A9AF9F;
+    --shadow: 0 1px 0 rgba(27,36,32,0.06);
+  }
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --bg: #121815;
+      --surface: #1A211D;
+      --surface-2: #212924;
+      --ink: #E7EAE3;
+      --ink-muted: #9FA89F;
+      --ink-faint: #6C766E;
+      --accent: #5FBDB5;
+      --accent-soft: #1E3230;
+      --accent-2: #E0A868;
+      --line: #2C352F;
+      --line-strong: #3A443D;
+      --shadow: 0 1px 0 rgba(0,0,0,0.3);
+    }
+  }
+  :root[data-theme="dark"] {
+    --bg: #121815; --surface: #1A211D; --surface-2: #212924;
+    --ink: #E7EAE3; --ink-muted: #9FA89F; --ink-faint: #6C766E;
+    --accent: #5FBDB5; --accent-soft: #1E3230; --accent-2: #E0A868;
+    --line: #2C352F; --line-strong: #3A443D; --shadow: 0 1px 0 rgba(0,0,0,0.3);
+  }
+  :root[data-theme="light"] {
+    --bg: #E9EBE6; --surface: #F5F6F2; --surface-2: #DFE2DA;
+    --ink: #1B2420; --ink-muted: #4B564F; --ink-faint: #7B857D;
+    --accent: #1F5F5B; --accent-soft: #DCE8E6; --accent-2: #B5722A;
+    --line: #C7CCC1; --line-strong: #A9AF9F; --shadow: 0 1px 0 rgba(27,36,32,0.06);
+  }
+
+  * { box-sizing: border-box; }
+  html { color-scheme: light dark; }
+  body {
+    margin: 0;
+    background: var(--bg);
+    color: var(--ink);
+    font-family: "Iowan Old Style", "Palatino Linotype", "Book Antiqua", Georgia, serif;
+    -webkit-font-smoothing: antialiased;
+    line-height: 1.5;
+  }
+  .sans { font-family: -apple-system, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; }
+  .mono {
+    font-family: ui-monospace, "SFMono-Regular", Consolas, "Liberation Mono", Menlo, monospace;
+    font-variant-numeric: tabular-nums;
+  }
+  .label {
+    font-family: ui-monospace, "SFMono-Regular", Consolas, "Liberation Mono", Menlo, monospace;
+    font-size: 0.72rem;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--ink-faint);
+  }
+
+  a { color: var(--accent); }
+
+  .wrap { max-width: 1080px; margin: 0 auto; padding: 0 28px; }
+
+  /* ---------- nav ---------- */
+  header.top {
+    position: sticky; top: 0; z-index: 10;
+    background: color-mix(in srgb, var(--bg) 88%, transparent);
+    backdrop-filter: blur(6px);
+    border-bottom: 1px solid var(--line);
+  }
+  .topbar {
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 16px 0;
+  }
+  .brand { display: flex; flex-direction: column; gap: 2px; }
+  .brand .name { font-size: 1rem; font-weight: 600; letter-spacing: 0.01em; }
+  nav.links { display: flex; gap: 22px; }
+  nav.links a {
+    font-family: ui-monospace, "SFMono-Regular", Consolas, monospace;
+    font-size: 0.78rem; letter-spacing: 0.04em; text-transform: uppercase;
+    color: var(--ink-muted); text-decoration: none; border-bottom: 1px solid transparent;
+  }
+  nav.links a:hover { color: var(--accent); border-bottom-color: var(--accent); }
+
+  /* ---------- hero ---------- */
+  .hero { padding: 76px 0 56px; }
+  .hero .label { margin-bottom: 18px; }
+  .hero h1 {
+    font-size: clamp(2rem, 4.4vw, 3.15rem);
+    line-height: 1.12;
+    margin: 0 0 22px;
+    max-width: 15ch;
+    font-weight: 600;
+    text-wrap: balance;
+  }
+  .hero .lede {
+    max-width: 58ch;
+    font-size: 1.12rem;
+    color: var(--ink-muted);
+    margin: 0 0 34px;
+  }
+  .hero .lede strong { color: var(--ink); font-weight: 600; }
+
+  .status-strip {
+    display: flex; flex-wrap: wrap; gap: 10px;
+    margin-bottom: 36px;
+  }
+  .chip {
+    font-family: ui-monospace, "SFMono-Regular", Consolas, monospace;
+    font-size: 0.76rem;
+    padding: 6px 11px;
+    border: 1px solid var(--line-strong);
+    border-radius: 3px;
+    color: var(--ink-muted);
+    background: var(--surface);
+  }
+  .chip.accent { color: var(--accent); border-color: var(--accent); }
+
+  .cta-row { display: flex; gap: 14px; flex-wrap: wrap; }
+  .btn {
+    font-family: -apple-system, "Segoe UI", sans-serif;
+    display: inline-flex; align-items: center; gap: 8px;
+    padding: 12px 20px; font-size: 0.94rem; font-weight: 600;
+    text-decoration: none; border-radius: 3px; border: 1px solid transparent;
+    transition: transform 0.15s ease, background 0.15s ease;
+  }
+  .btn.primary { background: var(--accent); color: var(--surface); }
+  .btn.primary:hover { transform: translateY(-1px); }
+  .btn.ghost { border-color: var(--line-strong); color: var(--ink); }
+  .btn.ghost:hover { border-color: var(--accent); color: var(--accent); }
+
+  /* ---------- sections generic ---------- */
+  section { padding: 54px 0; border-top: 1px solid var(--line); }
+  .section-head {
+    display: flex; align-items: baseline; justify-content: space-between;
+    margin-bottom: 30px; gap: 20px; flex-wrap: wrap;
+  }
+  .section-head h2 {
+    font-size: 1.5rem; margin: 6px 0 0; font-weight: 600;
+  }
+
+  /* ---------- project cards ---------- */
+  .grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+    gap: 18px;
+  }
+  .card {
+    background: var(--surface);
+    border: 1px solid var(--line);
+    border-radius: 4px;
+    padding: 22px 24px 24px;
+    opacity: 0; transform: translateY(10px);
+    transition: opacity 0.5s ease, transform 0.5s ease, border-color 0.2s ease;
+  }
+  .card.in { opacity: 1; transform: translateY(0); }
+  .card:hover { border-color: var(--line-strong); }
+  .card .refrow {
+    display: flex; justify-content: space-between; align-items: center;
+    margin-bottom: 12px;
+  }
+  .card .ref { font-family: ui-monospace, Consolas, monospace; font-size: 0.72rem; color: var(--accent-2); letter-spacing: 0.06em; }
+  .card h3 { font-size: 1.2rem; margin: 0 0 10px; font-weight: 600; }
+  .card .problem { font-size: 0.92rem; color: var(--ink-muted); margin: 0 0 10px; }
+  .card .problem b { color: var(--ink); font-weight: 600; }
+  .card .desc { font-size: 0.92rem; color: var(--ink-muted); margin: 0 0 16px; }
+  .tags { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 16px; }
+  .tag {
+    font-family: ui-monospace, Consolas, monospace;
+    font-size: 0.7rem; padding: 3px 8px;
+    border: 1px solid var(--line-strong); border-radius: 2px;
+    color: var(--ink-faint);
+  }
+  .result {
+    font-size: 0.86rem; padding-top: 14px; border-top: 1px dashed var(--line);
+    color: var(--ink-muted);
+  }
+  .result .tag-label { color: var(--ink-faint); }
+  .result b { color: var(--accent); font-weight: 700; }
+
+  .tech-detail { margin-top: 14px; }
+  .tech-detail summary {
+    cursor: pointer; list-style: none;
+    font-family: ui-monospace, Consolas, monospace;
+    font-size: 0.76rem; letter-spacing: 0.04em; text-transform: uppercase;
+    color: var(--accent); display: flex; align-items: center; gap: 6px;
+  }
+  .tech-detail summary::-webkit-details-marker { display: none; }
+  .tech-detail summary::before { content: "+"; font-size: 0.95rem; }
+  .tech-detail[open] summary::before { content: "–"; }
+  .tech-detail ul { margin: 12px 0 0; padding-left: 18px; }
+  .tech-detail li { font-size: 0.86rem; color: var(--ink-muted); margin-bottom: 8px; }
+  .tech-detail li:last-child { margin-bottom: 0; }
+  .tech-detail li b { color: var(--ink); font-weight: 600; }
+
+  /* ---------- about ---------- */
+  .about { display: grid; grid-template-columns: 1.1fr 0.9fr; gap: 48px; align-items: start; }
+  .about p { font-size: 1rem; color: var(--ink-muted); margin: 0 0 14px; max-width: 56ch; }
+  .about-stats { display: flex; flex-direction: column; gap: 0; border-top: 1px solid var(--line); }
+  .about-stats .stat { display: flex; justify-content: space-between; padding: 14px 0; border-bottom: 1px solid var(--line); gap: 12px; }
+  .about-stats .stat .n { font-family: ui-monospace, Consolas, monospace; font-weight: 700; color: var(--accent); white-space: nowrap; }
+  .about-stats .stat .d { font-size: 0.86rem; color: var(--ink-muted); }
+
+  /* ---------- services ---------- */
+  .services-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 0; border-top: 1px solid var(--line); border-left: 1px solid var(--line); }
+  .service { padding: 22px 24px; border-right: 1px solid var(--line); border-bottom: 1px solid var(--line); }
+  .service .label { margin-bottom: 10px; }
+  .service h3 { font-size: 1.02rem; margin: 0 0 8px; font-weight: 600; }
+  .service p { font-size: 0.86rem; color: var(--ink-muted); margin: 0; }
+
+  /* ---------- faq ---------- */
+  .faq-list { display: flex; flex-direction: column; gap: 0; }
+  .faq {
+    border-bottom: 1px solid var(--line); padding: 18px 0;
+  }
+  .faq summary {
+    cursor: pointer; list-style: none; font-weight: 600; font-size: 1rem;
+    display: flex; justify-content: space-between; align-items: center; gap: 12px;
+  }
+  .faq summary::-webkit-details-marker { display: none; }
+  .faq summary::after { content: "+"; color: var(--accent); font-family: ui-monospace, Consolas, monospace; flex-shrink: 0; }
+  .faq[open] summary::after { content: "–"; }
+  .faq p { margin: 12px 0 0; font-size: 0.92rem; color: var(--ink-muted); max-width: 62ch; }
+
+  /* ---------- skills ---------- */
+  .skill-row {
+    display: grid; grid-template-columns: 200px 1fr;
+    gap: 18px; padding: 14px 0; border-top: 1px solid var(--line);
+    align-items: baseline;
+  }
+  .skill-row:last-child { border-bottom: 1px solid var(--line); }
+  .skill-row .cat { font-weight: 600; font-size: 0.95rem; }
+  .skill-row .items { display: flex; flex-wrap: wrap; gap: 8px; }
+  .skill-row .items span {
+    font-family: ui-monospace, Consolas, monospace; font-size: 0.76rem;
+    color: var(--ink-muted);
+  }
+  .skill-row .items span:not(:last-child)::after { content: "·"; margin-left: 8px; color: var(--line-strong); }
+
+  /* ---------- how i work ---------- */
+  .principles {
+    display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: 0;
+  }
+  .principle {
+    padding: 4px 24px; border-left: 1px solid var(--line);
+  }
+  .principle:first-child { padding-left: 0; border-left: none; }
+  .principle .label { margin-bottom: 10px; }
+  .principle p { margin: 0; font-size: 0.92rem; color: var(--ink-muted); }
+
+  /* ---------- contact ---------- */
+  .contact {
+    display: flex; justify-content: space-between; align-items: flex-end;
+    flex-wrap: wrap; gap: 24px;
+  }
+  .contact h2 { font-size: 1.8rem; margin: 6px 0 10px; max-width: 12ch; text-wrap: balance; }
+  .contact p { color: var(--ink-muted); max-width: 42ch; margin: 0 0 20px; font-size: 0.98rem; }
+
+  footer {
+    padding: 24px 0 48px;
+    color: var(--ink-faint); font-size: 0.8rem;
+  }
+
+  @media (max-width: 640px) {
+    nav.links { display: none; }
+    .skill-row { grid-template-columns: 1fr; gap: 6px; }
+    .contact { align-items: flex-start; }
+    .about { grid-template-columns: 1fr; }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .card { transition: none; opacity: 1; transform: none; }
+  }
+</style>
+
+<header class="top">
+  <div class="wrap topbar">
+    <div class="brand">
+      <span class="name">Marcelo Poblete</span>
+    </div>
+    <nav class="links">
+      <a href="#proyectos">Proyectos</a>
+      <a href="#servicios">Servicios</a>
+      <a href="#habilidades">Habilidades</a>
+      <a href="#preguntas">Preguntas</a>
+      <a href="#contacto">Contacto</a>
+    </nav>
+  </div>
+</header>
+
+<main class="wrap">
+
+  <section class="hero" style="border-top:none;">
+    <div class="label">Perfil técnico — automatización &amp; datos</div>
+    <h1>Convierto procesos manuales en sistemas que corren solos.</h1>
+    <p class="lede">
+      Desarrollo <strong>dashboards, pipelines de datos y tableros de Business Intelligence</strong>
+      para operaciones reales: consolidación de planillas, monitoreo en tiempo real,
+      reportes ejecutivos y bases de datos que antes dependían de trabajo manual repetido cada mes.
+    </p>
+    <div class="status-strip">
+      <span class="chip accent">6 sistemas en producción</span>
+      <span class="chip">Python · SQL Server · Power BI · Flask</span>
+      <span class="chip">Sector salud pública</span>
+    </div>
+    <div class="cta-row">
+      <a class="btn primary" href="#proyectos">Ver proyectos</a>
+      <a class="btn ghost" href="mailto:marcelopoblete16@gmail.com">Escríbeme</a>
+    </div>
+  </section>
+
+  <section id="sobre-mi">
+    <div class="section-head">
+      <div>
+        <div class="label">Contexto</div>
+        <h2>Sobre mí</h2>
+      </div>
+    </div>
+    <div class="about">
+      <div>
+        <p>Trabajo día a día dentro de los sistemas de gestión de una institución de salud pública: ahí es donde nacieron los proyectos de este portafolio. No los diseñé como ejercicios — resuelven problemas reales que alguien tenía que resolver esa semana, con datos reales y consecuencias reales si fallaban.</p>
+        <p>Mi punto fuerte es tomar un proceso manual (una planilla, un reporte, una conciliación) y convertirlo en algo que corre solo, se puede auditar y no depende de que una persona se acuerde de hacerlo cada mes. Eso implica Python y SQL, pero también entender el proceso de negocio lo suficientemente bien como para saber qué regla estaba mal antes de tocar el código.</p>
+      </div>
+      <div class="about-stats">
+        <div class="stat"><span class="d">Sistemas propios en producción activa</span><span class="n">6</span></div>
+        <div class="stat"><span class="d">Registros re-validados en la corrección de un solo pipeline</span><span class="n">200.000+</span></div>
+        <div class="stat"><span class="d">Errores de carga tras auditar un modelo de BI completo</span><span class="n">0</span></div>
+        <div class="stat"><span class="d">Puertos / apps Flask corriendo en paralelo</span><span class="n">3</span></div>
+      </div>
+    </div>
+  </section>
+
+  <section id="proyectos">
+    <div class="section-head">
+      <div>
+        <div class="label">Trabajo reciente</div>
+        <h2>Proyectos</h2>
+      </div>
+    </div>
+    <div class="grid" id="cardGrid">
+
+      <article class="card">
+        <div class="refrow"><span class="ref">REF. OPS-01</span></div>
+        <h3>Panel de control operacional</h3>
+        <p class="problem"><b>Problema:</b> la herramienta interna se colgaba por bloqueos síncronos y ya no escalaba a nuevas funciones.</p>
+        <p class="desc">Migración completa de Streamlit a una arquitectura Flask con métricas en tiempo real vía Server-Sent Events, sin frameworks de build.</p>
+        <div class="tags">
+          <span class="tag">Python</span><span class="tag">Flask</span><span class="tag">SSE</span><span class="tag">Chart.js</span><span class="tag">RAG + LLM local</span>
+        </div>
+        <div class="result"><span class="tag-label">Resultado —</span> <b>6 módulos</b> en producción (automatización de tareas, monitoreo en vivo, mantenimiento de equipos, consulta a documentación con IA) sin bloqueos.</div>
+        <details class="tech-detail">
+          <summary>Detalle técnico</summary>
+          <ul>
+            <li><b>Arquitectura:</b> backend Flask puro con rutas separadas por módulo (bots, optimizador, Excel, hospital, IA), sin build de JS — el front consume SSE directo para no depender de polling.</li>
+            <li><b>Módulo de IA:</b> capa RAG sobre documentación interna con Ollama local, orquestable desde el mismo panel junto a otros proveedores (Anthropic, Gemini, Groq) según disponibilidad.</li>
+            <li><b>Migración:</b> reescritura completa de ~1.500 líneas de un script monolítico en Streamlit a una arquitectura por capas (core / rutas / estático), preservando toda la funcionalidad original.</li>
+          </ul>
+        </details>
+      </article>
+
+      <article class="card">
+        <div class="refrow"><span class="ref">REF. DATA-02</span></div>
+        <h3>Pipeline de consolidación de datos</h3>
+        <p class="problem"><b>Problema:</b> cruzar dos fuentes de solicitudes con nombres inconsistentes era manual, lento y sin trazabilidad.</p>
+        <p class="desc">Pipeline en pandas con normalización difusa de texto (distancia de Levenshtein), clasificación automática de estados y barra de progreso por etapa.</p>
+        <div class="tags">
+          <span class="tag">Python</span><span class="tag">pandas</span><span class="tag">Fuzzy matching</span><span class="tag">Flask</span>
+        </div>
+        <div class="result"><span class="tag-label">Resultado —</span> proceso reproducible que valida y clasifica <b>miles de registros</b> por corrida, con saneo de rutas de archivo agregado tras revisión de seguridad.</div>
+        <details class="tech-detail">
+          <summary>Detalle técnico</summary>
+          <ul>
+            <li><b>Bug silencioso encontrado:</b> el código usaba asignaciones encadenadas <span class="mono" style="font-size:0.82em">df[col].fillna(inplace=True)</span> en 7 lugares — funcionan en versiones viejas de pandas pero se vuelven un no-op silencioso (la columna queda igual) en pandas 3.0. Se corrigieron todas antes de que fallaran en producción sin avisar.</li>
+            <li><b>Seguridad:</b> los endpoints de carga y ejecución armaban rutas de archivo con el año y el nombre que mandaba el navegador, sin validar — se agregó validación de formato y <span class="mono" style="font-size:0.82em">secure_filename</span>.</li>
+            <li><b>Robustez de datos:</b> uno de los scripts tenía hardcodeado el nombre de un archivo mensual que cambia cada mes; se reemplazó por una búsqueda del más reciente por patrón.</li>
+          </ul>
+        </details>
+      </article>
+
+      <article class="card">
+        <div class="refrow"><span class="ref">REF. BI-03</span></div>
+        <h3>Modelo de Business Intelligence</h3>
+        <p class="problem"><b>Problema:</b> los reportes ejecutivos de cumplimiento vivían en Excel estático, sin actualización automática.</p>
+        <p class="desc">Modelo semántico en Power BI (Power Query + DAX) conectado a SharePoint y SQL Server; depuración de errores de carga con parsers oficiales de M cuando la interfaz no daba pistas.</p>
+        <div class="tags">
+          <span class="tag">Power BI</span><span class="tag">DAX</span><span class="tag">Power Query (M)</span><span class="tag">SQL Server</span>
+        </div>
+        <div class="result"><span class="tag-label">Resultado —</span> tablero ejecutivo con KPIs de cumplimiento en tiempo real, <b>cero errores de carga</b> tras la auditoría técnica del modelo.</div>
+        <details class="tech-detail">
+          <summary>Detalle técnico</summary>
+          <ul>
+            <li><b>Diagnóstico sin pistas:</b> Power BI Desktop reportaba "se esperaba el token Literal" sin línea ni columna. Se instaló el parser oficial de Microsoft para el lenguaje M (Node.js) para aislar cada consulta y encontrar la exacta que fallaba — llevó a un operador de coalescencia (<span class="mono" style="font-size:0.82em">??</span>) que ese motor no soporta.</li>
+            <li><b>Regla de DAX aprendida y aplicada:</b> una columna calculada referenciaba a una columna "hermana" creada en el mismo bloque de agregación, algo que DAX no permite aunque no lo marque como error evidente — se resolvió recalculando con variables.</li>
+            <li><b>Errores de datos vs. de sintaxis:</b> tras arreglar la carga aparecieron errores de importación (miles de filas) por conversión de tipos y valores <span class="mono" style="font-size:0.82em">#N/A</span> de Excel — se resolvieron con manejo explícito de errores y conversión regional de números (coma decimal).</li>
+          </ul>
+        </details>
+      </article>
+
+      <article class="card">
+        <div class="refrow"><span class="ref">REF. OPS-04</span></div>
+        <h3>Validación y auditoría de inventario</h3>
+        <p class="problem"><b>Problema:</b> conciliar el inventario operativo contra auditorías externas era manual, y los errores pasaban desapercibidos.</p>
+        <p class="desc">Dashboard que valida reglas de negocio sobre Excel, repara errores automáticamente vía automatización COM y compara contra el informe del auditor (con OCR), armando el borrador de correo con las diferencias.</p>
+        <div class="tags">
+          <span class="tag">Python</span><span class="tag">Excel COM</span><span class="tag">OCR (PyMuPDF)</span><span class="tag">Flask</span>
+        </div>
+        <div class="result"><span class="tag-label">Resultado —</span> conciliación mensual de <b>horas a minutos</b>, con historial versionado de cada revisión.</div>
+        <details class="tech-detail">
+          <summary>Detalle técnico</summary>
+          <ul>
+            <li><b>Regla de negocio no documentada:</b> la clasificación de zonas no dependía de la columna "Zona" del Excel, sino de la "Categoría" real de cada área — un supuesto que estaba mal en la fórmula original y generaba diferencias contra la auditoría externa.</li>
+            <li><b>Dato vivo, no estático:</b> la columna de categoría quedó como fórmula <span class="mono" style="font-size:0.82em">VLOOKUP</span> contra una base maestra, así que editar la base actualiza los 6 meses de reportes sin tocarlos uno por uno.</li>
+            <li><b>Cruce con el auditor externo:</b> el informe del PDF se lee con OCR y se compara celda a celda contra el Excel operativo, priorizando el Excel como fuente de verdad cuando el PDF trae errores.</li>
+          </ul>
+        </details>
+      </article>
+
+      <article class="card">
+        <div class="refrow"><span class="ref">REF. DATA-05</span></div>
+        <h3>Mantenimiento de base de datos SQL Server</h3>
+        <p class="problem"><b>Problema:</b> procesos automatizados nocturnos generaban cifras de reporting incorrectas y fallaban en silencio.</p>
+        <p class="desc">Corrección de la lógica de negocio en los jobs (T-SQL) y reparación de un job de indexación que fallaba a diario por un error de configuración.</p>
+        <div class="tags">
+          <span class="tag">SQL Server</span><span class="tag">T-SQL</span><span class="tag">SQL Agent</span>
+        </div>
+        <div class="result"><span class="tag-label">Resultado —</span> jobs corriendo <b>sin errores cada noche</b>, cifras de reporting re-validadas contra el origen.</div>
+        <details class="tech-detail">
+          <summary>Detalle técnico</summary>
+          <ul>
+            <li><b>Clasificación incorrecta:</b> un <span class="mono" style="font-size:0.82em">CASE</span> agrupaba en una sola categoría dos situaciones distintas (equipos sin previsión asignada vs. con previsión pero sin orden de trabajo) — se separó en 3 categorías reales, cambiando las cifras que veía la jefatura.</li>
+            <li><b>Conteo mal referenciado:</b> una tabla resumen contaba filas por una columna que no era la correcta, inflando el total anual — se corrigió el <span class="mono" style="font-size:0.82em">COUNT</span> a la columna de identificador único.</li>
+            <li><b>Job que fallaba a diario:</b> el job de generación de índices llevaba tiempo fallando por un error de configuración de sesión SQL; se corrigió y se agregaron guardas para que sea seguro re-ejecutarlo.</li>
+          </ul>
+        </details>
+      </article>
+
+      <article class="card">
+        <div class="refrow"><span class="ref">REF. AI-06</span></div>
+        <h3>Asistente de IA local</h3>
+        <p class="problem"><b>Problema:</b> automatizar tareas puntuales (crear archivos, revisar documentos) sin depender de suscripciones pagas.</p>
+        <p class="desc">Configuración de un agente de IA con modelo en la nube gratuito como cerebro principal y un modelo local de respaldo, con acceso a herramientas de archivo desde línea de comandos.</p>
+        <div class="tags">
+          <span class="tag">LLM APIs</span><span class="tag">Ollama</span><span class="tag">CLI tooling</span>
+        </div>
+        <div class="result"><span class="tag-label">Resultado —</span> asistente que ejecuta tareas reales sobre el sistema de archivos, con <b>respaldo local sin conexión</b>.</div>
+      </article>
+
+    </div>
+  </section>
+
+  <section id="servicios">
+    <div class="section-head">
+      <div>
+        <div class="label">Qué puedo resolverte</div>
+        <h2>Servicios</h2>
+      </div>
+    </div>
+    <div class="services-grid">
+      <div class="service">
+        <div class="label">Servicio</div>
+        <h3>Automatización de planillas Excel</h3>
+        <p>Reemplazo procesos manuales repetitivos (cruces, cálculos, formatos) por scripts que corren en segundos y son auditables.</p>
+      </div>
+      <div class="service">
+        <div class="label">Servicio</div>
+        <h3>Dashboards internos a medida</h3>
+        <p>Paneles web (Flask) para monitorear procesos, mostrar métricas en vivo o centralizar herramientas dispersas en un solo lugar.</p>
+      </div>
+      <div class="service">
+        <div class="label">Servicio</div>
+        <h3>Modelos e informes en Power BI</h3>
+        <p>Modelado de datos, medidas DAX, y depuración de errores de carga cuando el modelo simplemente no abre y nadie sabe por qué.</p>
+      </div>
+      <div class="service">
+        <div class="label">Servicio</div>
+        <h3>Integración y mantención SQL Server</h3>
+        <p>Revisión y corrección de jobs automatizados, consultas T-SQL y lógica de negocio que produce cifras incorrectas.</p>
+      </div>
+      <div class="service">
+        <div class="label">Servicio</div>
+        <h3>Asistentes de IA aplicados</h3>
+        <p>Configuro agentes de IA con acceso a tus archivos y herramientas para automatizar tareas puntuales, con opción de correr en local.</p>
+      </div>
+      <div class="service">
+        <div class="label">Servicio</div>
+        <h3>Diagnóstico de un sistema existente</h3>
+        <p>¿Algo ya construido falla o "nadie sabe por qué"? Reviso el código o el modelo, encuentro la causa raíz y la documento.</p>
+      </div>
+    </div>
+  </section>
+
+  <section id="habilidades">
+    <div class="section-head">
+      <div>
+        <div class="label">Herramientas</div>
+        <h2>Habilidades</h2>
+      </div>
+    </div>
+    <div class="skill-list">
+      <div class="skill-row">
+        <div class="cat">Backend &amp; datos</div>
+        <div class="items"><span>Python</span><span>Flask</span><span>pandas</span><span>APIs REST</span></div>
+      </div>
+      <div class="skill-row">
+        <div class="cat">Bases de datos</div>
+        <div class="items"><span>SQL Server</span><span>T-SQL</span><span>SQL Agent / jobs</span></div>
+      </div>
+      <div class="skill-row">
+        <div class="cat">Business Intelligence</div>
+        <div class="items"><span>Power BI</span><span>DAX</span><span>Power Query (M)</span></div>
+      </div>
+      <div class="skill-row">
+        <div class="cat">Automatización</div>
+        <div class="items"><span>Excel COM / pywin32</span><span>OCR</span><span>Scripting de procesos</span></div>
+      </div>
+      <div class="skill-row">
+        <div class="cat">IA aplicada</div>
+        <div class="items"><span>Integración de LLMs</span><span>Agentes con acceso a herramientas</span><span>Modelos locales (Ollama)</span></div>
+      </div>
+    </div>
+  </section>
+
+  <section id="como-trabajo">
+    <div class="section-head">
+      <div>
+        <div class="label">Método</div>
+        <h2>Cómo trabajo</h2>
+      </div>
+    </div>
+    <div class="principles">
+      <div class="principle">
+        <div class="label">01 — Verificación</div>
+        <p>No doy nada por resuelto sin correrlo y ver el resultado. Si algo falla, lo digo con el detalle exacto del error.</p>
+      </div>
+      <div class="principle">
+        <div class="label">02 — Causa raíz</div>
+        <p>Cada corrección queda documentada con su porqué, no solo el parche encima del síntoma.</p>
+      </div>
+      <div class="principle">
+        <div class="label">03 — Simplicidad</div>
+        <p>Elijo la solución más simple que funciona de verdad, sin arquitecturas de más ni dependencias innecesarias.</p>
+      </div>
+    </div>
+  </section>
+
+  <section id="preguntas">
+    <div class="section-head">
+      <div>
+        <div class="label">Antes de escribirme</div>
+        <h2>Preguntas frecuentes</h2>
+      </div>
+    </div>
+    <div class="faq-list">
+      <details class="faq">
+        <summary>¿Trabajas por proyecto cerrado o por hora?</summary>
+        <p>Ambas, según el caso. Para algo bien definido (un dashboard, una automatización puntual) prefiero cotizar por proyecto cerrado. Para mantención o soporte continuo, por hora o con un bloque mensual.</p>
+      </details>
+      <details class="faq">
+        <summary>¿Qué necesitas de mí para empezar?</summary>
+        <p>Una muestra de los datos o archivos reales con los que trabajarías (o una copia sin datos sensibles), y una descripción del resultado que esperas ver. Con eso puedo dar un alcance y un plazo concretos.</p>
+      </details>
+      <details class="faq">
+        <summary>¿Puedes trabajar con datos sensibles o confidenciales?</summary>
+        <p>Sí. Ya trabajo a diario con datos de un sector regulado y sigo criterios de confidencialidad por defecto — nada de lo que veas en este portafolio expone información real de ningún cliente.</p>
+      </details>
+      <details class="faq">
+        <summary>¿Haces mantención después de entregar?</summary>
+        <p>Sí, es la parte que más me interesa dejar bien hecha: documento las decisiones no obvias para que el sistema se pueda tocar después sin depender de mí, y quedo disponible para soporte si algo falla.</p>
+      </details>
+    </div>
+  </section>
+
+  <section id="contacto">
+    <div class="contact">
+      <div>
+        <div class="label">Disponibilidad</div>
+        <h2>¿Conversamos sobre tu proyecto?</h2>
+        <p>Disponible para proyectos freelance (dashboards, automatización, Power BI) y para oportunidades como desarrollador o analista de datos.</p>
+        <a class="btn primary" href="mailto:marcelopoblete16@gmail.com">marcelopoblete16@gmail.com</a>
+      </div>
+    </div>
+  </section>
+
+</main>
+
+<footer class="wrap">
+  Marcelo Poblete — Automatización de datos &amp; sistemas de gestión.
+</footer>
+
+<script>
+  (function () {
+    var reduce = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    var cards = document.querySelectorAll('.card');
+    if (reduce || !('IntersectionObserver' in window)) {
+      cards.forEach(function (c) { c.classList.add('in'); });
+      return;
+    }
+    var io = new IntersectionObserver(function (entries) {
+      entries.forEach(function (e) {
+        if (e.isIntersecting) {
+          e.target.classList.add('in');
+          io.unobserve(e.target);
+        }
+      });
+    }, { threshold: 0.15 });
+    cards.forEach(function (c, i) {
+      c.style.transitionDelay = (i % 3) * 60 + 'ms';
+      io.observe(c);
+    });
+  })();
+</script>
