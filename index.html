@@ -376,6 +376,22 @@
     background: var(--surface-2); color: var(--ink-muted); line-height: 1.4;
   }
   .demo-chat .msg.user .bubble { background: var(--accent-soft); color: var(--ink); }
+  .demo-chat .bubble.pending { color: var(--ink-faint); font-style: italic; }
+  .demo-chat .bubble.error { color: var(--bad); }
+  .demo-chat-input { display: flex; gap: 6px; margin-top: 10px; }
+  .demo-chat-input input {
+    flex: 1; min-width: 0; background: var(--surface-2); border: 1px solid var(--line-strong);
+    border-radius: 4px; padding: 7px 9px; font-size: 0.76rem; color: var(--ink);
+    font-family: -apple-system, "Segoe UI", sans-serif;
+  }
+  .demo-chat-input input:focus { outline: none; border-color: var(--accent); }
+  .demo-chat-input button {
+    font-family: ui-monospace, Consolas, monospace; font-size: 0.72rem; font-weight: 600;
+    padding: 7px 12px; border-radius: 4px; border: 1px solid transparent;
+    background: var(--accent); color: var(--surface); cursor: pointer;
+  }
+  .demo-chat-input button:hover:not(:disabled) { transform: translateY(-1px); }
+  .demo-chat-input button:disabled { opacity: 0.5; cursor: default; }
 
   /* ---------- demo: línea de tiempo (histórico) ---------- */
   .demo-timeline { display: flex; flex-direction: column; padding-left: 14px; border-left: 1px solid var(--line); }
@@ -729,9 +745,12 @@
                 </div>
               </div>
               <div class="demo-panel" data-panel="jarvis">
-                <div class="demo-chat">
-                  <div class="msg user"><div class="avatar">M</div><div class="bubble">¿Cuántos bots corrieron hoy?</div></div>
-                  <div class="msg"><div class="avatar">IA</div><div class="bubble">14 bots ejecutados, 12 completados y 2 con error — el detalle está en la pestaña Bots.</div></div>
+                <div class="demo-chat" id="jarvisChat">
+                  <div class="msg"><div class="avatar">IA</div><div class="bubble">Demo en vivo: pregúntame sobre 3 documentos ficticios (un contrato de mantenimiento preventivo, un SLA de aseo y un acta de recepción de obra). Ej: "¿cuánto dura la garantía del ascensor?"</div></div>
+                </div>
+                <div class="demo-chat-input">
+                  <input type="text" id="jarvisInput" placeholder="Escribe tu pregunta..." maxlength="220">
+                  <button type="button" id="jarvisSend">Enviar</button>
                 </div>
               </div>
             </div>
@@ -1314,6 +1333,80 @@
         runSteps(steps, function () { btn.disabled = false; });
       });
     })();
+  })();
+
+  // Asistente legal (demo en vivo): chat conectado a un Worker de Cloudflare
+  // que responde solo con base en 3 documentos ficticios. Sin backend propio:
+  // rate-limit y CORS los aplica el Worker, no este script.
+  (function () {
+    var WORKER_URL = "https://asistente-legal-demo.marcelopoblete16.workers.dev";
+    var chat = document.getElementById("jarvisChat");
+    var input = document.getElementById("jarvisInput");
+    var btn = document.getElementById("jarvisSend");
+    if (!chat || !input || !btn) return;
+
+    function sessionId() {
+      var key = "asistenteLegalSession";
+      var id = localStorage.getItem(key);
+      if (!id) {
+        id = (crypto.randomUUID ? crypto.randomUUID() : String(Date.now()) + Math.random());
+        localStorage.setItem(key, id);
+      }
+      return id;
+    }
+
+    function addMsg(texto, esUsuario, extraClass) {
+      var msg = document.createElement("div");
+      msg.className = "msg" + (esUsuario ? " user" : "");
+      var avatar = document.createElement("div");
+      avatar.className = "avatar";
+      avatar.textContent = esUsuario ? "M" : "IA";
+      var bubble = document.createElement("div");
+      bubble.className = "bubble" + (extraClass ? " " + extraClass : "");
+      bubble.textContent = texto;
+      msg.appendChild(avatar);
+      msg.appendChild(bubble);
+      chat.appendChild(msg);
+      chat.scrollTop = chat.scrollHeight;
+      return bubble;
+    }
+
+    function enviar() {
+      var texto = input.value.trim();
+      if (!texto) return;
+      addMsg(texto, true);
+      input.value = "";
+      input.disabled = true;
+      btn.disabled = true;
+      var pendiente = addMsg("Escribiendo…", false, "pending");
+
+      fetch(WORKER_URL, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ message: texto, sessionId: sessionId() }),
+      })
+        .then(function (res) { return res.json(); })
+        .then(function (data) {
+          pendiente.classList.remove("pending");
+          pendiente.textContent = data.reply || data.error || "Sin respuesta.";
+          if (data.error) pendiente.classList.add("error");
+        })
+        .catch(function () {
+          pendiente.classList.remove("pending");
+          pendiente.classList.add("error");
+          pendiente.textContent = "No se pudo contactar al asistente. Intenta de nuevo en un momento.";
+        })
+        .finally(function () {
+          input.disabled = false;
+          btn.disabled = false;
+          input.focus();
+        });
+    }
+
+    btn.addEventListener("click", enviar);
+    input.addEventListener("keydown", function (e) {
+      if (e.key === "Enter") enviar();
+    });
   })();
 
   // Toggle de tema: alterna claro/oscuro y recuerda la preferencia.
