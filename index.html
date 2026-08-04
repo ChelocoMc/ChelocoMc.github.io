@@ -5,8 +5,6 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Marcelo Poblete | Data Engineer & RPA</title>
 <meta name="description" content="Especialista en Data Engineering, RPA y automatización de sistemas.">
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;800&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
 <style>
   :root {
@@ -18,9 +16,6 @@
     --secondary: #B388FF;
     --text-main: #FFFFFF;
     --text-muted: #94A3B8;
-    --success: #10B981;
-    --warning: #F59E0B;
-    --danger: #EF4444;
   }
   
   * { box-sizing: border-box; margin: 0; padding: 0; }
@@ -39,30 +34,25 @@
 
   /* Grid Pattern Background */
   .grid-bg {
-    position: fixed;
-    top: 0; left: 0; width: 100vw; height: 100vh;
+    position: fixed; top: 0; left: 0; width: 100vw; height: 100vh;
     background-image: 
       linear-gradient(to right, rgba(255,255,255,0.02) 1px, transparent 1px),
       linear-gradient(to bottom, rgba(255,255,255,0.02) 1px, transparent 1px);
-    background-size: 50px 50px;
-    z-index: -1;
+    background-size: 50px 50px; z-index: -1;
     mask-image: radial-gradient(circle at center, black 40%, transparent 100%);
     -webkit-mask-image: radial-gradient(circle at center, black 40%, transparent 100%);
   }
 
   .container { max-width: 1200px; margin: 0 auto; padding: 0 24px; }
-  .mono { font-family: 'JetBrains Mono', monospace; }
 
   /* Navbar */
   nav {
     position: fixed; top: 0; width: 100%; z-index: 100;
-    background: rgba(7, 9, 15, 0.7);
-    backdrop-filter: blur(12px);
-    border-bottom: 1px solid var(--surface-border);
-    padding: 20px 0;
+    background: rgba(7, 9, 15, 0.7); backdrop-filter: blur(12px);
+    border-bottom: 1px solid var(--surface-border); padding: 20px 0;
   }
   .nav-content { display: flex; justify-content: space-between; align-items: center; }
-  .logo { font-weight: 800; font-size: 1.2rem; letter-spacing: 1px; display: flex; align-items: center; gap: 8px;}
+  .logo { font-weight: 800; font-size: 1.2rem; letter-spacing: 1px; }
   .logo span { color: var(--primary); }
   .nav-links a {
     color: var(--text-muted); text-decoration: none; margin-left: 32px;
@@ -71,161 +61,64 @@
   .nav-links a:hover { color: var(--primary); }
 
   /* Hero Section */
-  .hero {
-    padding: 180px 0 100px;
-    display: flex; flex-direction: column; align-items: flex-start;
-    position: relative;
-  }
+  .hero { padding: 180px 0 100px; display: flex; flex-direction: column; align-items: flex-start; position: relative; }
   .badge {
-    background: rgba(0, 229, 255, 0.1);
-    color: var(--primary);
-    padding: 8px 16px; border-radius: 20px;
-    font-size: 0.85rem; font-weight: 600; letter-spacing: 1px;
-    border: 1px solid var(--primary-glow);
-    margin-bottom: 24px;
-    display: inline-block;
+    background: rgba(0, 229, 255, 0.1); color: var(--primary);
+    padding: 8px 16px; border-radius: 20px; font-size: 0.85rem; font-weight: 600; letter-spacing: 1px;
+    border: 1px solid var(--primary-glow); margin-bottom: 24px; display: inline-block;
   }
   .hero h1 {
-    font-size: clamp(3rem, 6vw, 5rem);
-    line-height: 1.1; font-weight: 800;
-    margin-bottom: 24px;
-    background: linear-gradient(to right, #fff, #94A3B8);
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
+    font-size: clamp(3rem, 6vw, 5rem); line-height: 1.1; font-weight: 800; margin-bottom: 24px;
+    background: linear-gradient(to right, #fff, #94A3B8); -webkit-background-clip: text; -webkit-text-fill-color: transparent;
   }
-  .hero h1 span {
-    background: linear-gradient(to right, var(--primary), var(--secondary));
-    -webkit-background-clip: text;
-  }
-  .hero p {
-    font-size: 1.2rem; color: var(--text-muted);
-    max-width: 700px; margin-bottom: 40px;
-  }
+  .hero h1 span { background: linear-gradient(to right, var(--primary), var(--secondary)); -webkit-background-clip: text; }
+  .hero p { font-size: 1.2rem; color: var(--text-muted); max-width: 700px; margin-bottom: 40px; }
+  
   .btn {
-    display: inline-block;
-    padding: 16px 32px;
-    background: linear-gradient(45deg, var(--primary), #00b3cc);
-    color: #000;
-    font-weight: 800;
-    border-radius: 8px;
-    text-decoration: none;
-    transition: all 0.3s ease;
+    display: inline-block; padding: 16px 32px; background: linear-gradient(45deg, var(--primary), #00b3cc);
+    color: #000; font-weight: 800; border-radius: 8px; text-decoration: none; transition: all 0.3s ease;
     box-shadow: 0 0 20px var(--primary-glow);
   }
-  .btn:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 0 30px rgba(0, 229, 255, 0.5);
-  }
+  .btn:hover { transform: translateY(-2px); box-shadow: 0 0 30px rgba(0, 229, 255, 0.5); }
   .btn-outline {
-    background: transparent; color: var(--text-main);
-    border: 1px solid var(--surface-border); box-shadow: none;
-    margin-left: 16px;
+    background: transparent; color: var(--text-main); border: 1px solid var(--surface-border);
+    box-shadow: none; margin-left: 16px;
   }
-  .btn-outline:hover {
-    border-color: var(--text-main); background: rgba(255,255,255,0.05); box-shadow: none;
-  }
+  .btn-outline:hover { border-color: var(--text-main); background: rgba(255,255,255,0.05); }
 
   /* Section Styles */
   section { padding: 100px 0; }
-  .section-title {
-    font-size: 2.5rem; font-weight: 800; margin-bottom: 16px;
-  }
-  .section-subtitle {
-    color: var(--primary); font-size: 1rem; font-weight: 600; text-transform: uppercase; letter-spacing: 2px; margin-bottom: 40px; display: block;
-  }
+  .section-title { font-size: 2.5rem; font-weight: 800; margin-bottom: 16px; }
+  .section-subtitle { color: var(--primary); font-size: 1rem; font-weight: 600; text-transform: uppercase; letter-spacing: 2px; margin-bottom: 40px; display: block; }
 
   /* Tech Stack Grid */
-  .stack-grid {
-    display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 24px;
-  }
+  .stack-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 24px; }
   .stack-card {
-    background: var(--surface); border: 1px solid var(--surface-border);
-    padding: 32px; border-radius: 16px;
-    backdrop-filter: blur(10px);
-    transition: transform 0.3s ease, border-color 0.3s ease;
+    background: var(--surface); border: 1px solid var(--surface-border); padding: 32px; border-radius: 16px;
+    backdrop-filter: blur(10px); transition: transform 0.3s ease, border-color 0.3s ease;
   }
-  .stack-card:hover {
-    transform: translateY(-5px);
-    border-color: var(--primary);
-  }
+  .stack-card:hover { transform: translateY(-5px); border-color: var(--primary); }
   .stack-card h3 { font-size: 1.2rem; margin-bottom: 16px; color: var(--primary); }
   .stack-card ul { list-style: none; }
-  .stack-card li { margin-bottom: 12px; color: var(--text-muted); display: flex; align-items: center; gap: 8px;}
+  .stack-card li { margin-bottom: 12px; color: var(--text-muted); display: flex; align-items: center; gap: 8px; }
   .stack-card li::before { content: '→'; color: var(--secondary); font-weight: bold; }
 
-  /* Demos Section */
-  .demo-container {
-    display: flex; flex-direction: column; gap: 60px;
+  /* Demos Teaser */
+  .demos-teaser {
+    background: linear-gradient(135deg, rgba(0,229,255,0.05), rgba(179,136,255,0.05));
+    border: 1px solid var(--primary-glow); border-radius: 24px; padding: 60px;
+    text-align: center; position: relative; overflow: hidden;
   }
-  .demo-card {
-    display: grid; grid-template-columns: 1fr 1.2fr; gap: 40px;
-    background: var(--surface); border: 1px solid var(--surface-border);
-    border-radius: 20px; overflow: hidden;
-    transition: all 0.4s ease;
-  }
-  .demo-card:hover {
-    border-color: rgba(0, 229, 255, 0.3);
-    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.5);
-  }
-  .demo-info { padding: 40px; display: flex; flex-direction: column; justify-content: center; }
-  .demo-tag { font-size: 0.8rem; background: rgba(179, 136, 255, 0.1); color: var(--secondary); padding: 4px 12px; border-radius: 12px; display: inline-block; margin-bottom: 16px; font-weight: 600; border: 1px solid rgba(179, 136, 255, 0.2);}
-  .demo-info h3 { font-size: 2rem; margin-bottom: 16px; font-weight: 800; }
-  .demo-info p { color: var(--text-muted); margin-bottom: 24px; font-size: 1.05rem; }
-  .tech-pills { display: flex; flex-wrap: wrap; gap: 8px; margin-top: auto; }
-  .pill { font-size: 0.75rem; padding: 6px 12px; border-radius: 6px; background: rgba(255,255,255,0.05); border: 1px solid var(--surface-border); color: #ccc;}
-  
-  /* Interactive UI Mockups (Demos) */
-  .demo-ui {
-    background: #0d1117;
-    border-left: 1px solid var(--surface-border);
-    padding: 24px;
-    position: relative;
-    display: flex; flex-direction: column; justify-content: center;
-  }
-  
-  /* Window Header */
-  .window-header { display: flex; gap: 8px; margin-bottom: 20px; }
-  .window-dot { width: 12px; height: 12px; border-radius: 50%; background: #333; }
-  .window-dot:nth-child(1) { background: #FF5F56; }
-  .window-dot:nth-child(2) { background: #FFBD2E; }
-  .window-dot:nth-child(3) { background: #27C93F; }
-
-  /* Process Animation 1: ETL */
-  .etl-flow { display: flex; flex-direction: column; gap: 16px; }
-  .etl-step { background: rgba(255,255,255,0.03); padding: 16px; border-radius: 8px; border: 1px solid var(--surface-border); display: flex; justify-content: space-between; align-items: center; }
-  .etl-step .status { font-size: 0.8rem; background: var(--success); color: #000; padding: 2px 8px; border-radius: 4px; font-weight: bold; }
-  .etl-step.loading .status { background: var(--warning); animation: pulse 1.5s infinite; }
-  .etl-line { height: 20px; width: 2px; background: var(--surface-border); margin: 0 auto; position: relative; }
-  .etl-line::after { content: ''; position: absolute; top: 0; left: 0; width: 100%; height: 50%; background: var(--primary); animation: flow 2s infinite linear; }
-
-  /* Process Animation 2: OCR & Validation */
-  .ocr-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
-  .ocr-doc { background: #1a1e24; height: 150px; border-radius: 8px; position: relative; overflow: hidden; border: 1px solid var(--surface-border); padding: 16px;}
-  .ocr-doc::before { content: ''; position: absolute; top: 0; left: 0; width: 100%; height: 2px; background: var(--primary); animation: scan 3s infinite alternate ease-in-out; box-shadow: 0 0 10px var(--primary); z-index: 10; }
-  .doc-line { height: 8px; background: rgba(255,255,255,0.1); border-radius: 4px; margin-bottom: 12px; }
-  .doc-line.short { width: 60%; }
-  
-  /* Process Animation 3: SQL Agent & DB */
-  .db-terminal { background: #000; font-family: 'JetBrains Mono', monospace; font-size: 0.8rem; padding: 16px; border-radius: 8px; color: #4af626; border: 1px solid #333; height: 200px; overflow: hidden; }
-  .terminal-line { margin-bottom: 8px; opacity: 0; animation: type 4s infinite; }
-  .terminal-line:nth-child(2) { animation-delay: 0.5s; color: #ccc;}
-  .terminal-line:nth-child(3) { animation-delay: 1s; color: var(--warning); }
-  .terminal-line:nth-child(4) { animation-delay: 1.5s; color: #ccc;}
-  .terminal-line:nth-child(5) { animation-delay: 2s; color: var(--primary); }
-
-  @keyframes pulse { 0% { opacity: 1; } 50% { opacity: 0.5; } 100% { opacity: 1; } }
-  @keyframes flow { 0% { top: -50%; } 100% { top: 100%; } }
-  @keyframes scan { 0% { top: 0; } 100% { top: 100%; } }
-  @keyframes type { 0%, 10% { opacity: 0; } 15%, 100% { opacity: 1; } }
+  .demos-teaser h2 { font-size: 2.5rem; margin-bottom: 16px; }
+  .demos-teaser p { color: var(--text-muted); max-width: 600px; margin: 0 auto 40px; font-size: 1.1rem; }
 
   /* Contact */
-  .contact-box { background: linear-gradient(135deg, rgba(0,229,255,0.1), rgba(179,136,255,0.1)); padding: 60px; border-radius: 24px; text-align: center; border: 1px solid var(--surface-border); }
+  .contact-box { background: var(--surface); padding: 60px; border-radius: 24px; text-align: center; border: 1px solid var(--surface-border); }
   .contact-box h2 { font-size: 2.5rem; margin-bottom: 24px; }
   .social-links { margin-top: 32px; display: flex; justify-content: center; gap: 16px; }
   
-  @media (max-width: 900px) {
-    .demo-card { grid-template-columns: 1fr; }
-    .demo-ui { border-left: none; border-top: 1px solid var(--surface-border); }
+  @media (max-width: 768px) {
+    .btn-outline { margin-left: 0; margin-top: 16px; display: block; text-align: center; }
   }
 </style>
 </head>
@@ -238,7 +131,7 @@
     <div class="logo">MP<span>.</span></div>
     <div class="nav-links">
       <a href="#expertise">Expertise</a>
-      <a href="#demos">Procesos & Demos</a>
+      <a href="demos.html">Laboratorio de Demos</a>
       <a href="#contacto">Contacto</a>
     </div>
   </div>
@@ -250,7 +143,7 @@
     <h1>Construyo sistemas que<br><span>trabajan por ti.</span></h1>
     <p>Convierto procesos manuales críticos del sector salud en arquitecturas automatizadas, pipelines de datos resilientes y dashboards analíticos (Power BI, Python, SQL Server).</p>
     <div>
-      <a href="#demos" class="btn">Ver Procesos Automatizados</a>
+      <a href="demos.html" class="btn">Entrar al Laboratorio de Demos</a>
       <a href="https://cl.linkedin.com/in/marcelopoblete" target="_blank" class="btn btn-outline">Ver LinkedIn</a>
     </div>
   </section>
@@ -289,122 +182,11 @@
     </div>
   </section>
 
-  <section id="demos">
-    <span class="section-subtitle">Casos de Uso en Producción</span>
-    <h2 class="section-title">Demos de Procesos</h2>
-    
-    <div class="demo-container">
-      
-      <!-- DEMO 1 -->
-      <div class="demo-card">
-        <div class="demo-info">
-          <span class="demo-tag">Data Engineering / ETL</span>
-          <h3>Pipeline de Consolidación Difusa</h3>
-          <p>Cruce automatizado de fuentes de datos incompatibles (nombres y formatos inconsistentes) utilizando distancia de Levenshtein para normalización automática y trazabilidad de estados.</p>
-          <div class="tech-pills">
-            <span class="pill">Python</span>
-            <span class="pill">Pandas</span>
-            <span class="pill">Fuzzy Matching</span>
-            <span class="pill">Flask SSE</span>
-          </div>
-        </div>
-        <div class="demo-ui">
-          <div class="window-header"><div class="window-dot"></div><div class="window-dot"></div><div class="window-dot"></div></div>
-          <div class="etl-flow mono">
-            <div class="etl-step"><span>[1] EXTRACT: API Salud_A</span><span class="status">OK</span></div>
-            <div class="etl-line"></div>
-            <div class="etl-step"><span>[2] EXTRACT: DB Local_B</span><span class="status">OK</span></div>
-            <div class="etl-line"></div>
-            <div class="etl-step loading"><span>[3] TRANSFORM: Fuzzy Match Names</span><span class="status">PROCESSING...</span></div>
-            <div class="etl-line"></div>
-            <div class="etl-step" style="opacity: 0.5;"><span>[4] LOAD: DWH Master</span><span class="status" style="background:#555;">PENDING</span></div>
-          </div>
-        </div>
-      </div>
-
-      <!-- DEMO 2 -->
-      <div class="demo-card">
-        <div class="demo-info">
-          <span class="demo-tag">RPA & Visión Computacional</span>
-          <h3>Auditoría de Inventario Automatizada</h3>
-          <p>Bot que lee reportes PDF de auditores externos usando OCR, los cruza con la base de datos operativa en Excel mediante automatización COM y detecta descuadres a nivel celda, ahorrando días de revisión manual.</p>
-          <div class="tech-pills">
-            <span class="pill">PyMuPDF</span>
-            <span class="pill">Excel COM</span>
-            <span class="pill">Regex</span>
-            <span class="pill">RPA</span>
-          </div>
-        </div>
-        <div class="demo-ui">
-          <div class="window-header"><div class="window-dot"></div><div class="window-dot"></div><div class="window-dot"></div></div>
-          <div class="ocr-grid">
-            <div class="ocr-doc">
-              <div style="font-size: 0.7rem; color: #888; margin-bottom: 8px; font-family: monospace;">PDF_AUDITORIA.pdf</div>
-              <div class="doc-line"></div><div class="doc-line short"></div><div class="doc-line"></div><div class="doc-line short"></div>
-            </div>
-            <div style="display:flex; flex-direction:column; justify-content:center; gap: 10px; font-family: monospace; font-size: 0.8rem;">
-              <div style="padding: 8px; background: rgba(16, 185, 129, 0.1); border: 1px solid var(--success); border-radius: 4px; color: var(--success);">✔ Match: Item #4092</div>
-              <div style="padding: 8px; background: rgba(239, 68, 68, 0.1); border: 1px solid var(--danger); border-radius: 4px; color: var(--danger);">✖ Descuadre: Zona B (3 vs 4)</div>
-              <div style="padding: 8px; background: rgba(16, 185, 129, 0.1); border: 1px solid var(--success); border-radius: 4px; color: var(--success);">✔ Match: Item #4095</div>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <!-- DEMO 3 -->
-      <div class="demo-card">
-        <div class="demo-info">
-          <span class="demo-tag">Database Administration</span>
-          <h3>Saneamiento & SQL Agent Jobs</h3>
-          <p>Re-arquitectura de procesos nocturnos (T-SQL) que fallaban silenciosamente. Corrección de lógica de negocio, optimización de índices y habilitación de telemetría de fallos en SQL Server.</p>
-          <div class="tech-pills">
-            <span class="pill">SQL Server</span>
-            <span class="pill">T-SQL</span>
-            <span class="pill">SQL Agent</span>
-            <span class="pill">Query Optimization</span>
-          </div>
-        </div>
-        <div class="demo-ui">
-          <div class="window-header"><div class="window-dot"></div><div class="window-dot"></div><div class="window-dot"></div></div>
-          <div class="db-terminal">
-            <div class="terminal-line">> EXEC msdb.dbo.sp_start_job N'ETL_Nightly_Build'</div>
-            <div class="terminal-line">[INFO] Starting Step 1: Rebuild Indexes...</div>
-            <div class="terminal-line">[WARN] Fragmentation detected > 30% on dbo.Transactions</div>
-            <div class="terminal-line">[INFO] ALTER INDEX ALL ON dbo.Transactions REBUILD;</div>
-            <div class="terminal-line">[SUCCESS] Job completed in 14.3s. 0 Errors.</div>
-            <div class="terminal-line">> _</div>
-          </div>
-        </div>
-      </div>
-
-      <!-- DEMO 4 -->
-      <div class="demo-card">
-        <div class="demo-info">
-          <span class="demo-tag">Business Intelligence</span>
-          <h3>Modelado Semántico de Alto Impacto</h3>
-          <p>Construcción de dashboards corporativos (Power BI) conectados a SharePoint y SQL Server. Resolución de cuellos de botella en Power Query (M) y reescritura de medidas DAX complejas para evitar cálculos iterativos masivos.</p>
-          <div class="tech-pills">
-            <span class="pill">Power BI</span>
-            <span class="pill">DAX</span>
-            <span class="pill">Power Query</span>
-            <span class="pill">Data Modeling</span>
-          </div>
-        </div>
-        <div class="demo-ui">
-          <div class="window-header"><div class="window-dot"></div><div class="window-dot"></div><div class="window-dot"></div></div>
-          <div style="display:flex; height: 180px; gap: 8px; align-items: flex-end; padding-top: 20px;">
-            <div style="flex:1; background: var(--primary); height: 30%; border-radius: 4px 4px 0 0; opacity: 0.6;"></div>
-            <div style="flex:1; background: var(--primary); height: 50%; border-radius: 4px 4px 0 0; opacity: 0.7;"></div>
-            <div style="flex:1; background: var(--primary); height: 40%; border-radius: 4px 4px 0 0; opacity: 0.8;"></div>
-            <div style="flex:1; background: var(--primary); height: 80%; border-radius: 4px 4px 0 0; opacity: 0.9;"></div>
-            <div style="flex:1; background: var(--primary); height: 100%; border-radius: 4px 4px 0 0; box-shadow: 0 0 15px var(--primary-glow);"></div>
-          </div>
-          <div style="display:flex; justify-content: space-between; margin-top: 16px; font-family: monospace; color: var(--text-muted); font-size: 0.8rem;">
-            <span>Q1</span><span>Q2</span><span>Q3</span><span>Q4</span><span>YTD</span>
-          </div>
-        </div>
-      </div>
-
+  <section id="demos-link">
+    <div class="demos-teaser">
+      <h2>Explora mis casos de éxito en detalle</h2>
+      <p>He preparado un entorno interactivo donde puedes simular y ver el código detrás de mis procesos de consolidación ETL y auditoría RPA.</p>
+      <a href="demos.html" class="btn" style="box-shadow: 0 0 30px var(--secondary);">Ver Demos Interactivas →</a>
     </div>
   </section>
 
@@ -418,7 +200,6 @@
       </div>
     </div>
   </section>
-
 </main>
 
 <footer style="text-align: center; padding: 40px; color: var(--text-muted); font-size: 0.9rem; border-top: 1px solid var(--surface-border); margin-top: 60px;">
@@ -428,8 +209,8 @@
 </footer>
 
 <script>
-  // Simple intersection observer to add class 'visible' to cards
-  const cards = document.querySelectorAll('.demo-card, .stack-card');
+  // Simple intersection observer
+  const cards = document.querySelectorAll('.stack-card, .demos-teaser, .contact-box');
   const observer = new IntersectionObserver((entries) => {
     entries.forEach(entry => {
       if (entry.isIntersecting) {

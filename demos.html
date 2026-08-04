@@ -1,0 +1,372 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Demos Interactivos | Marcelo Poblete</title>
+<meta name="description" content="Casos de uso y demostraciones interactivas de RPA y Data Engineering.">
+<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;800&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #07090f;
+    --surface: rgba(255, 255, 255, 0.03);
+    --surface-border: rgba(255, 255, 255, 0.08);
+    --primary: #00E5FF;
+    --primary-glow: rgba(0, 229, 255, 0.3);
+    --secondary: #B388FF;
+    --text-main: #FFFFFF;
+    --text-muted: #94A3B8;
+    --success: #10B981;
+    --warning: #F59E0B;
+    --danger: #EF4444;
+  }
+  
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  
+  body {
+    background-color: var(--bg); color: var(--text-main);
+    font-family: 'Outfit', sans-serif; line-height: 1.6;
+  }
+
+  .grid-bg {
+    position: fixed; top: 0; left: 0; width: 100vw; height: 100vh;
+    background-image: 
+      linear-gradient(to right, rgba(255,255,255,0.02) 1px, transparent 1px),
+      linear-gradient(to bottom, rgba(255,255,255,0.02) 1px, transparent 1px);
+    background-size: 50px 50px; z-index: -1;
+    mask-image: radial-gradient(circle at center, black 60%, transparent 100%);
+    -webkit-mask-image: radial-gradient(circle at center, black 60%, transparent 100%);
+  }
+
+  .container { max-width: 1200px; margin: 0 auto; padding: 0 24px; }
+  .mono { font-family: 'JetBrains Mono', monospace; }
+
+  /* Navbar */
+  nav {
+    position: sticky; top: 0; width: 100%; z-index: 100;
+    background: rgba(7, 9, 15, 0.7); backdrop-filter: blur(12px);
+    border-bottom: 1px solid var(--surface-border); padding: 20px 0;
+  }
+  .nav-content { display: flex; justify-content: space-between; align-items: center; }
+  .logo { font-weight: 800; font-size: 1.2rem; text-decoration: none; color: #fff;}
+  .logo span { color: var(--primary); }
+  .btn-back {
+    color: var(--text-muted); text-decoration: none; font-size: 0.9rem; font-weight: 600;
+    display: flex; align-items: center; gap: 8px; transition: color 0.3s;
+  }
+  .btn-back:hover { color: var(--primary); }
+
+  /* Header */
+  .page-header { padding: 80px 0 40px; text-align: center; }
+  .page-header h1 { font-size: 3rem; font-weight: 800; margin-bottom: 16px; }
+  .page-header p { color: var(--text-muted); max-width: 600px; margin: 0 auto; font-size: 1.1rem; }
+
+  /* Interactive Demos */
+  .interactive-demo {
+    background: var(--surface); border: 1px solid var(--surface-border);
+    border-radius: 16px; margin-bottom: 80px; overflow: hidden;
+    display: flex; flex-direction: column;
+  }
+  .demo-header {
+    padding: 30px 40px; border-bottom: 1px solid var(--surface-border);
+    display: flex; justify-content: space-between; align-items: flex-end;
+  }
+  .demo-title { font-size: 1.8rem; font-weight: 800; color: var(--primary); margin-bottom: 8px; }
+  .demo-desc { color: var(--text-muted); max-width: 600px; }
+  .run-btn {
+    background: rgba(0, 229, 255, 0.1); border: 1px solid var(--primary);
+    color: var(--primary); padding: 10px 24px; border-radius: 8px;
+    font-weight: 600; cursor: pointer; transition: all 0.3s; display: flex; align-items: center; gap: 8px;
+  }
+  .run-btn:hover { background: var(--primary); color: #000; box-shadow: 0 0 15px var(--primary-glow); }
+  .run-btn:disabled { opacity: 0.5; cursor: not-allowed; }
+
+  /* Tabs */
+  .demo-tabs {
+    display: flex; background: rgba(0,0,0,0.3); border-bottom: 1px solid var(--surface-border);
+  }
+  .tab {
+    padding: 16px 32px; color: var(--text-muted); cursor: pointer;
+    font-weight: 600; font-size: 0.9rem; border-bottom: 2px solid transparent; transition: all 0.3s;
+  }
+  .tab.active { color: #fff; border-bottom-color: var(--primary); background: rgba(255,255,255,0.02); }
+  .tab:hover:not(.active) { color: #fff; }
+
+  .demo-body { padding: 40px; min-height: 400px; position: relative; }
+  .tab-content { display: none; height: 100%; }
+  .tab-content.active { display: flex; flex-direction: column; }
+
+  /* --- Demo 1: Pipeline ETL --- */
+  .etl-console {
+    background: #0d1117; border: 1px solid #30363d; border-radius: 8px; padding: 20px;
+    font-size: 0.85rem; color: #e6edf3; height: 320px; overflow-y: auto; flex: 1;
+  }
+  .log-line { margin-bottom: 6px; opacity: 0; }
+  .log-time { color: var(--text-muted); margin-right: 12px; }
+  .log-info { color: #79c0ff; }
+  .log-warn { color: var(--warning); }
+  .log-success { color: var(--success); }
+
+  .arch-diagram {
+    display: flex; align-items: center; justify-content: space-between; gap: 20px; flex: 1; padding: 40px;
+  }
+  .node {
+    background: #161b22; border: 1px solid #30363d; padding: 24px; border-radius: 12px; text-align: center; flex: 1;
+    position: relative;
+  }
+  .node h4 { color: var(--primary); margin-bottom: 8px; }
+  .node p { font-size: 0.8rem; color: var(--text-muted); }
+  .arrow { color: var(--surface-border); font-size: 2rem; }
+
+  /* --- Demo 2: Bot Auditor OCR --- */
+  .ocr-split { display: flex; gap: 24px; height: 100%; }
+  .ocr-panel { flex: 1; background: #0d1117; border: 1px solid #30363d; border-radius: 8px; padding: 20px; position: relative;}
+  .ocr-panel h4 { margin-bottom: 16px; color: var(--text-muted); font-size: 0.9rem; text-transform: uppercase; letter-spacing: 1px; }
+  .pdf-content { font-family: monospace; font-size: 0.85rem; color: #8b949e; }
+  .pdf-content .highlight { color: #fff; background: rgba(0, 229, 255, 0.1); padding: 2px 4px; border-radius: 3px; transition: background 0.5s; }
+  .excel-table { width: 100%; border-collapse: collapse; font-family: monospace; font-size: 0.85rem; }
+  .excel-table th, .excel-table td { border: 1px solid #30363d; padding: 8px; text-align: left; }
+  .excel-table th { background: #161b22; color: var(--text-muted); }
+  .excel-table tr.error td { background: rgba(239, 68, 68, 0.1); color: var(--danger); transition: all 0.5s;}
+  .excel-table tr.resolved td { background: rgba(16, 185, 129, 0.1); color: var(--success); }
+  .scanner-line {
+    position: absolute; top: 0; left: 0; width: 100%; height: 2px;
+    background: var(--primary); box-shadow: 0 0 10px var(--primary);
+    opacity: 0; pointer-events: none;
+  }
+
+  @keyframes scan { 0% { top: 0; } 100% { top: 100%; } }
+
+  /* Footer */
+  footer { text-align: center; padding: 40px; color: var(--text-muted); font-size: 0.9rem; border-top: 1px solid var(--surface-border); }
+  
+  @media (max-width: 900px) {
+    .ocr-split, .arch-diagram { flex-direction: column; }
+    .demo-header { flex-direction: column; align-items: flex-start; gap: 20px; }
+  }
+</style>
+</head>
+<body>
+<div class="grid-bg"></div>
+
+<nav>
+  <div class="container nav-content">
+    <a href="index.html" class="logo">MP<span>.</span></a>
+    <a href="index.html" class="btn-back">← Volver al inicio</a>
+  </div>
+</nav>
+
+<main class="container">
+  <header class="page-header">
+    <h1>Laboratorio de Procesos</h1>
+    <p>Interactúa con simulaciones funcionales de los sistemas de automatización e ingeniería de datos que he diseñado y puesto en producción.</p>
+  </header>
+
+  <!-- DEMO 1: PIPELINE ETL -->
+  <div class="interactive-demo" id="demo-etl">
+    <div class="demo-header">
+      <div>
+        <div class="demo-title">Pipeline de Consolidación Difusa</div>
+        <div class="demo-desc">Proceso ETL que normaliza nombres inconsistentes utilizando distancia de Levenshtein (Fuzzy Matching).</div>
+      </div>
+      <button class="run-btn" onclick="runETL()">▶ Ejecutar Pipeline</button>
+    </div>
+    <div class="demo-tabs">
+      <div class="tab active" onclick="switchTab(this, 'etl-sim')">Simulación (Log)</div>
+      <div class="tab" onclick="switchTab(this, 'etl-arch')">Arquitectura</div>
+    </div>
+    <div class="demo-body">
+      <!-- Tab 1 -->
+      <div class="tab-content active" id="etl-sim">
+        <div class="etl-console mono" id="etl-console-output">
+          <div style="color:var(--text-muted)">Esperando inicialización del script python (etl_master.py)...</div>
+        </div>
+      </div>
+      <!-- Tab 2 -->
+      <div class="tab-content" id="etl-arch">
+        <div class="arch-diagram">
+          <div class="node">
+            <h4>1. Extracción</h4><p>APIs / Servidor Local</p>
+          </div>
+          <div class="arrow">→</div>
+          <div class="node" style="border-color: var(--primary);">
+            <h4>2. Transformación</h4><p>Python Pandas + FuzzyWuzzy</p>
+          </div>
+          <div class="arrow">→</div>
+          <div class="node">
+            <h4>3. Carga</h4><p>SQL Server Data Warehouse</p>
+          </div>
+        </div>
+        <div style="margin-top: 30px; padding: 20px; background: rgba(0,0,0,0.3); border-radius: 8px; border: 1px solid var(--surface-border);">
+          <p style="color: var(--primary); margin-bottom: 10px;"><strong>Impacto del negocio:</strong></p>
+          <p style="color: var(--text-muted); font-size: 0.95rem;">Antes, el equipo cruzaba manualmente ~5,000 registros semanales. Al implementar este script, las coincidencias difusas logran un 98% de accuracy en 4.2 segundos. Los errores no detectados cayeron a cero.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- DEMO 2: OCR BOT -->
+  <div class="interactive-demo" id="demo-ocr">
+    <div class="demo-header">
+      <div>
+        <div class="demo-title">Bot Auditor de Inventario (RPA + OCR)</div>
+        <div class="demo-desc">Validación automática entre reportes externos en PDF y la maestra operativa en Excel.</div>
+      </div>
+      <button class="run-btn" onclick="runOCR()">🔍 Escanear y Auditar</button>
+    </div>
+    <div class="demo-tabs">
+      <div class="tab active" onclick="switchTab(this, 'ocr-sim')">Vista de Auditoría</div>
+      <div class="tab" onclick="switchTab(this, 'ocr-code')">Código RPA (Fragmento)</div>
+    </div>
+    <div class="demo-body">
+      <!-- Tab 1 -->
+      <div class="tab-content active" id="ocr-sim">
+        <div class="ocr-split">
+          <div class="ocr-panel">
+            <h4>Reporte Externo (PDF)</h4>
+            <div class="scanner-line" id="scanner-line"></div>
+            <div class="pdf-content">
+              [PAGINA 1]<br><br>
+              INFORME DE AUDITORÍA<br>
+              --------------------<br>
+              Cod: <span id="pdf-i1">M-1010</span> | Stock Físico: <span id="pdf-s1">45</span><br>
+              Cod: <span id="pdf-i2">M-1015</span> | Stock Físico: <span id="pdf-s2">22</span><br>
+              Cod: <span id="pdf-i3">M-1020</span> | Stock Físico: <span id="pdf-s3">150</span><br>
+              ...
+            </div>
+          </div>
+          <div class="ocr-panel">
+            <h4>Sistema Local (Excel)</h4>
+            <table class="excel-table">
+              <tr><th>Código</th><th>Categoría</th><th>Stock Sis.</th><th>Estado</th></tr>
+              <tr id="row-1"><td>M-1010</td><td>Insumos</td><td>45</td><td id="status-1">-</td></tr>
+              <tr id="row-2"><td>M-1015</td><td>Insumos</td><td>12</td><td id="status-2">-</td></tr>
+              <tr id="row-3"><td>M-1020</td><td>Medicamentos</td><td>150</td><td id="status-3">-</td></tr>
+            </table>
+          </div>
+        </div>
+      </div>
+      <!-- Tab 2 -->
+      <div class="tab-content" id="ocr-code">
+        <div class="etl-console mono" style="color: #c9d1d9;">
+<pre style="margin:0;"><span style="color: #ff7b72;">import</span> fitz  <span style="color: #8b949e;"># PyMuPDF</span>
+<span style="color: #ff7b72;">import</span> win32com.client <span style="color: #ff7b72;">as</span> win32
+
+<span style="color: #d2a8ff;">def</span> <span style="color: #79c0ff;">auditar_stock</span>(pdf_path, excel_path):
+    <span style="color: #8b949e;"># Extraer datos OCR del PDF</span>
+    doc = fitz.open(pdf_path)
+    texto = doc[<span style="color: #79c0ff;">0</span>].get_text()
+    datos_pdf = parse_report(texto)
+
+    <span style="color: #8b949e;"># Conectar a Excel via COM</span>
+    excel = win32.Dispatch(<span style="color: #a5d6ff;">'Excel.Application'</span>)
+    wb = excel.Workbooks.Open(excel_path)
+    sheet = wb.Sheets(<span style="color: #a5d6ff;">'Stock_Operativo'</span>)
+
+    <span style="color: #8b949e;"># Comparar y marcar diferencias</span>
+    <span style="color: #ff7b72;">for</span> row <span style="color: #ff7b72;">in</span> range(<span style="color: #79c0ff;">2</span>, <span style="color: #79c0ff;">1000</span>):
+        codigo = sheet.Cells(row, <span style="color: #79c0ff;">1</span>).Value
+        stock_sistema = sheet.Cells(row, <span style="color: #79c0ff;">3</span>).Value
+        
+        <span style="color: #ff7b72;">if</span> codigo <span style="color: #ff7b72;">in</span> datos_pdf:
+            <span style="color: #ff7b72;">if</span> stock_sistema != datos_pdf[codigo]:
+                sheet.Cells(row, <span style="color: #79c0ff;">4</span>).Value = <span style="color: #a5d6ff;">'DESCUADRE'</span>
+                sheet.Cells(row, <span style="color: #79c0ff;">4</span>).Interior.Color = <span style="color: #79c0ff;">255</span> <span style="color: #8b949e;"># Red</span>
+            <span style="color: #ff7b72;">else</span>:
+                sheet.Cells(row, <span style="color: #79c0ff;">4</span>).Value = <span style="color: #a5d6ff;">'OK'</span></pre>
+        </div>
+      </div>
+    </div>
+  </div>
+</main>
+
+<footer>
+  <div class="container">
+    &copy; 2026 Marcelo Poblete | Data Engineer & RPA Specialist.
+  </div>
+</footer>
+
+<script>
+  function switchTab(el, targetId) {
+    const parent = el.closest('.interactive-demo');
+    parent.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+    parent.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
+    el.classList.add('active');
+    document.getElementById(targetId).classList.add('active');
+  }
+
+  async function runETL() {
+    const consoleEl = document.getElementById('etl-console-output');
+    const btn = document.querySelector('#demo-etl .run-btn');
+    btn.disabled = true;
+    consoleEl.innerHTML = '';
+    
+    const logs = [
+      { text: "INICIANDO SCRIPT: etl_master.py", class: "log-info", delay: 200 },
+      { text: "[EXTRACT] Conectando a API...", class: "", delay: 800 },
+      { text: "[EXTRACT] Obtenidos 4,521 registros.", class: "log-success", delay: 1000 },
+      { text: "[EXTRACT] Leyendo archivo plano (DB_LOCAL.csv)...", class: "", delay: 800 },
+      { text: "[EXTRACT] Obtenidos 4,502 registros.", class: "log-success", delay: 500 },
+      { text: "[TRANSFORM] Iniciando motor FuzzyWuzzy (Distancia Levenshtein)...", class: "log-info", delay: 600 },
+      { text: "Comparando: 'HOSPITAL S. JUAN DE DIOS' vs 'Hosp. San Juan de Dios' -> Similitud: 89%", class: "", delay: 1200 },
+      { text: "Comparando: 'CESFAM PEDRO AGUIRRE' vs 'C.S.F. P. Aguirre Cerda' -> Similitud: 82%", class: "", delay: 1000 },
+      { text: "[WARN] 14 registros por debajo de 70%. Enviando a revisión manual.", class: "log-warn", delay: 1500 },
+      { text: "[LOAD] Abriendo conexión a SQL Server DWH_PROD...", class: "", delay: 800 },
+      { text: "[LOAD] Insertando 4,488 registros (chunksize=1000)...", class: "", delay: 1200 },
+      { text: "EJECUCIÓN COMPLETADA. Tiempo total: 4.2s", class: "log-success", delay: 500 },
+    ];
+
+    for (let log of logs) {
+      await new Promise(r => setTimeout(r, log.delay));
+      const line = document.createElement('div');
+      line.className = `log-line mono ${log.class}`;
+      const time = new Date().toLocaleTimeString('es-CL', { hour12: false });
+      line.innerHTML = `<span class="log-time">[${time}]</span> ${log.text}`;
+      consoleEl.appendChild(line);
+      requestAnimationFrame(() => {
+        line.style.transition = 'opacity 0.3s ease';
+        line.style.opacity = 1;
+        consoleEl.scrollTop = consoleEl.scrollHeight;
+      });
+    }
+    btn.disabled = false;
+  }
+
+  async function runOCR() {
+    const btn = document.querySelector('#demo-ocr .run-btn');
+    btn.disabled = true;
+    
+    document.querySelectorAll('.excel-table tr').forEach(tr => { tr.className = ''; });
+    document.querySelectorAll('[id^="status-"]').forEach(td => td.innerText = '-');
+    document.querySelectorAll('.pdf-content span').forEach(s => s.classList.remove('highlight'));
+    
+    const scanner = document.getElementById('scanner-line');
+    scanner.style.opacity = 1;
+    scanner.style.animation = 'scan 2s linear';
+    
+    await new Promise(r => setTimeout(r, 2000));
+    scanner.style.opacity = 0;
+    scanner.style.animation = 'none';
+
+    document.getElementById('pdf-s1').classList.add('highlight');
+    await new Promise(r => setTimeout(r, 600));
+    document.getElementById('row-1').classList.add('resolved');
+    document.getElementById('status-1').innerText = 'OK';
+
+    await new Promise(r => setTimeout(r, 800));
+    document.getElementById('pdf-s2').classList.add('highlight');
+    await new Promise(r => setTimeout(r, 600));
+    document.getElementById('row-2').classList.add('error');
+    document.getElementById('status-2').innerText = 'DESCUADRE (-10)';
+    
+    await new Promise(r => setTimeout(r, 800));
+    document.getElementById('pdf-s3').classList.add('highlight');
+    await new Promise(r => setTimeout(r, 600));
+    document.getElementById('row-3').classList.add('resolved');
+    document.getElementById('status-3').innerText = 'OK';
+
+    btn.disabled = false;
+  }
+</script>
+</body>
+</html>
