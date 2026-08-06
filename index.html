@@ -832,6 +832,8 @@ input[type="range"]::-moz-range-thumb {
   border: 0; background: transparent; color: var(--ink-faint); transition: all .18s var(--ease);
 }
 .seg button[aria-pressed="true"] { background: var(--accent); color: var(--paper); }
+.demo .seg { width: 100%; }
+.demo .seg button { flex: 1; min-width: 120px; padding: 9px 10px; }
 
 .hint { font-size: 0.74rem; color: var(--ink-faint); font-style: italic; margin: 0; line-height: 1.5; }
 
@@ -957,6 +959,7 @@ input[type="range"]::-moz-range-thumb {
       <a href="#trabajo">Trabajo</a>
       <a href="#laboratorio">Laboratorio</a>
       <a href="#servicios">Servicios</a>
+      <a href="#presupuesto">Presupuesto</a>
       <a href="#perfil">Perfil</a>
       <a href="#metodo">Método</a>
       <a href="#contacto">Contacto</a>
@@ -1103,11 +1106,26 @@ input[type="range"]::-moz-range-thumb {
     </div>
   </section>
 
+  <!-- ══════════════ PRESUPUESTO ══════════════ -->
+  <section class="band" id="presupuesto">
+    <div class="wrap band-inner">
+      <div class="rail">
+        <span class="idx">§ 04</span>
+        <h2 class="rail-title">Presupuesto</h2>
+        <p class="rail-note">Un cálculo honesto para que sepas el orden de magnitud antes de escribirme. No reemplaza mirar tus archivos: eso siempre cambia algo.</p>
+      </div>
+      <div class="band-body">
+        <p class="band-lead">Cuánto sale, <em>aproximadamente</em>, antes de que conversemos.</p>
+        <div data-mount-directo="presupuesto"></div>
+      </div>
+    </div>
+  </section>
+
   <!-- ══════════════ PERFIL ══════════════ -->
   <section class="band" id="perfil">
     <div class="wrap band-inner">
       <div class="rail">
-        <span class="idx">§ 04</span>
+        <span class="idx">§ 05</span>
         <h2 class="rail-title">Perfil</h2>
         <p class="rail-note">Ingeniero en Automatización y Control Industrial. Un pie en la operación y otro en el código.</p>
       </div>
@@ -1190,7 +1208,7 @@ input[type="range"]::-moz-range-thumb {
   <section class="band" id="metodo">
     <div class="wrap band-inner">
       <div class="rail">
-        <span class="idx">§ 05</span>
+        <span class="idx">§ 06</span>
         <h2 class="rail-title">Cómo trabajo</h2>
         <p class="rail-note">Tres reglas que no negocio, y las respuestas a lo que siempre me preguntan.</p>
       </div>
@@ -1245,7 +1263,7 @@ input[type="range"]::-moz-range-thumb {
   <!-- ══════════════ CONTACTO ══════════════ -->
   <section id="contacto">
     <div class="wrap contact">
-      <span class="tag-label">§ 06 — Contacto</span>
+      <span class="tag-label">§ 07 — Contacto</span>
       <h2>Cuéntame qué estás<br>haciendo <em>a mano</em>.</h2>
       <p>Escríbeme con el problema en dos líneas, aunque no sepas si tiene solución técnica. Si no es para mí, te lo digo de inmediato y te oriento hacia dónde mirar.</p>
       <div class="cta-row">
@@ -1573,6 +1591,33 @@ input[type="range"]::-moz-range-thumb {
   </div>
 </template>
 
+
+<template id="tpl-presupuesto">
+  <div class="demo" data-demo="presupuesto">
+    <div class="demo-bar"><span class="dot"></span><span class="dot"></span><span class="dot"></span><span class="demo-url">estimador de proyecto</span></div>
+    <div class="demo-body">
+      <div class="seg" role="group" aria-label="Tipo de trabajo" data-pp-tipos style="flex-wrap:wrap"></div>
+      <div class="ctl-row" data-pp-campos></div>
+      <div class="mini-row" data-pp-kpi></div>
+      <div class="d-compare">
+        <div class="side">
+          <div class="t">De dónde salen las horas</div>
+          <div data-pp-desglose></div>
+        </div>
+        <div class="side">
+          <div class="t">Qué incluye siempre</div>
+          <div data-pp-incluye></div>
+        </div>
+      </div>
+      <div class="ctl-row">
+        <a class="run-btn" data-pp-mail href="#">✉ Enviarme este resumen</a>
+        <button class="run-btn" type="button" data-pp-copiar>⧉ Copiar resumen</button>
+        <span class="hint" data-pp-aviso></span>
+      </div>
+      <p class="hint">Cifras aproximadas y sujetas a revisión: son un punto de partida, no una cotización. El número final sale después de mirar tus archivos y tu proceso real, y puede subir o bajar. Trabajo con 50% al inicio y 50% contra entrega.</p>
+    </div>
+  </div>
+</template>
 <script>
 /* ============================================================
    1. DATOS DE PROYECTOS — única fuente de verdad de la grilla
@@ -3484,6 +3529,207 @@ MOTORES.auto = function (root) {
   }).join('');
 };
 
+
+/* ------------------------------------------------------------
+   Estimador de presupuesto
+   Todo sale de esta tabla: cambiar TARIFA o las horas de un ítem
+   recalcula el sitio entero. Las horas son estimaciones propias,
+   no un estándar de mercado.
+   ------------------------------------------------------------ */
+const TARIFA = 18000;        // pesos por hora
+const HORAS_SEMANA = 12;     // horas vendibles por semana (trabajo con pega full-time)
+const PISO = 0.9, TECHO = 1.3;
+
+const TIPOS = {
+  web: {
+    n: 'Sitio web', base: 10,
+    campos: [
+      { id: 'paginas', t: 'Páginas', tipo: 'rango', min: 1, max: 20, def: 5, h: function (v) { return (v - 1) * 2.5; }, txt: function (v) { return v + (v === 1 ? ' página' : ' páginas'); } },
+      { id: 'clase', t: 'Tipo', tipo: 'opciones', def: 'info', ops: [['info', 'Informativo', 0], ['catalogo', 'Catálogo', 8], ['tienda', 'Tienda en línea', 30]] },
+      { id: 'cms', t: 'Contenido editable por ti', tipo: 'si', h: 14 },
+      { id: 'form', t: 'Formularios que guardan datos', tipo: 'si', h: 10 },
+      { id: 'diseno', t: 'Diseño desde cero', tipo: 'si', h: 8, def: true },
+      { id: 'idioma', t: 'Segundo idioma', tipo: 'si', h: 6 }
+    ]
+  },
+  auto: {
+    n: 'Automatizar procesos', base: 6,
+    campos: [
+      { id: 'procesos', t: 'Procesos', tipo: 'rango', min: 1, max: 10, def: 2, h: function (v) { return v * 8; }, txt: function (v) { return v + (v === 1 ? ' proceso' : ' procesos'); } },
+      { id: 'fuentes', t: 'Herramientas a conectar', tipo: 'rango', min: 1, max: 8, def: 2, h: function (v) { return v * 4; }, txt: function (v) { return v + (v === 1 ? ' fuente' : ' fuentes'); } },
+      { id: 'agenda', t: 'Corre solo, sin que nadie lo lance', tipo: 'si', h: 6, def: true },
+      { id: 'ocr', t: 'Tiene que leer documentos', tipo: 'si', h: 12 },
+      { id: 'panel', t: 'Panel para verlo correr', tipo: 'si', h: 14 }
+    ]
+  },
+  bi: {
+    n: 'Dashboard o Power BI', base: 12,
+    campos: [
+      { id: 'origenes', t: 'Orígenes de datos', tipo: 'rango', min: 1, max: 8, def: 2, h: function (v) { return v * 5; }, txt: function (v) { return v + (v === 1 ? ' origen' : ' orígenes'); } },
+      { id: 'pags', t: 'Páginas del informe', tipo: 'rango', min: 1, max: 12, def: 4, h: function (v) { return v * 4; }, txt: function (v) { return v + (v === 1 ? ' página' : ' páginas'); } },
+      { id: 'nuevo', t: 'Modelo nuevo, no uno existente', tipo: 'si', h: 10, def: true },
+      { id: 'refresco', t: 'Se actualiza solo', tipo: 'si', h: 8, def: true },
+      { id: 'reglas', t: 'Reglas de negocio propias', tipo: 'si', h: 10 }
+    ]
+  },
+  docs: {
+    n: 'Documentos y datos', base: 8,
+    campos: [
+      { id: 'miles', t: 'Documentos', tipo: 'rango', min: 1, max: 20, def: 5, h: function (v) { return v * 2; }, txt: function (v) { return (v * 1000).toLocaleString('es-CL') + ' documentos'; } },
+      { id: 'escaneados', t: 'Vienen escaneados', tipo: 'si', factor: 1.8, sobre: 'miles' },
+      { id: 'cruce', t: 'Cruzar contra una base existente', tipo: 'si', h: 18, def: true },
+      { id: 'buscador', t: 'Buscador web sobre el archivo', tipo: 'si', h: 14 }
+    ]
+  }
+};
+
+const INCLUYE = [
+  'Reunión inicial y definición del alcance por escrito',
+  'Código y archivos entregados, sin quedar amarrado a mí',
+  'Documentación de las decisiones no obvias',
+  'Una ronda de ajustes después de la entrega',
+  'Un mes de soporte por si algo falla'
+];
+
+MOTORES.presupuesto = function (root) {
+  const segs = $1(root, '[data-pp-tipos]');
+  const campos = $1(root, '[data-pp-campos]');
+  const kpi = $1(root, '[data-pp-kpi]');
+  const desglose = $1(root, '[data-pp-desglose]');
+  const incluye = $1(root, '[data-pp-incluye]');
+  const mail = $1(root, '[data-pp-mail]');
+  const copiar = $1(root, '[data-pp-copiar]');
+  const aviso = $1(root, '[data-pp-aviso]');
+  let tipo = 'web';
+  const valores = {};
+
+  Object.keys(TIPOS).forEach(function (k) {
+    TIPOS[k].campos.forEach(function (c) {
+      valores[k + '.' + c.id] = c.tipo === 'si' ? !!c.def : (c.def !== undefined ? c.def : (c.min || 0));
+    });
+  });
+
+  incluye.innerHTML = INCLUYE.map(function (i) {
+    return '<div class="row"><span>' + i + '</span><span class="ok">✓</span></div>';
+  }).join('');
+
+  segs.innerHTML = Object.keys(TIPOS).map(function (k) {
+    return '<button type="button" data-pp-tipo="' + k + '" aria-pressed="' + (k === tipo) + '">' + TIPOS[k].n + '</button>';
+  }).join('');
+
+  function calcular() {
+    const def = TIPOS[tipo];
+    const lineas = [{ n: 'Punto de partida', h: def.base }];
+    let factor = 1;
+    def.campos.forEach(function (c) {
+      const v = valores[tipo + '.' + c.id];
+      if (c.tipo === 'rango') {
+        lineas.push({ id: c.id, n: c.txt(v), h: c.h(v) });
+      } else if (c.tipo === 'opciones') {
+        const op = c.ops.filter(function (o) { return o[0] === v; })[0];
+        if (op && op[2]) lineas.push({ id: c.id, n: op[1], h: op[2] });
+      } else if (v) {
+        /* Un recargo como el OCR encarece el volumen de documentos, no el
+           trabajo de cruzarlos: se aplica solo a la línea que corresponde. */
+        if (c.factor) {
+          factor = c.factor;
+          lineas.forEach(function (l) { if (l.id === c.sobre) l.h *= c.factor; });
+        } else {
+          lineas.push({ id: c.id, n: c.t, h: c.h });
+        }
+      }
+    });
+    const horas = lineas.reduce(function (a, l) { return a + l.h; }, 0);
+    const hMin = Math.round(horas * PISO), hMax = Math.round(horas * TECHO);
+    const redondear = function (x) { return Math.round(x * TARIFA / 10000) * 10000; };
+    return {
+      lineas: lineas, factor: factor, horas: horas,
+      hMin: hMin, hMax: hMax,
+      pMin: redondear(hMin), pMax: redondear(hMax),
+      semanas: Math.max(1, Math.round(hMax / HORAS_SEMANA))
+    };
+  }
+
+  function resumen(r) {
+    const def = TIPOS[tipo];
+    return 'Estimación desde el sitio — ' + def.n + '\n' +
+      '────────────────────────────────\n' +
+      def.campos.map(function (c) {
+        const v = valores[tipo + '.' + c.id];
+        if (c.tipo === 'rango') return '· ' + c.t + ': ' + c.txt(v);
+        if (c.tipo === 'opciones') return '· ' + c.t + ': ' + c.ops.filter(function (o) { return o[0] === v; })[0][1];
+        return '· ' + c.t + ': ' + (v ? 'sí' : 'no');
+      }).join('\n') +
+      '\n\nEstimado: ' + r.hMin + ' a ' + r.hMax + ' horas · $' +
+      nfm.format(r.pMin) + ' a $' + nfm.format(r.pMax) +
+      ' · alrededor de ' + r.semanas + (r.semanas === 1 ? ' semana' : ' semanas') +
+      '\n(aproximado, sujeto a revisión)\n\nCuéntame acá qué necesitas:\n';
+  }
+
+  function pintar() {
+    const def = TIPOS[tipo];
+
+    campos.innerHTML = def.campos.map(function (c) {
+      const v = valores[tipo + '.' + c.id];
+      if (c.tipo === 'rango') {
+        return '<div class="ctl"><label>' + c.t + '</label>' +
+          '<input type="range" min="' + c.min + '" max="' + c.max + '" value="' + v + '" data-pp="' + c.id + '" aria-label="' + c.t + '">' +
+          '<output>' + c.txt(v) + '</output></div>';
+      }
+      if (c.tipo === 'opciones') {
+        return '<div class="ctl"><label>' + c.t + '</label><select data-pp="' + c.id + '" aria-label="' + c.t + '">' +
+          c.ops.map(function (o) { return '<option value="' + o[0] + '"' + (o[0] === v ? ' selected' : '') + '>' + o[1] + '</option>'; }).join('') +
+          '</select></div>';
+      }
+      return '<div class="ctl"><label>' + c.t + '</label>' +
+        '<input type="checkbox" data-pp="' + c.id + '"' + (v ? ' checked' : '') + ' aria-label="' + c.t + '"></div>';
+    }).join('');
+
+    $n(campos, '[data-pp]').forEach(function (el) {
+      const c = def.campos.filter(function (x) { return x.id === el.dataset.pp; })[0];
+      el.addEventListener('input', function () {
+        valores[tipo + '.' + c.id] = c.tipo === 'si' ? el.checked : (c.tipo === 'rango' ? Number(el.value) : el.value);
+        pintar();
+      });
+    });
+
+    const r = calcular();
+
+    kpi.innerHTML =
+      '<div class="mini"><div class="t">Horas estimadas</div><div class="v">' + r.hMin + '–' + r.hMax + '</div></div>' +
+      '<div class="mini"><div class="t">Rango de precio</div><div class="v ok">$' + nfm.format(r.pMin) + ' – $' + nfm.format(r.pMax) + '</div></div>' +
+      '<div class="mini"><div class="t">Plazo aproximado</div><div class="v">' + r.semanas + (r.semanas === 1 ? ' semana' : ' semanas') + '</div></div>' +
+      '<div class="mini"><div class="t">Para partir</div><div class="v">$' + nfm.format(Math.round(r.pMin / 2 / 10000) * 10000) + '</div></div>';
+
+    desglose.innerHTML = r.lineas.map(function (l) {
+      return '<div class="row"><span>' + l.n + '</span><span class="mono">' + (Math.round(l.h * 10) / 10).toString().replace('.', ',') + ' h</span></div>';
+    }).join('') +
+      (r.factor !== 1 ? '<div class="row" style="color:var(--ink-faint)"><span>(el recargo por escaneo ya está aplicado al volumen)</span><span class="mono">×' + String(r.factor).replace('.', ',') + '</span></div>' : '') +
+      '<div class="row diff"><span>Total antes del rango</span><span class="mono">' + Math.round(r.horas) + ' h</span></div>';
+
+    const txt = resumen(r);
+    mail.href = 'mailto:marcelopoblete16@gmail.com?subject=' +
+      encodeURIComponent('Consulta — ' + def.n) + '&body=' + encodeURIComponent(txt);
+    copiar.onclick = function () {
+      navigator.clipboard.writeText(txt).then(function () {
+        aviso.textContent = 'Resumen copiado.';
+        setTimeout(function () { aviso.textContent = ''; }, 2500);
+      }).catch(function () {
+        aviso.textContent = 'No pude copiar; usa el botón de correo.';
+      });
+    };
+  }
+
+  $n(segs, '[data-pp-tipo]').forEach(function (b) {
+    b.addEventListener('click', function () {
+      tipo = b.dataset.ppTipo;
+      $n(segs, '[data-pp-tipo]').forEach(function (o) { o.setAttribute('aria-pressed', String(o === b)); });
+      pintar();
+    });
+  });
+
+  pintar();
+};
 /* ------------------------------------------------------------
    Arranque: pestañas genéricas + montaje de cada motor
    ------------------------------------------------------------ */
@@ -3514,6 +3760,10 @@ function initDemos(scope) {
 
 /* El laboratorio muestra dos motores completos reusando las mismas
    plantillas de las fichas, sin duplicar una línea de HTML. */
+$n(document, '[data-mount-directo]').forEach(function (slot) {
+  const t = document.getElementById('tpl-' + slot.dataset.mountDirecto);
+  if (t) slot.appendChild(t.content.cloneNode(true));
+});
 $n(document, '[data-mount]').forEach(function (slot) {
   const tpl = document.getElementById('tpl-' + slot.dataset.mount);
   if (tpl) slot.appendChild(tpl.content.cloneNode(true));
