@@ -982,6 +982,17 @@ input[type="range"]::-moz-range-thumb {
   .bot-chispa { animation: none; }
 }
 
+.bot-inclina { transform-box: view-box; transform-origin: 27px 38px; }
+.bot-capa.frente { z-index: 42; }
+.bot-capa.sobrehoja { z-index: 92; }
+.bot-ui.sobrehoja { z-index: 93; }
+
+/* Al apretar un control el brazo se estira del todo y la pinza cierra. */
+.bot-capa.pulsando .bot-brazo { transform: rotate(-4deg); }
+.bot-capa.pulsando .bot-antebrazo { transform: rotate(-14deg); }
+.bot-capa.pulsando .bot-pupila { r: 1.8; }
+.bot-capa.pulsando .bot-haz { opacity: .2; }
+
 .bot-ui { position: fixed; inset: 0; z-index: 41; pointer-events: none; }
 .bot-ui.encima { z-index: 92; }
 .bot-hit {
@@ -1395,6 +1406,7 @@ input[type="range"]::-moz-range-thumb {
 <div class="bot-capa" id="botCapa" aria-hidden="true">
   <svg viewBox="0 0 62 50">
     <g class="bot-todo">
+     <g class="bot-inclina">
       <path class="bot-haz" d="M24 8 L47 -2 L47 18 Z"/>
 
       <g class="bot-tren">
@@ -1433,6 +1445,7 @@ input[type="range"]::-moz-range-thumb {
           <path class="bot-linea" d="M60 11l2.5-2.5M60 11l.5 3.4"/>
         </g>
       </g>
+     </g>
     </g>
   </svg>
 </div>
@@ -4071,10 +4084,11 @@ initDemos(document);
 
 /* ============================================================
    6. BOT-01 — unidad de ronda
-   Persigue su objetivo con un lazo de primer orden (por eso frena
-   suave), comenta la sección que estás mirando, se mete detrás de
-   las tarjetas y baja por el pasillo que queda entre las columnas.
-   Cuando abres una ficha trepa por el borde de la hoja y se asoma.
+   Persigue su objetivo con un lazo de primer orden, se inclina con la
+   velocidad, se esconde detrás de las tarjetas, baja por el pasillo
+   entre columnas, se cuelga del borde de las fichas y —lo importante—
+   opera las demos él mismo: llega hasta el control, estira el brazo y
+   dispara el evento de verdad. Lo que ves después lo calculó la demo.
    ============================================================ */
 (function () {
   const capa = document.getElementById('botCapa');
@@ -4082,6 +4096,7 @@ initDemos(document);
   const hit = document.getElementById('botHit');
   const globo = document.getElementById('botGlobo');
   const texto = document.getElementById('botTexto');
+  const inclina = capa && capa.querySelector('.bot-inclina');
   if (!capa) return;
 
   const reduce = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
@@ -4090,41 +4105,38 @@ initDemos(document);
 
   const SECCION = {
     inicio: ['Unidad en línea. Empiezo la ronda.', 'Todo lo que se ve acá lo calcula el navegador. Yo incluido.'],
-    trabajo: ['Once fichas. Ábrelas: cada demo ejecuta la lógica de verdad, no una animación.',
+    trabajo: ['Once fichas. Ábrelas: adentro opero las demos yo mismo.',
               'Filtra por «Documentos» si te interesa lo de convertir papel en algo buscable.'],
-    laboratorio: ['Mueve el umbral del emparejador y mira cómo se reclasifican las filas al instante.',
-                  'En el plano, marca «ver nodos explorados»: ahí se ve cómo A* busca antes de decidir.'],
+    laboratorio: ['Llegamos al laboratorio. Déjame mostrarte cómo funciona esto.',
+                  'Acá me pongo a jugar: muevo los controles y las demos calculan solas.'],
     servicios: ['Regla simple: si algo se hace igual todos los meses, probablemente no debería hacerlo una persona.'],
-    presupuesto: ['Los precios de acá son aproximados. Sirven para saber el orden de magnitud, no para firmar.',
+    presupuesto: ['Los precios de acá son aproximados. Sirven para el orden de magnitud, no para firmar.',
                   'El botón del correo arma el resumen solo. Te ahorra explicar el proyecto dos veces.'],
     perfil: ['Ingeniero en automatización. Yo soy más o menos la prueba de concepto.'],
     metodo: ['Regla 01: nada se da por hecho sin haberlo corrido y visto el resultado.'],
     contacto: ['Escríbele con el problema en dos líneas, aunque no sepas si tiene solución técnica.']
   };
-  const OCIO = [
-    'Sigo en ronda. Sin novedad.',
-    'Calibrando.',
+  const OCIO = ['Sigo en ronda. Sin novedad.', 'Calibrando.',
     'Este logo no está dibujado: se calcula al cargar la página.',
     'Reviso los márgenes. Alguien tiene que hacerlo.',
-    'Si te pierdo de vista es porque estoy detrás de una tarjeta.',
-    'Turno tranquilo.'
-  ];
+    'Si te pierdo de vista es porque estoy detrás de una tarjeta.', 'Turno tranquilo.'];
   const DETRAS = ['Estoy detrás de esta tarjeta. Sigue tú.', 'Acá atrás no hay nada. Solo yo.',
-                  'Buen escondite.', 'Inspección de la cara oculta: conforme.'];
-  const ASOMADO = ['Me cuelgo del borde. No quiero perderme esta.',
-                   'Baja hasta «El proceso, paso a paso»: ahí está lo bueno.',
-                   'La demo de acá adentro calcula de verdad. Dale.',
-                   'Desde acá se ve todo. Sigue leyendo, yo aguanto.'];
+    'Buen escondite.', 'Inspección de la cara oculta: conforme.'];
+  const ASOMADO = ['Me cuelgo del borde. Ya subo a mostrarte la demo.',
+    'Baja hasta «El proceso, paso a paso»: ahí está lo bueno.',
+    'Desde acá se ve todo. Sigue leyendo, yo aguanto.'];
   const PASILLO = ['Bajando por el pasillo entre las tarjetas.', 'Ronda por el corredor central.'];
 
-  const bot = { x: 60, y: 260, tx: 60, ty: 260, rueda: 0, dir: 1, estado: 'carril', espera: 0, desde: 0 };
-  let ultimoMsg = 0, seccionVista = '', temporizador = 0;
+  const bot = {
+    x: 60, y: 260, tx: 60, ty: 260, vx: 0, vy: 0,
+    rueda: 0, dir: 1, estado: 'carril', espera: 0, desde: 0, truco: null
+  };
+  let ultimoMsg = 0, seccionVista = '', temporizador = 0, ultimoUsuario = 0, ultimoTruco = null;
 
   function carrilX() {
     const ancho = Math.min(1180, window.innerWidth - Math.min(88, Math.max(28, window.innerWidth * 0.06)));
     return Math.max(14, (window.innerWidth - ancho) / 2 / 2 - 14);
   }
-
   function decir(t, ms) {
     if (apagado) return;
     texto.textContent = t;
@@ -4134,7 +4146,15 @@ initDemos(document);
     ultimoMsg = Date.now();
   }
   function frase(l) { return l[Math.floor(Math.random() * l.length)]; }
-
+  function hojaAbierta() {
+    const s = document.getElementById('sheet');
+    return s && s.classList.contains('open');
+  }
+  function aLaVista(el) {
+    const r = el.getBoundingClientRect();
+    return r.width > 6 && r.height > 6 && r.top > 90 && r.bottom < window.innerHeight - 30 &&
+      r.left > 40 && r.right < window.innerWidth - 20;
+  }
   function seccionActiva() {
     let activa = 'inicio';
     Object.keys(SECCION).forEach(function (id) {
@@ -4150,50 +4170,190 @@ initDemos(document);
     });
   }
 
+  /* ---------- Trucos: qué puede operar el robot en lo que estás viendo ---------- */
+  const GUION = {
+    'data-umbral': 'Subo el umbral y mira: filas que estaban cruzadas se van a revisión manual.',
+    'data-fuzzy-run': 'Corro el motor. Cada línea del registro es una comparación de verdad.',
+    'data-ruta-b': 'Cambio el destino y que vuelva a rutear.',
+    'data-ruta-go': 'A* de nuevo. Fíjate en los nodos que tuvo que evaluar.',
+    'data-ruta-nodos': 'Enciendo los nodos explorados: eso es todo lo que el algoritmo miró antes de decidir.',
+    'data-bot-add': 'Encolo una tarea más y que el planificador se arregle.',
+    'data-aud-fix': 'Reparo automáticamente y mira cómo cuadran las tres zonas.',
+    'data-ea-reset': 'Vuelvo a los datos originales, para que se vea la brecha.',
+    'data-sql': 'Cambio la versión del CASE. Mismos equipos, otras cifras.',
+    'data-mes': 'Filtro por un mes: todo lo demás se recalcula solo.',
+    'data-unidad': 'Filtro por unidad y el gráfico se acomoda.'
+  };
+  const GENERICO = {
+    range: 'Muevo el control y se rehace todo sin recargar nada.',
+    boton: 'Esto corre de verdad. Ningún número está escrito a mano.',
+    tab: 'Hay más de una vista acá adentro.',
+    select: 'Cambio la selección y que recalcule.',
+    check: 'Activo esta opción.'
+  };
+  function guion(el, alt) {
+    const attrs = el.getAttributeNames ? el.getAttributeNames() : [];
+    for (let i = 0; i < attrs.length; i++) if (GUION[attrs[i]]) return GUION[attrs[i]];
+    return GENERICO[alt];
+  }
+
+  /* Desplaza un contenedor con una curva propia en vez de scrollIntoView:
+     es el mismo efecto y no depende del comportamiento de scroll suave. */
+  function bajarHasta(cont, destino) {
+    const rc = cont.getBoundingClientRect(), rd = destino.getBoundingClientRect();
+    const ini = cont.scrollTop, delta = (rd.top - rc.top) - 70;
+    let i = 0;
+    const t = setInterval(function () {
+      i++;
+      cont.scrollTop = ini + delta * (1 - Math.pow(1 - i / 18, 3));
+      if (i >= 18) clearInterval(t);
+    }, 24);
+  }
+
+  function deslizar(el) {
+    const min = Number(el.min || 0), max = Number(el.max || 100), act = Number(el.value);
+    const meta = act > (min + max) / 2 ? min + Math.round((max - min) * 0.18) : max - Math.round((max - min) * 0.18);
+    let v = act;
+    const t = setInterval(function () {
+      v += (meta - act) / 14;
+      if ((meta > act && v >= meta) || (meta < act && v <= meta)) { v = meta; clearInterval(t); }
+      el.value = Math.round(v);
+      el.dispatchEvent(new Event('input', { bubbles: true }));
+    }, 55);
+  }
+
+  function trucos(scope) {
+    const lista = [];
+    const agregar = function (el, tipo, accion) {
+      if (!el || !aLaVista(el) || el.disabled) return;
+      lista.push({ el: el, msg: guion(el, tipo), accion: accion });
+    };
+    $n(scope, 'input[type="range"]').forEach(function (el) { agregar(el, 'range', function () { deslizar(el); }); });
+    $n(scope, '.run-btn').forEach(function (el) { agregar(el, 'boton', function () { el.click(); }); });
+    $n(scope, '.d-tabs [data-tab]').forEach(function (el) {
+      if (el.getAttribute('aria-selected') !== 'true') agregar(el, 'tab', function () { el.click(); });
+    });
+    $n(scope, '.seg button').forEach(function (el) {
+      if (el.getAttribute('aria-pressed') !== 'true') agregar(el, 'boton', function () { el.click(); });
+    });
+    $n(scope, 'select').forEach(function (el) {
+      agregar(el, 'select', function () {
+        const n = el.options.length;
+        if (n < 2) return;
+        el.selectedIndex = (el.selectedIndex + 1 + Math.floor(Math.random() * (n - 1))) % n;
+        el.dispatchEvent(new Event('change', { bubbles: true }));
+      });
+    });
+    $n(scope, 'input[type="checkbox"]').forEach(function (el) {
+      agregar(el, 'check', function () { el.checked = !el.checked; el.dispatchEvent(new Event('change', { bubbles: true })); });
+    });
+    $n(scope, '[data-mes], [data-unidad]').forEach(function (el) {
+      agregar(el, 'boton', function () { el.dispatchEvent(new MouseEvent('click', { bubbles: true })); });
+    });
+    return lista;
+  }
+
+  function demostrar() {
+    if (apagado || reduce) return;
+    if (Date.now() - ultimoUsuario < 6000) return;
+    if (bot.estado === 'demo' || bot.estado === 'excursion' || bot.estado === 'pasillo') return;
+
+    const enFicha = hojaAbierta();
+    const scope = enFicha ? document.getElementById('sheetBody') : document.getElementById('laboratorio');
+    if (!scope) return;
+    if (!enFicha && seccionActiva() !== 'laboratorio') return;
+
+    let lista = trucos(scope).filter(function (t) { return t.el !== ultimoTruco; });
+
+    /* En una ficha la demo suele quedar bajo el pliegue. Si no alcanza a
+       ver ningún control, baja la hoja él mismo y lo intenta de nuevo. */
+    if (!lista.length && enFicha && !bot.bajando) {
+      const demo = scope.querySelector('.demo');
+      if (demo && !aLaVista(demo)) {
+        bot.bajando = true;
+        decir('Bajo a la demo. Esto hay que verlo funcionando.', 4200);
+        bajarHasta(scope, demo);
+        setTimeout(function () { bot.bajando = false; demostrar(); }, 1500);
+      }
+      return;
+    }
+    if (!lista.length) return;
+    const t = lista[Math.floor(Math.random() * lista.length)];
+    ultimoTruco = t.el;
+
+    bot.truco = t;
+    bot.estado = 'demo';
+    bot.espera = 0;
+    capa.classList.add('mirando');
+    capa.classList.add(enFicha ? 'sobrehoja' : 'frente');
+    if (enFicha) ui.classList.add('sobrehoja');
+  }
+
+  /* ---------- Movimiento ---------- */
   function paso() {
     if (apagado) return;
-    const k = reduce ? 1 : (bot.estado === 'asomado' ? 0.09 : 0.055);
+    const k = reduce ? 1 : (bot.estado === 'demo' ? 0.1 : (bot.estado === 'asomado' ? 0.09 : 0.07));
     const dx = bot.tx - bot.x, dy = bot.ty - bot.y;
-    bot.x += dx * k;
-    bot.y += dy * k;
-    const v = Math.sqrt(dx * dx + dy * dy) * k;
+    bot.vx = dx * k; bot.vy = dy * k;
+    bot.x += bot.vx; bot.y += bot.vy;
+    const v = Math.sqrt(bot.vx * bot.vx + bot.vy * bot.vy);
     if (bot.estado !== 'asomado') bot.rueda += v * 7;
     if (Math.abs(dx) > 0.4) bot.dir = dx > 0 ? 1 : -1;
 
+    /* Se inclina hacia donde acelera y da un pequeño rebote al andar. */
+    const inc = Math.max(-13, Math.min(13, -bot.vx * bot.dir * 1.9));
+    const bote = reduce ? 0 : Math.sin(Date.now() / 330) * (v > 0.6 ? 1.7 : 0.7);
+    if (inclina) inclina.setAttribute('transform', 'rotate(' + inc.toFixed(1) + ' 27 38) translate(0 ' + bote.toFixed(2) + ')');
+
     capa.style.transform = 'translate3d(' + bot.x.toFixed(1) + 'px,' + bot.y.toFixed(1) + 'px,0) scaleX(' + bot.dir + ')';
     $n(capa, '.bot-eje').forEach(function (e) {
-      const cx = e.getAttribute('data-cx');
-      e.setAttribute('transform', 'rotate(' + bot.rueda.toFixed(1) + ' ' + cx + ' 37.5)');
+      e.setAttribute('transform', 'rotate(' + bot.rueda.toFixed(1) + ' ' + e.getAttribute('data-cx') + ' 37.5)');
     });
     hit.style.transform = 'translate3d(' + bot.x.toFixed(1) + 'px,' + bot.y.toFixed(1) + 'px,0)';
-
-    /* Asomado la burbuja iría encima de la hoja: solo se muestra si el
-       margen izquierdo da el ancho, y siempre hacia afuera. */
-    if (bot.estado === 'asomado') {
-      globo.style.left = Math.max(12, bot.x - 262) + 'px';
-    } else {
-      globo.style.left = Math.min(window.innerWidth - 290, bot.x + 70) + 'px';
-    }
+    globo.style.left = (bot.estado === 'asomado'
+      ? Math.max(12, bot.x - 262)
+      : Math.min(window.innerWidth - 290, Math.max(12, bot.x + 70))) + 'px';
     globo.style.top = Math.max(78, Math.min(window.innerHeight - 130, bot.y - 14)) + 'px';
 
-    if (v < 0.35 && bot.estado === 'excursion' && !bot.espera) {
+    if (v < 0.4 && bot.estado === 'excursion' && !bot.espera) {
       bot.espera = Date.now();
       capa.classList.remove('mirando');
       decir(frase(DETRAS), 4200);
     }
-    if (bot.espera && Date.now() - bot.espera > 3200) { bot.espera = 0; bot.estado = 'carril'; }
+    /* Llegó al control: estira el brazo, lo acciona y se queda mirando. */
+    if (v < 0.5 && bot.estado === 'demo' && bot.truco && !bot.espera) {
+      bot.espera = Date.now();
+      capa.classList.add('pulsando');
+      decir(bot.truco.msg, 5200);
+      setTimeout(function () {
+        try { bot.truco.accion(); } catch (e) {}
+        setTimeout(function () { capa.classList.remove('pulsando'); }, 420);
+      }, 380);
+    }
+    if (bot.espera && Date.now() - bot.espera > (bot.estado === 'demo' ? 3400 : 3200)) {
+      bot.espera = 0;
+      bot.truco = null;
+      capa.classList.remove('pulsando', 'frente', 'sobrehoja', 'mirando');
+      ui.classList.remove('sobrehoja');
+      bot.estado = hojaAbierta() ? 'asomado' : 'carril';
+      if (bot.estado === 'asomado') { capa.classList.add('encima', 'trepa'); ui.classList.add('encima'); }
+    }
     requestAnimationFrame(paso);
   }
 
   function rumbo() {
     if (apagado) return;
 
+    if (bot.estado === 'demo' && bot.truco) {
+      const r = bot.truco.el.getBoundingClientRect();
+      bot.tx = Math.max(6, r.left - 52);
+      bot.ty = r.top + r.height / 2 - 16;
+      return;
+    }
     if (bot.estado === 'asomado') {
       const hoja = document.getElementById('sheet').getBoundingClientRect();
-      /* Se cuelga del canto izquierdo: la mitad del cuerpo queda tapada
-         por la hoja, que está en z-index 91. */
       bot.tx = hoja.left - 34;
-      bot.ty = hoja.top + 120 + Math.sin((Date.now() - bot.desde) / 2100) * 110;
+      bot.ty = hoja.top + 120 + Math.sin((Date.now() - bot.desde) / 1500) * 130;
       return;
     }
 
@@ -4205,12 +4365,12 @@ initDemos(document);
       setTimeout(function () { capa.classList.remove('mirando'); }, 1800);
     }
     if (bot.estado === 'carril') {
-      bot.tx = carrilX();
-      bot.ty = window.innerHeight * 0.42 + Math.sin(Date.now() / 2600) * 90;
+      /* Ronda con más vaivén: se mueve en los dos ejes, no solo sube y baja. */
+      const t = Date.now();
+      bot.tx = carrilX() + Math.sin(t / 1900) * 26;
+      bot.ty = window.innerHeight * 0.40 + Math.sin(t / 1350) * 155 + Math.sin(t / 610) * 22;
     } else if (bot.estado === 'pasillo') {
-      /* Baja por el hueco entre las dos columnas de tarjetas: aparece y
-         desaparece a medida que pasa por detrás de cada una. */
-      const t = (Date.now() - bot.desde) / 6500;
+      const t = (Date.now() - bot.desde) / 5200;
       bot.ty = 110 + t * (window.innerHeight - 200);
       if (t >= 1) bot.estado = 'carril';
     }
@@ -4218,11 +4378,9 @@ initDemos(document);
 
   function excursion() {
     if (apagado || bot.estado !== 'carril') return;
+    if (Date.now() - ultimoUsuario < 4000) return;
     const vis = tarjetasVisibles();
     if (!vis.length) return;
-
-    /* Dos formas de jugar con las tarjetas: esconderse detrás de una,
-       o bajar por el pasillo que queda entre las columnas. */
     if (vis.length > 1 && Math.random() < 0.45) {
       const r0 = vis[0].getBoundingClientRect(), r1 = vis[1].getBoundingClientRect();
       if (Math.abs(r0.top - r1.top) < 30 && r1.left > r0.right) {
@@ -4243,19 +4401,23 @@ initDemos(document);
     capa.classList.add('mirando');
   }
 
+  function tic() {
+    if (apagado || reduce) return;
+    if (bot.estado !== 'carril' || Math.random() > 0.4) return;
+    capa.classList.add('mirando');
+    setTimeout(function () { capa.classList.remove('mirando'); }, 900);
+  }
   function ocio() {
-    if (apagado || bot.estado === 'asomado') return;
-    if (Date.now() - ultimoMsg > 24000) decir(frase(OCIO), 5000);
+    if (apagado || bot.estado === 'asomado' || bot.estado === 'demo') return;
+    if (Date.now() - ultimoMsg > 22000) decir(frase(OCIO), 5000);
   }
 
-  /* Se engancha a la apertura de la ficha mirando la clase de la hoja,
-     sin tocar abrirFicha. */
   const hoja = document.getElementById('sheet');
   if (hoja) {
     new MutationObserver(function () {
       if (apagado) return;
       const abierta = hoja.classList.contains('open');
-      if (abierta && bot.estado !== 'asomado') {
+      if (abierta && bot.estado !== 'asomado' && bot.estado !== 'demo') {
         bot.estado = 'asomado';
         bot.desde = Date.now();
         bot.espera = 0;
@@ -4264,11 +4426,13 @@ initDemos(document);
         const r = hoja.getBoundingClientRect();
         setTimeout(function () {
           if (bot.estado === 'asomado' && r.left > 300) decir(frase(ASOMADO), 6000);
-        }, 1400);
-      } else if (!abierta && bot.estado === 'asomado') {
+        }, 1300);
+        setTimeout(demostrar, 5200);
+      } else if (!abierta && (bot.estado === 'asomado' || bot.estado === 'demo')) {
         bot.estado = 'carril';
-        capa.classList.remove('encima', 'trepa', 'mirando');
-        ui.classList.remove('encima');
+        bot.truco = null; bot.espera = 0;
+        capa.classList.remove('encima', 'trepa', 'mirando', 'pulsando', 'sobrehoja', 'frente');
+        ui.classList.remove('encima', 'sobrehoja');
       }
     }).observe(hoja, { attributes: true, attributeFilter: ['class'] });
   }
@@ -4276,22 +4440,18 @@ initDemos(document);
   function encender() {
     apagado = false;
     try { localStorage.removeItem('bot'); } catch (e) {}
-    capa.style.display = '';
-    ui.style.display = '';
+    capa.style.display = ''; ui.style.display = '';
     decir('Vuelvo a la ronda.', 4000);
     requestAnimationFrame(paso);
   }
-
   document.getElementById('botApagar').addEventListener('click', function () {
     apagado = true;
     try { localStorage.setItem('bot', 'off'); } catch (e) {}
     globo.classList.remove('on');
-    capa.style.display = 'none';
-    ui.style.display = 'none';
+    capa.style.display = 'none'; ui.style.display = 'none';
     const pie = document.getElementById('botPie');
     if (pie) pie.hidden = false;
   });
-
   const volver = document.getElementById('botVolver');
   if (volver) volver.addEventListener('click', function () {
     const pie = document.getElementById('botPie');
@@ -4300,30 +4460,38 @@ initDemos(document);
   });
 
   hit.addEventListener('click', function () {
+    ultimoUsuario = 0;   // si te lo pide, va altiro
+    if (seccionActiva() === 'laboratorio' || hojaAbierta()) { demostrar(); return; }
     decir(frase(OCIO.concat(['Reportando: ' + PROYECTOS.length + ' fichas, ' +
       Object.keys(MOTORES).length + ' motores corriendo y cero dependencias externas.'])), 5200);
   });
   hit.addEventListener('mouseenter', function () { capa.classList.add('mirando'); });
   hit.addEventListener('mouseleave', function () { if (bot.estado !== 'asomado') capa.classList.remove('mirando'); });
 
+  /* Si estás usando la página, se hace a un lado. */
+  ['pointerdown', 'keydown', 'wheel'].forEach(function (ev) {
+    document.addEventListener(ev, function (e) { if (e.isTrusted) ultimoUsuario = Date.now(); }, { capture: true, passive: true });
+  });
   document.addEventListener('click', function (e) {
-    if (apagado || Date.now() - ultimoMsg < 5000) return;
+    if (apagado || !e.isTrusted || Date.now() - ultimoMsg < 5000) return;
     const chip = e.target.closest('.chip[data-filter]');
-    if (chip) { decir('Filtrando por «' + chip.textContent.replace(/\d+$/, '').trim() + '». Los contadores salen de los propios datos.', 5000); return; }
-    if (e.target.closest('.run-btn')) { decir('Eso está calculando de verdad. Ningún número de esta página está escrito a mano.', 5500); }
+    if (chip) decir('Filtrando por «' + chip.textContent.replace(/\d+$/, '').trim() + '». Los contadores salen de los propios datos.', 5000);
   }, true);
 
   if (apagado) {
-    capa.style.display = 'none';
-    ui.style.display = 'none';
+    capa.style.display = 'none'; ui.style.display = 'none';
     const pie = document.getElementById('botPie');
     if (pie) pie.hidden = false;
   } else {
     window.addEventListener('scroll', rumbo, { passive: true });
     window.addEventListener('resize', rumbo);
-    setInterval(rumbo, 700);
+    setInterval(rumbo, 500);
     setInterval(ocio, 9000);
-    if (!reduce) setInterval(excursion, 22000);
+    setInterval(tic, 4200);
+    if (!reduce) {
+      setInterval(excursion, 13000);
+      setInterval(demostrar, 9000);
+    }
     rumbo();
     requestAnimationFrame(paso);
     setTimeout(function () { decir(frase(SECCION.inicio), 7000); }, 2600);
