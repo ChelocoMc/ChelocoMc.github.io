@@ -929,6 +929,63 @@ input[type="range"]::-moz-range-thumb {
   background: var(--surface-2); border: 1px solid var(--line); border-radius: 6px; padding: 4px 7px;
 }
 .ctl input[type="checkbox"] { accent-color: var(--accent); width: 15px; height: 15px; }
+
+/* ============================================================
+   BOT-01 — unidad de ronda
+   Vive en z-index 1, o sea por debajo de <main>: por eso se pierde
+   detrás de las tarjetas, que son lo único opaco de la página, y se
+   ve en los márgenes. La burbuja va en una capa aparte, arriba.
+   ============================================================ */
+.bot-capa {
+  position: fixed; top: 0; left: 0; z-index: 1;
+  width: 46px; height: 36px; pointer-events: none;
+  will-change: transform;
+}
+.bot-capa svg { width: 100%; height: 100%; overflow: visible; }
+.bot-chasis { fill: var(--surface-2); stroke: var(--accent); stroke-width: 1.6; }
+.bot-linea { stroke: var(--accent); stroke-width: 1.6; fill: none; stroke-linecap: round; }
+.bot-rueda { fill: none; stroke: var(--accent); stroke-width: 1.4; }
+.bot-radio { stroke: var(--accent-line); stroke-width: 1; }
+.bot-ojo { fill: var(--paper); }
+.bot-led { fill: var(--ok); }
+.bot-haz { fill: var(--accent); opacity: 0; transition: opacity .4s var(--ease); }
+.bot-capa.mirando .bot-haz { opacity: .16; }
+
+.bot-ui { position: fixed; inset: 0; z-index: 41; pointer-events: none; }
+.bot-hit {
+  position: absolute; width: 58px; height: 48px; margin: -6px;
+  border-radius: 12px; pointer-events: auto; cursor: pointer;
+}
+.bot-globo {
+  position: absolute; max-width: 268px; pointer-events: auto;
+  background: var(--surface-2); border: 1px solid var(--accent-line);
+  border-radius: 12px; padding: 11px 13px;
+  box-shadow: var(--shadow-lift);
+  opacity: 0; transform: translateY(6px) scale(.97);
+  transition: opacity .3s var(--ease), transform .3s var(--ease);
+}
+.bot-globo.on { opacity: 1; transform: none; }
+.bot-globo .id {
+  font-family: var(--mono); font-size: 0.6rem; letter-spacing: 0.14em;
+  text-transform: uppercase; color: var(--accent); display: block; margin-bottom: 4px;
+}
+.bot-globo p { margin: 0; font-size: 0.82rem; line-height: 1.5; color: var(--ink); }
+.bot-globo .apagar {
+  display: block; margin-top: 8px; padding: 0; border: 0; background: none; cursor: pointer;
+  font-family: var(--mono); font-size: 0.62rem; letter-spacing: 0.08em;
+  text-transform: uppercase; color: var(--ink-faint);
+}
+.bot-globo .apagar:hover { color: var(--accent); }
+
+.bot-volver {
+  background: none; border: 0; padding: 0; cursor: pointer; color: inherit;
+  font: inherit; text-decoration: underline; text-underline-offset: 3px;
+}
+.bot-volver:hover { color: var(--accent); }
+
+@media (max-width: 1023px) {
+  .bot-capa, .bot-ui { display: none; }
+}
 @media (max-width: 620px) {
   .sensor { grid-template-columns: 1fr auto; }
   .sensor svg { display: none; }
@@ -1280,6 +1337,7 @@ input[type="range"]::-moz-range-thumb {
 
 <footer class="wrap foot">
   <span>© <span id="year">2026</span> Marcelo Poblete — Automatización de datos</span>
+  <span id="botPie" hidden>BOT-01 apagado · <button class="bot-volver" type="button" id="botVolver">volver a activarlo</button></span>
   <span>Hecho a mano, sin frameworks · <a href="https://github.com/chelocomc" target="_blank" rel="noopener">github.com/chelocomc</a></span>
 </footer>
 
@@ -1296,6 +1354,32 @@ input[type="range"]::-moz-range-thumb {
     </button>
   </div>
   <div class="sheet-body" id="sheetBody"></div>
+</div>
+
+
+<!-- BOT-01: la unidad de ronda y su burbuja, en capas separadas -->
+<div class="bot-capa" id="botCapa" aria-hidden="true">
+  <svg viewBox="0 0 46 36">
+    <path class="bot-haz" d="M23 6 L38 -4 L38 16 Z"/>
+    <circle class="bot-rueda" cx="16" cy="28" r="4.6"/>
+    <path class="bot-radio" d="M16 23.4v9.2M11.4 28h9.2"/>
+    <circle class="bot-rueda" cx="30" cy="28" r="4.6"/>
+    <path class="bot-radio" d="M30 23.4v9.2M25.4 28h9.2"/>
+    <rect class="bot-chasis" x="8" y="13" width="30" height="13" rx="5"/>
+    <path class="bot-linea" d="M23 13V8"/>
+    <circle class="bot-chasis" cx="23" cy="6" r="3.4"/>
+    <circle class="bot-ojo" cx="23" cy="6" r="1.3"/>
+    <circle class="bot-led" cx="33" cy="19.5" r="1.3"/>
+    <path class="bot-linea" d="M12 13V9.5M12 9.5h2.5"/>
+  </svg>
+</div>
+<div class="bot-ui" id="botUI">
+  <div class="bot-hit" id="botHit"></div>
+  <div class="bot-globo" id="botGlobo">
+    <span class="id">BOT-01 · ronda</span>
+    <p id="botTexto"></p>
+    <button class="apagar" type="button" id="botApagar">✕ terminar la ronda</button>
+  </div>
 </div>
 
 <!-- ══════════════ PLANTILLAS DE DEMO ══════════════
@@ -3919,6 +4003,214 @@ initDemos(document);
     });
   }, { threshold: 0.5 });
   nums.forEach(function (n) { io.observe(n); });
+})();
+
+
+/* ============================================================
+   6. BOT-01 — unidad de ronda
+   Patrulla el margen izquierdo persiguiendo su objetivo con un lazo
+   de primer orden (por eso frena suave en vez de teletransportarse),
+   comenta la sección que estás mirando y cada tanto se mete detrás
+   de una tarjeta, donde el z-index lo esconde de verdad.
+   ============================================================ */
+(function () {
+  const capa = document.getElementById('botCapa');
+  const ui = document.getElementById('botUI');
+  const hit = document.getElementById('botHit');
+  const globo = document.getElementById('botGlobo');
+  const texto = document.getElementById('botTexto');
+  if (!capa) return;
+
+  const reduce = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  let apagado = false;
+  try { apagado = localStorage.getItem('bot') === 'off'; } catch (e) {}
+
+  const SECCION = {
+    inicio: ['Unidad en línea. Empiezo la ronda.', 'Todo lo que se ve acá lo calcula el navegador. Yo incluido.'],
+    trabajo: ['Once fichas. Ábrelas: cada demo ejecuta la lógica de verdad, no una animación.',
+              'Filtra por «Documentos» si te interesa lo de convertir papel en algo buscable.'],
+    laboratorio: ['Mueve el umbral del emparejador y mira cómo se reclasifican las filas al instante.',
+                  'En el plano, marca «ver nodos explorados»: ahí se ve cómo A* busca antes de decidir.'],
+    servicios: ['Regla simple: si algo se hace igual todos los meses, probablemente no debería hacerlo una persona.'],
+    presupuesto: ['Los precios de acá son aproximados. Sirven para saber el orden de magnitud, no para firmar.',
+                  'El botón del correo arma el resumen solo. Te ahorra explicar el proyecto dos veces.'],
+    perfil: ['Ingeniero en automatización. Yo soy más o menos la prueba de concepto.'],
+    metodo: ['Regla 01: nada se da por hecho sin haberlo corrido y visto el resultado.'],
+    contacto: ['Escríbele con el problema en dos líneas, aunque no sepas si tiene solución técnica.']
+  };
+  const OCIO = [
+    'Sigo en ronda. Sin novedad.',
+    'Calibrando.',
+    'Este logo no está dibujado: se calcula al cargar la página.',
+    'Reviso los márgenes. Alguien tiene que hacerlo.',
+    'Si te pierdo de vista es porque estoy detrás de una tarjeta.',
+    'Turno tranquilo.'
+  ];
+  const DETRAS = [
+    'Estoy detrás de esta tarjeta. Sigue tú.',
+    'Acá atrás no hay nada. Solo yo.',
+    'Buen escondite.',
+    'Inspección de la cara oculta: conforme.'
+  ];
+
+  const bot = { x: 60, y: 260, tx: 60, ty: 260, rueda: 0, dir: 1, estado: 'carril', espera: 0 };
+  let ultimoMsg = 0, seccionVista = '', temporizador = 0;
+
+  function carrilX() {
+    const ancho = Math.min(1180, window.innerWidth - Math.min(88, Math.max(28, window.innerWidth * 0.06)));
+    return Math.max(14, (window.innerWidth - ancho) / 2 / 2 - 10);
+  }
+
+  function decir(t, ms) {
+    if (apagado) return;
+    texto.textContent = t;
+    globo.classList.add('on');
+    clearTimeout(temporizador);
+    temporizador = setTimeout(function () { globo.classList.remove('on'); }, ms || 6500);
+    ultimoMsg = Date.now();
+  }
+
+  function frase(lista) { return lista[Math.floor(Math.random() * lista.length)]; }
+
+  /* Qué sección estás mirando: la que cruza el tercio superior. */
+  function seccionActiva() {
+    const ids = Object.keys(SECCION);
+    let activa = 'inicio';
+    ids.forEach(function (id) {
+      const el = document.getElementById(id);
+      if (el && el.getBoundingClientRect().top <= window.innerHeight * 0.34) activa = id;
+    });
+    return activa;
+  }
+
+  function tarjetaVisible() {
+    const vis = $n(document, '.card').filter(function (c) {
+      const r = c.getBoundingClientRect();
+      return !c.classList.contains('hidden') && r.top > 80 && r.bottom < window.innerHeight - 40;
+    });
+    return vis.length ? vis[Math.floor(Math.random() * vis.length)] : null;
+  }
+
+  function paso() {
+    if (apagado) return;
+    const k = reduce ? 1 : 0.055;   // ganancia del lazo: cuánto corrige por cuadro
+    const dx = bot.tx - bot.x, dy = bot.ty - bot.y;
+    bot.x += dx * k;
+    bot.y += dy * k;
+    const v = Math.sqrt(dx * dx + dy * dy) * k;
+    bot.rueda += v * 7;
+    if (Math.abs(dx) > 0.4) bot.dir = dx > 0 ? 1 : -1;
+
+    capa.style.transform = 'translate3d(' + bot.x.toFixed(1) + 'px,' + bot.y.toFixed(1) + 'px,0) scaleX(' + bot.dir + ')';
+    $n(capa, '.bot-radio').forEach(function (r, i) {
+      r.setAttribute('transform', 'rotate(' + bot.rueda.toFixed(1) + ' ' + (i ? 30 : 16) + ' 28)');
+    });
+    hit.style.transform = 'translate3d(' + bot.x.toFixed(1) + 'px,' + bot.y.toFixed(1) + 'px,0)';
+    globo.style.left = Math.min(window.innerWidth - 290, bot.x + 58) + 'px';
+    globo.style.top = Math.max(78, Math.min(window.innerHeight - 130, bot.y - 14)) + 'px';
+
+    if (v < 0.35 && bot.estado === 'excursion' && !bot.espera) {
+      bot.espera = Date.now();
+      capa.classList.remove('mirando');
+      decir(frase(DETRAS), 4200);
+    }
+    if (bot.espera && Date.now() - bot.espera > 3200) {
+      bot.espera = 0;
+      bot.estado = 'carril';
+    }
+    requestAnimationFrame(paso);
+  }
+
+  function rumbo() {
+    if (apagado) return;
+    const sec = seccionActiva();
+    if (sec !== seccionVista) {
+      seccionVista = sec;
+      if (Date.now() - ultimoMsg > 2500) decir(frase(SECCION[sec]));
+      capa.classList.add('mirando');
+      setTimeout(function () { capa.classList.remove('mirando'); }, 1800);
+    }
+    if (bot.estado === 'carril') {
+      bot.tx = carrilX();
+      /* Se deja llevar por la sección visible, con un vaivén suave para
+         que no parezca un ascensor. */
+      bot.ty = window.innerHeight * 0.42 + Math.sin(Date.now() / 2600) * 90;
+    }
+  }
+
+  function excursion() {
+    if (apagado || bot.estado !== 'carril') return;
+    const c = tarjetaVisible();
+    if (!c) return;
+    const r = c.getBoundingClientRect();
+    bot.tx = r.left + r.width / 2 - 23;
+    bot.ty = r.top + r.height / 2 - 18;
+    bot.estado = 'excursion';
+    capa.classList.add('mirando');
+  }
+
+  function ocio() {
+    if (apagado) return;
+    if (Date.now() - ultimoMsg > 24000) decir(frase(OCIO), 5000);
+  }
+
+  function encender() {
+    apagado = false;
+    try { localStorage.removeItem('bot'); } catch (e) {}
+    capa.style.display = '';
+    ui.style.display = '';
+    decir('Vuelvo a la ronda.', 4000);
+    requestAnimationFrame(paso);
+  }
+
+  document.getElementById('botApagar').addEventListener('click', function () {
+    apagado = true;
+    try { localStorage.setItem('bot', 'off'); } catch (e) {}
+    globo.classList.remove('on');
+    capa.style.display = 'none';
+    ui.style.display = 'none';
+    const pie = document.getElementById('botPie');
+    if (pie) pie.hidden = false;
+  });
+
+  const volver = document.getElementById('botVolver');
+  if (volver) volver.addEventListener('click', function () {
+    const pie = document.getElementById('botPie');
+    if (pie) pie.hidden = true;
+    encender();
+  });
+
+  hit.addEventListener('click', function () {
+    decir(frase(OCIO.concat(['Reportando: ' + PROYECTOS.length + ' fichas, ' +
+      Object.keys(MOTORES).length + ' motores corriendo y cero dependencias externas.'])), 5200);
+  });
+  hit.addEventListener('mouseenter', function () { capa.classList.add('mirando'); });
+  hit.addEventListener('mouseleave', function () { capa.classList.remove('mirando'); });
+
+  /* Reacciona a lo que haces, no solo a dónde estás. */
+  document.addEventListener('click', function (e) {
+    if (apagado || Date.now() - ultimoMsg < 5000) return;
+    const chip = e.target.closest('.chip[data-filter]');
+    if (chip) { decir('Filtrando por «' + chip.textContent.replace(/\d+$/, '').trim() + '». Los contadores salen de los propios datos.', 5000); return; }
+    if (e.target.closest('.card')) { decir('Ahí adentro está el proceso completo: qué pasó, qué se hizo y qué costó encontrar.', 5500); return; }
+    if (e.target.closest('.run-btn')) { decir('Eso está calculando de verdad. Ningún número de esta página está escrito a mano.', 5500); }
+  }, true);
+
+  if (apagado) {
+    capa.style.display = 'none';
+    ui.style.display = 'none';
+    const pie = document.getElementById('botPie');
+    if (pie) pie.hidden = false;
+  } else {
+    window.addEventListener('scroll', rumbo, { passive: true });
+    window.addEventListener('resize', rumbo);
+    setInterval(rumbo, 900);
+    setInterval(ocio, 9000);
+    if (!reduce) setInterval(excursion, 26000);
+    rumbo();
+    requestAnimationFrame(paso);
+    setTimeout(function () { decir(frase(SECCION.inicio), 7000); }, 2600);
+  }
 })();
 
 document.getElementById('year').textContent = new Date().getFullYear();
