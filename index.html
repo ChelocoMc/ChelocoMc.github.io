@@ -203,11 +203,14 @@ header.top {
 
 .brand { display: flex; align-items: center; gap: 12px; text-decoration: none; color: inherit; margin-right: auto; }
 .brand-mark {
-  width: 32px; height: 32px; flex: none;
-  border: 1px solid var(--line); border-radius: 8px;
+  width: 44px; height: 34px; flex: none;
+  border: 1px solid var(--line); border-radius: 9px;
   display: grid; place-items: center; background: var(--surface);
+  overflow: hidden;
 }
-.brand-mark svg { width: 18px; height: 18px; }
+.brand-mark svg { width: 36px; height: 26px; }
+.brand-mark .setpoint { stroke: var(--ink-faint); stroke-width: .8; stroke-dasharray: 2 2.5; opacity: .55; }
+.brand-mark .traza { stroke: var(--accent); stroke-width: 2.6; }
 .brand-txt { display: flex; flex-direction: column; line-height: 1.15; }
 .brand-txt .n { font-family: var(--display); font-size: 1.06rem; }
 .brand-txt .r { font-family: var(--mono); font-size: 0.62rem; letter-spacing: 0.14em; text-transform: uppercase; color: var(--ink-faint); }
@@ -927,9 +930,7 @@ input[type="range"]::-moz-range-thumb {
   <div class="wrap topbar">
     <a class="brand" href="#inicio">
       <span class="brand-mark" aria-hidden="true">
-        <svg viewBox="0 0 32 32" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linejoin="round" stroke-linecap="round" style="color:var(--accent)">
-          <path d="M5 25V7l11 10L27 7v18"/>
-        </svg>
+        <svg id="marca" viewBox="0 0 44 32" fill="none" stroke-linejoin="round" stroke-linecap="round"></svg>
       </span>
       <span class="brand-txt">
         <span class="n">Marcelo Poblete</span>
@@ -3415,8 +3416,80 @@ initDemos(document);
 
 
 /* ============================================================
-   5. CROMO: tema, progreso, nav activa, contadores, reloj
+   5. CROMO: marca generativa, tema, progreso, nav, contadores
    ============================================================ */
+
+/* La marca no está dibujada: es la respuesta al escalón de un sistema de
+   segundo orden subamortiguado. Sobrepasa el setpoint, oscila y se asienta,
+   y al asentarse deja la M. El amortiguamiento cambia en cada visita, así
+   que el trazo nunca es idéntico pero siempre aterriza en la misma marca. */
+(function () {
+  const svg = document.getElementById('marca');
+  if (!svg) return;
+  const reduce = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+  /* y(t) = 1 − e^(−ζt)/√(1−ζ²) · sen(ω_d t + arccos ζ), con ω_n = 1. */
+  function respuesta(z, x0, x1, base, top) {
+    const wd = Math.sqrt(1 - z * z);
+    const fase = Math.acos(z);
+    const tMax = 3.5 * Math.PI / wd;
+    const pico = 1 + Math.exp(-z * Math.PI / wd);   // primer sobrepaso: normaliza el alto
+    const alto = base - top;
+    const pts = [];
+    const N = 110;
+    for (let i = 0; i <= N; i++) {
+      const t = (i / N) * tMax;
+      const y = 1 - (Math.exp(-z * t) / wd) * Math.sin(wd * t + fase);
+      pts.push((x0 + (i / N) * (x1 - x0)).toFixed(2) + ',' + (base - (y / pico) * alto).toFixed(2));
+    }
+    return { d: 'M' + pts.join(' L'), asentado: base - (1 / pico) * alto };
+  }
+
+  let ultimo = 0;
+  function dibujar(animar) {
+    /* ζ entre 0,06 y 0,11: por debajo de eso el trazo no alcanza a asentarse
+       y por encima la segunda cresta se aplasta y la M deja de leerse. */
+    const z = 0.06 + Math.random() * 0.05;
+    const r = respuesta(z, 3, 41, 28, 5);
+    svg.innerHTML =
+      '<line class="setpoint" x1="1" y1="' + r.asentado.toFixed(2) + '" x2="43" y2="' + r.asentado.toFixed(2) + '"/>' +
+      '<path class="traza" d="' + r.d + '"/>';
+    if (!animar) return;
+    const p = svg.querySelector('.traza');
+    const L = p.getTotalLength();
+    p.style.strokeDasharray = L;
+    p.style.strokeDashoffset = L;
+    p.style.transition = 'none';
+    requestAnimationFrame(function () {
+      p.style.transition = 'stroke-dashoffset 1.15s cubic-bezier(.16,.84,.3,1)';
+      p.style.strokeDashoffset = '0';
+    });
+  }
+
+  dibujar(!reduce);
+
+  /* Al pasar por encima vuelve a calibrarse, con otro amortiguamiento. */
+  if (!reduce) {
+    const marca = svg.closest('.brand');
+    if (marca) marca.addEventListener('mouseenter', function () {
+      const ahora = Date.now();
+      if (ahora - ultimo < 1400) return;
+      ultimo = ahora;
+      dibujar(true);
+    });
+  }
+
+  /* El favicon sale del mismo cálculo, con amortiguamiento fijo para que
+     la pestaña no cambie de forma entre visitas. */
+  const fav = respuesta(0.08, 11, 53, 46, 15);
+  const icono =
+    "<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'>" +
+    "<rect width='64' height='64' rx='14' fill='#0C100E'/>" +
+    "<path d='" + fav.d + "' fill='none' stroke='#E4894A' stroke-width='5' " +
+    "stroke-linecap='round' stroke-linejoin='round'/></svg>";
+  const link = document.querySelector('link[rel="icon"]');
+  if (link) link.href = 'data:image/svg+xml,' + encodeURIComponent(icono);
+})();
 (function () {
   const btn = document.getElementById('themeToggle');
   const icon = document.getElementById('themeIcon');
