@@ -13,7 +13,7 @@
 <meta property="og:type" content="website">
 <meta property="og:url" content="https://chelocomc.github.io/">
 <meta property="og:title" content="Marcelo Poblete — Automatización de datos y sistemas de gestión">
-<meta property="og:description" content="Siete sistemas en producción: dashboards, pipelines de datos, Power BI y SQL Server. Cada uno salió de un problema real, no de un tutorial.">
+<meta property="og:description" content="Once sistemas en producción: dashboards, pipelines, Power BI, SQL Server, motores documentales y sitios web. Cada uno salió de un problema real, no de un tutorial.">
 <meta property="og:locale" content="es_CL">
 <meta name="twitter:card" content="summary_large_image">
 <meta name="twitter:title" content="Marcelo Poblete — Automatización de datos y sistemas de gestión">
@@ -896,6 +896,18 @@ input[type="range"]::-moz-range-thumb {
 .bot .hd { display: flex; align-items: center; justify-content: space-between; gap: 10px; font-size: 0.8rem; }
 .bot .hd .mono { font-size: 0.7rem; color: var(--ink-faint); }
 
+.doc-ta {
+  width: 100%; min-height: 132px; resize: vertical;
+  font-family: var(--mono); font-size: 0.72rem; line-height: 1.7;
+  background: var(--paper-deep); border: 1px solid var(--line-soft); border-radius: 8px;
+  padding: 12px 14px; color: var(--ink-soft);
+}
+.doc-ta:focus { outline: none; border-color: var(--accent-line); color: var(--ink); }
+.ctl input[type="date"], .ctl input[type="number"] {
+  font: inherit; font-family: var(--mono); font-size: 0.7rem; color: var(--ink);
+  background: var(--surface-2); border: 1px solid var(--line); border-radius: 6px; padding: 4px 7px;
+}
+.ctl input[type="checkbox"] { accent-color: var(--accent); width: 15px; height: 15px; }
 @media (max-width: 620px) {
   .sensor { grid-template-columns: 1fr auto; }
   .sensor svg { display: none; }
@@ -959,7 +971,7 @@ input[type="range"]::-moz-range-thumb {
         </p>
         <div class="cta-row">
           <a class="btn primary" href="#trabajo">
-            Ver los siete sistemas
+            Ver los once sistemas
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
           </a>
           <a class="btn" href="mailto:marcelopoblete16@gmail.com">Escríbeme</a>
@@ -994,7 +1006,7 @@ input[type="range"]::-moz-range-thumb {
     </div>
 
     <div class="stat-strip">
-      <div class="cell"><span class="n" data-count="7">0</span><span class="d">sistemas propios corriendo hoy en producción</span></div>
+      <div class="cell"><span class="n" data-count="11">0</span><span class="d">sistemas propios corriendo hoy en producción</span></div>
       <div class="cell"><span class="n" data-count="200000" data-suffix="+">0</span><span class="d">registros re-validados al corregir un solo pipeline</span></div>
       <div class="cell"><span class="n"><span>0</span></span><span class="d">errores de carga tras auditar un modelo de BI completo</span></div>
       <div class="cell"><span class="n" data-count="14">0</span><span class="d">pisos de planos navegables con ruta guiada</span></div>
@@ -1007,7 +1019,7 @@ input[type="range"]::-moz-range-thumb {
       <div class="rail">
         <span class="idx">§ 01</span>
         <h2 class="rail-title">Trabajo reciente</h2>
-        <p class="rail-note">Siete sistemas en uso. Las vistas son recreaciones con datos ficticios: los originales trabajan con datos reales de la institución.</p>
+        <p class="rail-note">Once sistemas en uso. Las vistas son recreaciones con datos ficticios: los originales trabajan con datos reales de la institución.</p>
       </div>
       <div class="band-body">
         <p class="band-lead">Cada tarjeta es una <em>ficha técnica</em>: el problema, lo que construí y el bug real que costó encontrar.</p>
@@ -1020,6 +1032,7 @@ input[type="range"]::-moz-range-thumb {
           <button class="chip" data-filter="sql" aria-pressed="false">SQL</button>
           <button class="chip" data-filter="ia" aria-pressed="false">IA</button>
           <button class="chip" data-filter="web" aria-pressed="false">Web</button>
+          <button class="chip" data-filter="docs" aria-pressed="false">Documentos</button>
           <span class="count" id="filterCount" aria-live="polite"></span>
         </div>
 
@@ -1035,7 +1048,7 @@ input[type="range"]::-moz-range-thumb {
       <div class="rail">
         <span class="idx">§ 02</span>
         <h2 class="rail-title">Laboratorio</h2>
-        <p class="rail-note">Dos de los motores corriendo acá mismo, con la misma lógica del sistema real: el emparejador difuso y el ruteo A* sobre planta. Los otros cinco están dentro de sus fichas.</p>
+        <p class="rail-note">Dos de los motores corriendo acá mismo, con la misma lógica del sistema real: el emparejador difuso y el ruteo A* sobre planta. Los otros nueve están dentro de sus fichas.</p>
       </div>
       <div class="band-body">
         <p class="band-lead">Estas demos <em>calculan de verdad</em>: mueve un parámetro y los números se rehacen.</p>
@@ -1065,7 +1078,11 @@ input[type="range"]::-moz-range-thumb {
           <div class="svc"><span class="n">05</span><h3>Asistentes de IA aplicados</h3><p>Agentes con acceso real a tus archivos y herramientas, con opción de correr en local cuando los datos no pueden salir de la red.</p></div>
           <div class="svc"><span class="n">06</span><h3>Diagnóstico de un sistema existente</h3><p>Algo ya construido falla y el que lo hizo no está. Reviso el código o el modelo, encuentro la causa raíz y te la dejo documentada, con o sin arreglo.</p></div>
         </div>
-      </div>
+          <div class="svc"><span class="n">07</span><h3>Páginas web a medida</h3><p>Sitios institucionales, landings, catálogos y currículums navegables. Rápidos, responsivos y sin suscripción mensual: publicados gratis y editables sin una cadena de herramientas detrás.</p></div>
+          <div class="svc"><span class="n">08</span><h3>Archivos de papel que se pueden buscar</h3><p>Miles de PDF escaneados convertidos en una base consultable con OCR, indexados y cruzados contra tus registros para saber qué documento respalda cada cosa.</p></div>
+          <div class="svc"><span class="n">09</span><h3>Extracción de datos desde documentos</h3><p>Sacar de facturas, informes y cartas los números que después alguien teclea a mano en una planilla: cantidades, tarifas, folios y fechas, con las reglas del negocio incorporadas.</p></div>
+          <div class="svc"><span class="n">10</span><h3>Conciliación de facturación</h3><p>Cruzar lo que te facturan contra lo que respalda cada cobro, mes a mes, y dejar por escrito dónde no cuadra y cuánto vale esa diferencia.</p></div>
+              </div>
     </div>
   </section>
 
@@ -1454,6 +1471,91 @@ input[type="range"]::-moz-range-thumb {
   </div>
 </template>
 
+
+<template id="tpl-DOC-08">
+  <div class="demo" data-demo="docs">
+    <div class="demo-bar"><span class="dot"></span><span class="dot"></span><span class="dot"></span><span class="demo-url">extractor de referencias — cruce_documentos.py</span></div>
+    <div class="demo-body">
+      <p class="hint">Esta es la parte difícil del pipeline y corre acá: sacar de un texto libre qué solicitudes menciona, sin tragarse los años, los números de oficio ni las cifras de las tablas. Elige una carta o edítala y mira qué acepta y qué descarta.</p>
+      <div class="ctl-row">
+        <div class="ctl" style="flex:1"><label>Documento</label><select data-doc-sel aria-label="Carta de ejemplo" style="flex:1; max-width:none"></select></div>
+      </div>
+      <textarea class="doc-ta" data-doc-texto aria-label="Texto del documento" spellcheck="false"></textarea>
+      <div class="mini-row" data-doc-kpi></div>
+      <div class="d-scroll" style="max-height:210px">
+        <table class="d-table">
+          <thead><tr><th class="num">Nº hallado</th><th>Contexto previo</th><th>Decisión</th><th>Motivo</th></tr></thead>
+          <tbody data-doc-body></tbody>
+        </table>
+      </div>
+      <div class="d-line"><span>Llaves extraídas <span class="mono">(año, aviso)</span></span><span class="mono ok" data-doc-llaves>—</span></div>
+      <p class="hint" data-doc-nota></p>
+    </div>
+  </div>
+</template>
+
+<template id="tpl-KPI-09">
+  <div class="demo" data-demo="kpi">
+    <div class="demo-bar"><span class="dot"></span><span class="dot"></span><span class="dot"></span><span class="demo-url">simulador del indicador contractual</span></div>
+    <div class="demo-body">
+      <p class="hint">Universo sintético de 640 incumplimientos con la misma estructura del real. Los tres interruptores son exactamente las tres decisiones que rompían la coincidencia: cámbialos y mira cuánto se va el indicador respecto del oficial.</p>
+      <div class="ctl-row">
+        <div class="ctl"><label>Contar por</label>
+          <div class="seg" role="group" aria-label="Fecha de corte">
+            <button type="button" data-kpi-fecha="validacion" aria-pressed="true">Validación</button>
+            <button type="button" data-kpi-fecha="apertura" aria-pressed="false">Apertura</button>
+          </div>
+        </div>
+        <div class="ctl"><label>Incluir apelados</label><input type="checkbox" data-kpi-apelados aria-label="Incluir apelados"></div>
+        <div class="ctl"><label>Incluir solicitudes</label><input type="checkbox" data-kpi-solicitudes aria-label="Incluir solicitudes de servicio"></div>
+      </div>
+      <div class="mini-row" data-kpi-tiles></div>
+      <table class="d-table">
+        <thead><tr><th>Servicio</th><th class="num">Puntos descontados</th><th class="num">Calculado</th><th class="num">Oficial</th><th class="num">Δ</th></tr></thead>
+        <tbody data-kpi-body></tbody>
+      </table>
+      <pre class="code" data-kpi-code></pre>
+      <div class="ctl-row">
+        <div class="ctl"><label>Semestre de una fecha</label><input type="date" data-kpi-fechatest aria-label="Fecha para calcular el semestre contractual"></div>
+        <div class="d-line" style="flex:1" data-kpi-sem><span>El período contractual no es calendario: corre del 18 de abril al 17 de octubre.</span></div>
+      </div>
+    </div>
+  </div>
+</template>
+
+<template id="tpl-EA-10">
+  <div class="demo" data-demo="conciliar">
+    <div class="demo-bar"><span class="dot"></span><span class="dot"></span><span class="dot"></span><span class="demo-url">conciliador de facturación vs. respaldo</span></div>
+    <div class="demo-body">
+      <p class="hint">Los kilos facturados son editables. El motor compara contra la guía, detecta si un mes repite el valor del anterior y valoriza la brecha con la tarifa del contrato.</p>
+      <div class="ctl-row">
+        <div class="ctl"><label>Tarifa UF/kg</label><input type="text" data-ea-tarifa value="0,03556" style="max-width:90px"></div>
+        <button class="run-btn" data-ea-reset>↺ Volver a los datos originales</button>
+      </div>
+      <div class="mini-row" data-ea-kpi></div>
+      <div class="d-scroll">
+        <table class="d-table">
+          <thead><tr><th>Mes</th><th class="num">Kg de guía</th><th class="num">Kg facturados</th><th class="num">Brecha</th><th class="num">UF</th><th>Observación</th></tr></thead>
+          <tbody data-ea-body></tbody>
+        </table>
+      </div>
+      <pre class="mail" data-ea-obs></pre>
+    </div>
+  </div>
+</template>
+
+<template id="tpl-WEB-11">
+  <div class="demo" data-demo="auto">
+    <div class="demo-bar"><span class="dot"></span><span class="dot"></span><span class="dot"></span><span class="demo-url">auditoría de esta misma página</span></div>
+    <div class="demo-body">
+      <p class="hint">Todo lo de abajo se mide sobre la página que estás viendo ahora mismo, en este momento, con las APIs del navegador. Si recargas cambia.</p>
+      <div class="mini-row" data-auto-kpi></div>
+      <div style="display:grid; gap:7px;" data-auto-lista></div>
+      <p class="hint">Sin framework, sin bundler y sin paquetes de terceros: el archivo que se publica es el mismo que se edita.</p>
+    </div>
+  </div>
+</template>
+
 <script>
 /* ============================================================
    1. DATOS DE PROYECTOS — única fuente de verdad de la grilla
@@ -1576,6 +1678,78 @@ const PROYECTOS = [
       { t: 'Reconocimiento de puertas', d: 'El template matching no distinguía el arco de puerta del dibujo denso del plano (recall ~59%). Lo reemplacé por un clasificador HOG con regresión logística entrenado sobre puertas marcadas a mano (recall ~95%), corriendo con el detector HOG nativo de OpenCV para barrer un piso completo en segundos.' }
     ],
     resultado: 'Planos de <b>catorce pisos</b> navegables, ruta guiada entre pisos y detección de puertas por visión por computador en segundos por planta.'
+  },
+  {
+    ref: 'DOC-08', areas: ['python', 'docs', 'datos'],
+    titulo: 'Motor documental sobre casi 18.000 documentos',
+    kicker: 'Había que probar, documento por documento, qué se comunicó y cuándo. A mano era inviable.',
+    glyph: '<svg viewBox="0 0 48 48" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M12 4h16l8 8v20a2 2 0 0 1-2 2H12a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2Z"/><path d="M28 4v9h8"/><path d="M16 20h10M16 26h7"/><circle cx="30" cy="35" r="7"/><path d="m35 40 4 4"/></svg>',
+    metricas: [{ v: '17.939', k: 'documentos' }, { v: '2.536', k: 'con OCR' }, { v: '8', k: 'ejes de auditoría' }],
+    tags: ['Python', 'OCR (Tesseract)', 'PyMuPDF', 'Regex', 'pandas'],
+    contexto: 'Un archivo de correspondencia de casi dieciocho mil PDF —cartas enviadas y oficios recibidos a lo largo de seis años— y una pregunta que había que responder con evidencia: qué solicitudes fueron comunicadas formalmente, en qué carta y qué respondió la contraparte. Buscar a mano era imposible, y 2.536 de esas cartas eran escaneos: ni el buscador del sistema operativo las veía.',
+    solucion: 'Un pipeline que primero indexa el texto de todo lo que sí tiene capa de texto, después pasa OCR solo sobre lo escaneado —dieciséis procesos en paralelo, reanudable, porque una corrida completa toma media hora— y finalmente cruza cada documento contra la base de solicitudes. El resultado es un Excel donde cada solicitud tiene el documento que la comunicó, la fecha y la respuesta.',
+    cita: 'El correlativo se reinicia cada año. La llave nunca fue el número: era el par (año, número), y 308 de 893 números aparecían en más de un año.',
+    detalle: [
+      { t: 'Escaneos sin capa de texto', d: 'Las páginas se rasterizan con PyMuPDF a 200 dpi y pasan por Tesseract en español. Corre en dieciséis procesos y guarda avance parcial en un <code>.jsonl</code>, así que si se corta se retoma donde iba en vez de empezar de cero.' },
+      { t: 'La llave compuesta', d: 'El correlativo de las solicitudes se reinicia cada enero. Cruzar por número suelto mezclaba expedientes de años distintos; la llave correcta es <code>(año, número)</code>, y el año se saca del propio correlativo del documento porque la fecha escrita a veces viene mal tipeada.' },
+      { t: 'Falsos positivos', d: 'Los números de oficio, los años dentro del texto y las cifras de tres dígitos de las tablas se colaban como si fueran solicitudes. Un filtro descartaba todo número entre 1900 y 2099 como «año» — y con eso perdía la solicitud 1943, que era real. Se acotó a años plausibles y se sumó contexto: importa qué palabra viene antes del número.' },
+      { t: 'Auditoría propia', d: 'Ocho ejes de verificación corren sobre el resultado y escriben un informe. La validación final fue contra 106 pares emparejados a mano: 26 de 26 aciertos en los casos evaluables y las 106 referencias detectadas.' }
+    ],
+    resultado: 'Un archivo de <b>17.939 documentos</b> convertido en base consultable, con trazabilidad de qué se comunicó, cuándo y con qué respuesta.'
+  },
+  {
+    ref: 'KPI-09', areas: ['bi', 'sql', 'datos'],
+    titulo: 'Reproducir el indicador contractual del fiscalizador',
+    kicker: 'El tablero interno y el indicador oficial nunca daban el mismo número, y nadie sabía cuál creer.',
+    glyph: '<svg viewBox="0 0 48 48" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M8 34a18 18 0 1 1 32 0"/><path d="m24 32 9-11" stroke-linecap="round"/><circle cx="24" cy="34" r="2.6" fill="currentColor" stroke="none"/><path d="M10 26h4M34 26h4M23 14h2"/></svg>',
+    metricas: [{ v: '14/15', k: 'servicios exactos' }, { v: '1,07 M', k: 'filas validadas' }, { v: '5', k: 'reglas ocultas' }],
+    tags: ['SQL Server', 'T-SQL', 'Power BI', 'DAX'],
+    contexto: 'El indicador de nivel de servicio define pagos y descuentos, y lo calcula un tercero. Internamente se seguía con un tablero que nunca coincidía: a veces por décimas, a veces por servicios enteros. Sin poder reproducir el número oficial, cualquier discusión partía perdida.',
+    solucion: 'Reconstruí la fórmula desde la base de origen hasta que coincidió: catorce de quince servicios exactos y el quinceavo desviado en 0,01 por redondeo. Lo interesante fue que el criterio no estaba en ninguna medida documentada, sino repartido en los filtros de un visual y en cinco detalles que, cambiando cualquiera, rompen la coincidencia.',
+    cita: 'El campo «apelado» era una cadena vacía, no un nulo. Filtrar con IS NULL borraba cuatro servicios completos del cálculo.',
+    detalle: [
+      { t: 'No es un conteo, son puntos', d: 'Cada incumplimiento pesa distinto según la criticidad de la zona. Contar incidencias en vez de sumar su ponderación da un número que no se parece en nada al oficial.' },
+      { t: 'El período no es calendario', d: 'El semestre contractual corre del 18 de abril al 17 de octubre y viceversa, y cuenta por fecha de validación, no por fecha de apertura. La fórmula de corte se verificó contra 1.072.179 filas sin una sola diferencia.' },
+      { t: 'Vacío no es nulo', d: 'El campo de apelación viene como cadena vacía en buena parte de las filas. Un <code>IS NULL</code> parecía correcto y excluía servicios enteros sin avisar.' },
+      { t: 'Dónde vivía el criterio', d: 'La medida era trivial; todo el criterio estaba en los filtros del visual. Por eso copiar la medida a otro informe daba resultados distintos y nadie entendía por qué.' }
+    ],
+    resultado: 'Tablero que <b>coincide con el número oficial</b> y permite discutir cada punto descontado con la evidencia a la vista.'
+  },
+  {
+    ref: 'EA-10', areas: ['datos', 'docs'],
+    titulo: 'Conciliación de estados de pago contra respaldo',
+    kicker: 'Se pagaba contra facturas que nadie alcanzaba a cruzar con la evidencia que las respalda.',
+    glyph: '<svg viewBox="0 0 48 48" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M11 5h26v34l-5-3-4 3-4-3-4 3-4-3-5 3Z"/><path d="M17 15h14M17 22h14M17 29h8"/><path d="m28 33 3 3 6-6" stroke-width="2"/></svg>',
+    metricas: [{ v: '289', k: 'respaldos ordenados' }, { v: '5', k: 'servicios' }, { v: '2', k: 'brechas encontradas' }],
+    tags: ['Excel', 'PDF parsing', 'pandas', 'Conciliación'],
+    contexto: 'Cinco servicios facturan todos los meses y cada uno respalda con documentos distintos: carátulas en Excel, prefacturas en PDF, guías de kilos, anexos de dotación. El libro que consolida todo eso se llenaba a mano, y comprobar una cifra significaba abrir seis archivos en cuatro carpetas.',
+    solucion: 'Levanté el mapeo verificado de cada cifra del libro hasta el documento y la celda exacta que la respalda, dejé los 289 respaldos ordenados por servicio y mes con un índice de brechas, y crucé lo facturado contra lo respaldado mes a mes.',
+    cita: 'Una factura repetía exactamente los kilos del mes anterior. Cobraba 7.707 kilos de más y llevaba meses pasando.',
+    detalle: [
+      { t: 'Mapeo cifra a cifra', d: 'Cada valor del libro quedó trazado a su origen: tarifas unitarias de la carátula del proveedor, kilos desde la glosa de la factura, dotación desde el anexo. Donde el libro y el respaldo no cuadraban quedó anotado como brecha abierta, no maquillado.' },
+      { t: 'Documento repetido', d: 'Comparar la serie mensual de kilos facturados contra la guía dejó a la vista un mes que repetía el valor del anterior: un exceso de 7.707 kilos, del orden de 274 unidades de fomento.' },
+      { t: 'Adicional subregistrado', d: 'Otro proveedor pasó a facturar dos adicionales del mismo monto mientras el libro seguía registrando uno solo. La diferencia se arrastraba todos los meses.' },
+      { t: 'Lectura de PDF con criterio', d: 'Las prefacturas parten una misma categoría en dos líneas, así que la cantidad no se puede leer literal: hay que validarla contra el monto del ítem para no duplicar ni perder volumen.' }
+    ],
+    resultado: 'Respaldo completo y ordenado para cada peso facturado, y <b>dos brechas de cobro</b> detectadas que llevaban meses pasando inadvertidas.'
+  },
+  {
+    ref: 'WEB-11', areas: ['web'],
+    titulo: 'Sitios web sin dependencias',
+    kicker: 'Esta misma página: un archivo, sin build, sin framework y sin costo de hosting.',
+    glyph: '<svg viewBox="0 0 48 48" fill="none" stroke="currentColor" stroke-width="1.6"><rect x="5" y="9" width="38" height="30" rx="3"/><path d="M5 17h38"/><circle cx="10" cy="13" r="1.2" fill="currentColor" stroke="none"/><circle cx="14" cy="13" r="1.2" fill="currentColor" stroke="none"/><path d="m18 24-4 4 4 4M30 24l4 4-4 4M26 22l-4 12" stroke-linecap="round"/></svg>',
+    metricas: [{ v: '1', k: 'archivo' }, { v: '0', k: 'dependencias' }, { v: '$0', k: 'hosting' }],
+    tags: ['HTML', 'CSS moderno', 'JavaScript', 'SVG', 'GitHub Pages'],
+    contexto: 'La mayoría de los sitios de una PYME o de un profesional no necesitan un framework: necesitan cargar rápido, verse bien en el teléfono, poder editarse sin una cadena de herramientas y no costar una suscripción mensual para siempre.',
+    solucion: 'Este portafolio es el ejemplo: un solo archivo HTML con su CSS y su JavaScript adentro, tipografías cargadas del proveedor y nada más. Los motores que ves corriendo en las otras fichas son JavaScript plano. Se publica gratis y se actualiza empujando un cambio al repositorio.',
+    cita: 'Sin build no hay build que se rompa. El sitio que entregas es exactamente el archivo que editas.',
+    detalle: [
+      { t: 'Accesible por defecto', d: 'Navegación por teclado, foco visible, diálogos con trampa de foco y cierre con Escape, contraste verificado en tema claro y oscuro, y respeto por <code>prefers-reduced-motion</code> para quien prefiere menos movimiento.' },
+      { t: 'Tema claro y oscuro reales', d: 'Toda la paleta vive en custom properties, con la preferencia del sistema como punto de partida y un interruptor que recuerda la elección. No es un filtro invertido encima.' },
+      { t: 'Responsivo de verdad', d: 'Verificado a 390, 768 y 1440 píxeles renderizando el sitio dentro de un iframe, porque las capturas directas en escritorio mienten sobre el ancho real del móvil.' },
+      { t: 'Qué puedo hacer con esto', d: 'Sitios institucionales, landings, catálogos, currículums navegables y páginas de producto. Si el proyecto pide formularios, pagos o contenido editable por el cliente, ahí sí conviene sumar un backend — y también lo armo.' }
+    ],
+    resultado: 'Un sitio que <b>carga en un archivo</b>, se ve igual en el teléfono y no genera costo mensual de mantención ni de hosting.'
   }
 ];
 
@@ -2840,6 +3014,367 @@ function montarChat(root) {
   send.addEventListener('click', enviar);
   input.addEventListener('keydown', function (e) { if (e.key === 'Enter') enviar(); });
 }
+
+
+/* ------------------------------------------------------------
+   DOC-08 · Extracción de referencias desde texto libre
+   Las mismas reglas del pipeline: contexto antes del número,
+   listas encadenadas, descarte de años y de números de oficio.
+   ------------------------------------------------------------ */
+const CARTAS = [
+  {
+    n: 'Carta con lista encadenada',
+    t: 'Señor Inspector Fiscal:\n\nJunto con saludar, y en atención al Ord. IFE N° 11970 de fecha 12 de junio de 2026, esta Concesionaria informa que los avisos SIC 44483- 61737-46109 fueron atendidos dentro del plazo contractual, según consta en los registros del sistema.\n\nSin otro particular, saluda atentamente.\n\nN° CORRELATIVO: 03/IFE/SCMS/006602/26'
+  },
+  {
+    n: 'Carta con tabla de cifras',
+    t: 'De nuestra consideración:\n\nAdjuntamos el detalle de raciones del período, cuyo resumen es el siguiente:\n\n  Desayunos     412\n  Almuerzos     938\n  Cenas         874\n\nAsimismo, se informa el cierre del aviso 1943, pendiente desde el mes anterior, y se reitera lo señalado en nuestra carta del año 2024 sobre la materia.\n\nN° CORRELATIVO: 07/IFE/SCMS/004120/26'
+  },
+  {
+    n: 'Carta que cubre varios avisos',
+    t: 'Señor Inspector Fiscal:\n\nEn respuesta al Ord. N° 9323, esta Concesionaria remite el estado de los siguientes avisos SIC: 60112, 60118, 60127, 60130, 60144 y 60151, todos correspondientes al segundo semestre.\n\nSe hace presente que el artículo 1.10.1.2 del contrato faculta el uso del Fondo de Reserva, no debiendo confundirse con el 1.10.12 referido a Indicadores Centinela.\n\nN° CORRELATIVO: 12/IFE/SCMS/007801/25'
+  },
+  {
+    n: 'Carta sin referencias',
+    t: 'Señor Inspector Fiscal:\n\nPor medio de la presente, esta Concesionaria acusa recibo del Ord. IFE N° 2755 y manifiesta su disposición a sostener una reunión técnica durante la semana del 18 de octubre.\n\nNo se adjuntan antecedentes adicionales en esta oportunidad.\n\nN° CORRELATIVO: 21/IFE/SCMS/002941/24'
+  }
+];
+
+/* Devuelve cada número encontrado con su veredicto y el motivo,
+   más las llaves (año, aviso) que sobreviven. */
+function extraerReferencias(texto) {
+  const corr = texto.match(/(\d{2})\/IFE\/SCMS\/(\d{4,6})\/(\d{2})/);
+  const anio = corr ? 2000 + Number(corr[3]) : null;
+  const rangoCorr = corr ? [texto.indexOf(corr[0]), texto.indexOf(corr[0]) + corr[0].length] : null;
+
+  const marcador = /(sic|aviso|avisos)\s*(n[°ºo]?)?\s*[:#]?\s*$/i;
+  const oficio = /(ord\.?|oficio)\s*(ife)?\s*n[°ºo]?\s*$/i;
+  const encadena = /^[\s\-–,]*(y\s*)?$/;
+
+  const hallazgos = [];
+  const re = /\b(\d{3,6})\b/g;
+  let m, finAnterior = -1, aceptadoAntes = false;
+
+  while ((m = re.exec(texto)) !== null) {
+    const num = m[1];
+    const ini = m.index;
+    const antes = texto.slice(Math.max(0, ini - 40), ini);
+    const puente = finAnterior >= 0 ? texto.slice(finAnterior, ini) : null;
+    const ctx = antes.replace(/\s+/g, ' ').trim().slice(-28);
+    let ok = false, motivo = '';
+
+    if (rangoCorr && ini >= rangoCorr[0] && ini < rangoCorr[1]) {
+      motivo = 'parte del correlativo del documento';
+    } else if (oficio.test(antes)) {
+      motivo = 'número de oficio, no de aviso';
+    } else if (marcador.test(antes)) {
+      ok = true; motivo = 'precedido por «SIC» o «aviso»';
+    } else if (aceptadoAntes && puente !== null && encadena.test(puente)) {
+      ok = true; motivo = 'continúa la lista anterior';
+    } else if (num.length === 4 && Number(num) >= 1950 && Number(num) <= 2039) {
+      motivo = 'año plausible fuera de contexto de aviso';
+    } else if (num.length === 3) {
+      motivo = 'cifra de tabla, sin marcador delante';
+    } else {
+      motivo = 'sin marcador ni lista que lo respalde';
+    }
+
+    hallazgos.push({ num: num, ctx: ctx || '(inicio del texto)', ok: ok, motivo: motivo });
+    finAnterior = ini + num.length;
+    aceptadoAntes = ok;
+  }
+  return { anio: anio, hallazgos: hallazgos };
+}
+
+MOTORES.docs = function (root) {
+  const sel = $1(root, '[data-doc-sel]');
+  const ta = $1(root, '[data-doc-texto]');
+  const kpi = $1(root, '[data-doc-kpi]');
+  const cuerpo = $1(root, '[data-doc-body]');
+  const llaves = $1(root, '[data-doc-llaves]');
+  const nota = $1(root, '[data-doc-nota]');
+
+  sel.innerHTML = CARTAS.map(function (c, i) { return '<option value="' + i + '">' + c.n + '</option>'; }).join('');
+
+  function correr() {
+    const r = extraerReferencias(ta.value);
+    const ok = r.hallazgos.filter(function (h) { return h.ok; });
+
+    kpi.innerHTML =
+      '<div class="mini"><div class="t">Caracteres</div><div class="v">' + nfm.format(ta.value.length) + '</div></div>' +
+      '<div class="mini"><div class="t">Números vistos</div><div class="v">' + r.hallazgos.length + '</div></div>' +
+      '<div class="mini"><div class="t">Aceptados</div><div class="v ok">' + ok.length + '</div></div>' +
+      '<div class="mini"><div class="t">Descartados</div><div class="v warn">' + (r.hallazgos.length - ok.length) + '</div></div>';
+
+    cuerpo.innerHTML = r.hallazgos.map(function (h) {
+      return '<tr>' +
+        '<td class="num mono ' + (h.ok ? 'ok' : 'warn') + '">' + h.num + '</td>' +
+        '<td class="mono" style="color:var(--ink-faint)">…' + esc(h.ctx) + '</td>' +
+        '<td class="' + (h.ok ? 'ok' : 'warn') + '">' + (h.ok ? 'aceptado' : 'descartado') + '</td>' +
+        '<td style="color:var(--ink-soft)">' + h.motivo + '</td></tr>';
+    }).join('') || '<tr><td colspan="4" style="color:var(--ink-faint)">Sin números en el texto.</td></tr>';
+
+    llaves.textContent = ok.length
+      ? ok.map(function (h) { return '(' + (r.anio || '?') + ', ' + h.num + ')'; }).join('  ')
+      : 'ninguna';
+
+    nota.textContent = r.anio
+      ? 'El año sale del correlativo del propio documento (' + r.anio + '), no de la fecha escrita: esa viene mal tipeada más seguido de lo que uno esperaría.'
+      : 'Sin correlativo legible no hay año, y sin año la llave queda incompleta: ese documento va a revisión manual.';
+  }
+
+  sel.addEventListener('change', function () { ta.value = CARTAS[Number(sel.value)].t; correr(); });
+  ta.addEventListener('input', correr);
+  ta.value = CARTAS[0].t;
+  correr();
+};
+
+/* ------------------------------------------------------------
+   KPI-09 · Simulador del indicador y del semestre contractual
+   ------------------------------------------------------------ */
+function semestreContractual(f) {
+  const a = f.getFullYear(), m = f.getMonth() + 1, d = f.getDate();
+  if (m < 4 || (m === 4 && d < 18)) return (a - 2021) * 2 + 2;
+  if (m > 10 || (m === 10 && d >= 18)) return (a - 2020) * 2 + 2;
+  return (a - 2020) * 2 + 1;
+}
+const ROMANO = ['', 'I', 'II', 'III', 'IV', 'V', 'VI', 'VII', 'VIII', 'IX', 'X', 'XI', 'XII', 'XIII', 'XIV', 'XV', 'XVI'];
+
+MOTORES.kpi = function (root) {
+  const SERVICIOS = ['Mantenimiento', 'Aseo', 'Alimentación', 'Ropería', 'Vigilancia'];
+  const FACTORES = [0.17, 0.242, 0.264, 0.58];
+  const r = rng(131313);
+  const AVISOS = [];
+  for (let i = 0; i < 640; i++) {
+    AVISOS.push({
+      servicio: SERVICIOS[Math.floor(r() * SERVICIOS.length)],
+      factor: FACTORES[Math.floor(r() * FACTORES.length)],
+      tipo: r() > 0.34 ? 'Incidencia' : 'Solicitud de Servicio',
+      excedido: r() > 0.42,
+      apelado: r() > 0.82 ? 'S' : '',
+      semValidacion: r() > 0.16 ? 13 : 12,
+      semApertura: r() > 0.24 ? 13 : 12
+    });
+  }
+
+  const cfg = { fecha: 'validacion', apelados: false, solicitudes: false };
+
+  function calcular(c) {
+    const porServicio = {};
+    SERVICIOS.forEach(function (s) { porServicio[s] = 0; });
+    AVISOS.forEach(function (a) {
+      const sem = c.fecha === 'validacion' ? a.semValidacion : a.semApertura;
+      if (sem !== 13) return;
+      if (!a.excedido) return;
+      if (a.tipo !== 'Incidencia' && !c.solicitudes) return;
+      if (a.apelado === 'S' && !c.apelados) return;
+      porServicio[a.servicio] += a.factor;
+    });
+    return porServicio;
+  }
+
+  /* El "oficial" es el resultado con la configuración correcta:
+     el mismo dato, las mismas reglas, calculado una sola vez. */
+  const OFICIAL = calcular({ fecha: 'validacion', apelados: false, solicitudes: false });
+
+  const tiles = $1(root, '[data-kpi-tiles]');
+  const cuerpo = $1(root, '[data-kpi-body]');
+  const code = $1(root, '[data-kpi-code]');
+
+  function pintar() {
+    const actual = calcular(cfg);
+    let sumaDelta = 0, exactos = 0;
+
+    cuerpo.innerHTML = SERVICIOS.map(function (s) {
+      const nspA = Math.max(0, 100 - actual[s]);
+      const nspO = Math.max(0, 100 - OFICIAL[s]);
+      const delta = nspA - nspO;
+      sumaDelta += Math.abs(delta);
+      if (Math.abs(delta) < 0.005) exactos++;
+      const cl = Math.abs(delta) < 0.005 ? 'ok' : (Math.abs(delta) < 1 ? 'warn' : 'bad');
+      return '<tr><td>' + s + '</td>' +
+        '<td class="num mono">' + actual[s].toFixed(3).replace('.', ',') + '</td>' +
+        '<td class="num mono">' + nspA.toFixed(2).replace('.', ',') + '</td>' +
+        '<td class="num mono" style="color:var(--ink-faint)">' + nspO.toFixed(2).replace('.', ',') + '</td>' +
+        '<td class="num mono ' + cl + '">' + (delta >= 0 ? '+' : '') + delta.toFixed(2).replace('.', ',') + '</td></tr>';
+    }).join('');
+
+    tiles.innerHTML =
+      '<div class="mini"><div class="t">Servicios exactos</div><div class="v ' + (exactos === SERVICIOS.length ? 'ok' : 'bad') + '">' + exactos + '/' + SERVICIOS.length + '</div></div>' +
+      '<div class="mini"><div class="t">Desviación total</div><div class="v ' + (sumaDelta < 0.01 ? 'ok' : 'bad') + '">' + sumaDelta.toFixed(2).replace('.', ',') + '</div></div>' +
+      '<div class="mini"><div class="t">Avisos considerados</div><div class="v">' + nfm.format(AVISOS.filter(function (a) {
+        const sem = cfg.fecha === 'validacion' ? a.semValidacion : a.semApertura;
+        return sem === 13 && a.excedido && (a.tipo === 'Incidencia' || cfg.solicitudes) && (a.apelado !== 'S' || cfg.apelados);
+      }).length) + '</div></div>' +
+      '<div class="mini"><div class="t">Estado</div><div class="v ' + (sumaDelta < 0.01 ? 'ok' : 'bad') + '">' + (sumaDelta < 0.01 ? 'coincide' : 'no cuadra') + '</div></div>';
+
+    code.innerHTML =
+      '<b>SELECT</b> 100 - <b>SUM</b>(Factor) <i>-- puntos de relevancia, no un conteo</i>\n' +
+      '<b>FROM</b> AvisosConSemestreFactor\n' +
+      '<b>WHERE</b> Validado = \'S\'\n' +
+      '  <b>AND</b> Semestre' + (cfg.fecha === 'validacion' ? 'Validacion' : 'Apertura') + ' = 13' +
+        (cfg.fecha === 'validacion' ? '' : '   <i>&lt;-- rompe la coincidencia</i>') + '\n' +
+      '  <b>AND</b> SobrePasatiempo = \'Tiempo Excedido\'\n' +
+      (cfg.solicitudes ? '  <i>-- sin filtro de tipo &lt;-- rompe la coincidencia</i>\n' : '  <b>AND</b> TipoPeticionTexto = \'Incidencia\'\n') +
+      (cfg.apelados ? '  <i>-- sin filtro de apelación &lt;-- rompe la coincidencia</i>' : '  <b>AND</b> ISNULL(Apelado,\'\') &lt;&gt; \'S\'   <i>-- ojo: vacío, no NULL</i>');
+  }
+
+  $n(root, '[data-kpi-fecha]').forEach(function (b) {
+    b.addEventListener('click', function () {
+      cfg.fecha = b.dataset.kpiFecha;
+      $n(root, '[data-kpi-fecha]').forEach(function (o) { o.setAttribute('aria-pressed', String(o === b)); });
+      pintar();
+    });
+  });
+  $1(root, '[data-kpi-apelados]').addEventListener('change', function () { cfg.apelados = this.checked; pintar(); });
+  $1(root, '[data-kpi-solicitudes]').addEventListener('change', function () { cfg.solicitudes = this.checked; pintar(); });
+
+  const fin = $1(root, '[data-kpi-fechatest]');
+  const semOut = $1(root, '[data-kpi-sem]');
+  fin.addEventListener('change', function () {
+    if (!fin.value) return;
+    const p = fin.value.split('-');
+    const f = new Date(Number(p[0]), Number(p[1]) - 1, Number(p[2]));
+    const s = semestreContractual(f);
+    semOut.innerHTML = '<span>' + f.toLocaleDateString('es-CL') + ' cae en el semestre</span><span class="mono ok">' +
+      (ROMANO[s] || s) + ' (' + s + ')</span>';
+  });
+
+  pintar();
+};
+
+/* ------------------------------------------------------------
+   EA-10 · Conciliación de facturación contra respaldo
+   ------------------------------------------------------------ */
+MOTORES.conciliar = function (root) {
+  /* El caso real: la factura de febrero repite los kilos facturados en enero
+     mientras la guía de ese mes dice otra cosa. */
+  const BASE = [
+    { mes: 'Enero', guia: 94748, fact: 94748 },
+    { mes: 'Febrero', guia: 87041, fact: 94748 },
+    { mes: 'Marzo', guia: 90155, fact: 90155 },
+    { mes: 'Abril', guia: 88420, fact: 88420 },
+    { mes: 'Mayo', guia: 91004, fact: 91004 },
+    { mes: 'Junio', guia: 86770, fact: 86770 }
+  ];
+  let filas = BASE.map(function (f) { return Object.assign({}, f); });
+
+  const cuerpo = $1(root, '[data-ea-body]');
+  const kpi = $1(root, '[data-ea-kpi]');
+  const obs = $1(root, '[data-ea-obs]');
+  const tarifaIn = $1(root, '[data-ea-tarifa]');
+
+  function tarifa() {
+    const v = parseFloat(String(tarifaIn.value).replace(',', '.'));
+    return isNaN(v) ? 0 : v;
+  }
+
+  function analizar() {
+    return filas.map(function (f, i) {
+      const brecha = f.fact - f.guia;
+      const notas = [];
+      if (i > 0 && f.fact === filas[i - 1].fact && f.guia !== filas[i - 1].guia) {
+        notas.push('repite los kilos facturados del mes anterior');
+      }
+      if (brecha > 0) notas.push('cobra de más');
+      else if (brecha < 0) notas.push('cobra de menos');
+      return { f: f, brecha: brecha, uf: brecha * tarifa(), notas: notas };
+    });
+  }
+
+  function pintar() {
+    const an = analizar();
+    const conBrecha = an.filter(function (x) { return x.brecha !== 0; });
+    const ufTotal = an.reduce(function (a, x) { return a + x.uf; }, 0);
+
+    kpi.innerHTML =
+      '<div class="mini"><div class="t">Meses conciliados</div><div class="v ok">' + (an.length - conBrecha.length) + '/' + an.length + '</div></div>' +
+      '<div class="mini"><div class="t">Con brecha</div><div class="v ' + (conBrecha.length ? 'bad' : 'ok') + '">' + conBrecha.length + '</div></div>' +
+      '<div class="mini"><div class="t">Kg en disputa</div><div class="v">' + nfm.format(conBrecha.reduce(function (a, x) { return a + Math.abs(x.brecha); }, 0)) + '</div></div>' +
+      '<div class="mini"><div class="t">Equivale a</div><div class="v ' + (Math.abs(ufTotal) > 0.5 ? 'bad' : 'ok') + '">' + ufTotal.toFixed(1).replace('.', ',') + ' UF</div></div>';
+
+    cuerpo.innerHTML = an.map(function (x, i) {
+      return '<tr>' +
+        '<td>' + x.f.mes + '</td>' +
+        '<td class="num mono">' + nfm.format(x.f.guia) + '</td>' +
+        '<td class="num' + (x.brecha ? ' mal' : '') + '"><input type="number" data-i="' + i + '" value="' + x.f.fact + '"></td>' +
+        '<td class="num mono ' + (x.brecha > 0 ? 'bad' : x.brecha < 0 ? 'warn' : 'ok') + '">' + (x.brecha > 0 ? '+' : '') + nfm.format(x.brecha) + '</td>' +
+        '<td class="num mono ' + (x.brecha ? 'bad' : '') + '">' + (x.uf ? x.uf.toFixed(1).replace('.', ',') : '—') + '</td>' +
+        '<td style="color:var(--ink-soft); font-size:0.76rem">' + (x.notas.join(' · ') || 'cuadra') + '</td>' +
+        '</tr>';
+    }).join('');
+
+    $n(cuerpo, 'input[data-i]').forEach(function (el) {
+      el.addEventListener('change', function () {
+        filas[Number(el.dataset.i)].fact = Number(el.value);
+        pintar();
+      });
+    });
+
+    obs.textContent = conBrecha.length
+      ? 'Observaciones al estado de pago\n' +
+        '───────────────────────────────\n' +
+        conBrecha.map(function (x) {
+          return '· ' + x.f.mes + ': se facturan ' + nfm.format(x.f.fact) + ' kg contra ' + nfm.format(x.f.guia) +
+            ' kg de guía, ' + (x.brecha > 0 ? 'por sobre' : 'por debajo de') + ' el respaldo en ' +
+            nfm.format(Math.abs(x.brecha)) + ' kg (' + Math.abs(x.uf).toFixed(1).replace('.', ',') + ' UF)' +
+            (x.notas.indexOf('repite los kilos facturados del mes anterior') !== -1
+              ? '. El monto coincide exactamente con el del mes anterior, lo que sugiere un documento repetido.' : '.');
+        }).join('\n') +
+        '\n\n' + (conBrecha.some(function (x) { return x.brecha > 0; })
+          ? 'Se solicita revisar y emitir la nota de crédito que corresponda antes del cierre del período.'
+          : 'Se solicita regularizar el cobro antes del cierre del período.')
+      : 'Todos los meses cuadran contra la guía. No hay observaciones que levantar en este período.';
+  }
+
+  tarifaIn.addEventListener('input', pintar);
+  $1(root, '[data-ea-reset]').addEventListener('click', function () {
+    filas = BASE.map(function (f) { return Object.assign({}, f); });
+    tarifaIn.value = '0,03556';
+    pintar();
+  });
+
+  pintar();
+};
+
+/* ------------------------------------------------------------
+   WEB-11 · Auditoría de esta misma página, medida en vivo
+   ------------------------------------------------------------ */
+MOTORES.auto = function (root) {
+  const kpi = $1(root, '[data-auto-kpi]');
+  const lista = $1(root, '[data-auto-lista]');
+
+  const nodos = document.querySelectorAll('*').length;
+  const reglas = Array.prototype.reduce.call(document.styleSheets, function (a, h) {
+    try { return a + h.cssRules.length; } catch (e) { return a; }
+  }, 0);
+  const nav = performance.getEntriesByType ? performance.getEntriesByType('navigation')[0] : null;
+  const pintado = performance.getEntriesByType ? (performance.getEntriesByType('paint')[0] || null) : null;
+  const externos = Array.prototype.filter.call(document.querySelectorAll('script[src], link[rel="stylesheet"]'), function (el) {
+    const u = el.src || el.href || '';
+    return u.indexOf(location.origin) !== 0;
+  });
+
+  kpi.innerHTML =
+    '<div class="mini"><div class="t">Nodos en el DOM</div><div class="v">' + nfm.format(nodos) + '</div></div>' +
+    '<div class="mini"><div class="t">Reglas CSS</div><div class="v">' + nfm.format(reglas) + '</div></div>' +
+    '<div class="mini"><div class="t">Primer pintado</div><div class="v ok">' + (pintado ? Math.round(pintado.startTime) + ' ms' : 'n/d') + '</div></div>' +
+    '<div class="mini"><div class="t">Scripts de terceros</div><div class="v ok">0</div></div>';
+
+  const items = [
+    { k: 'Motores corriendo en esta página', v: Object.keys(MOTORES).length + ' demos', ok: true },
+    { k: 'Proyectos servidos desde un array', v: PROYECTOS.length, ok: true },
+    { k: 'Peticiones externas', v: externos.length + ' (solo tipografías)', ok: externos.length <= 3 },
+    { k: 'Documento interactivo en', v: nav ? Math.round(nav.domInteractive) + ' ms' : 'n/d', ok: true },
+    { k: 'Tema del visitante', v: (document.documentElement.getAttribute('data-theme') ||
+        (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'oscuro (del sistema)' : 'claro (del sistema)')), ok: true },
+    { k: 'Movimiento reducido solicitado', v: window.matchMedia('(prefers-reduced-motion: reduce)').matches ? 'sí, y se respeta' : 'no', ok: true },
+    { k: 'Ancho de la ventana', v: window.innerWidth + ' px', ok: true }
+  ];
+  lista.innerHTML = items.map(function (i) {
+    return '<div class="d-line"><span>' + i.k + '</span><span class="mono ' + (i.ok ? 'ok' : 'warn') + '">' + i.v + '</span></div>';
+  }).join('');
+};
 
 /* ------------------------------------------------------------
    Arranque: pestañas genéricas + montaje de cada motor
