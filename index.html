@@ -777,6 +777,133 @@ footer.foot {
 }
 footer.foot a { color: var(--ink-faint); text-decoration: none; }
 footer.foot a:hover { color: var(--accent); }
+
+/* ============================================================
+   CONTROLES DE DEMO — las demos ejecutan lógica real, así que
+   necesitan parámetros que el visitante pueda mover.
+   ============================================================ */
+.ctl-row { display: flex; flex-wrap: wrap; gap: 9px; align-items: center; }
+.ctl {
+  display: flex; align-items: center; gap: 9px;
+  font-family: var(--mono); font-size: 0.68rem; color: var(--ink-faint);
+  border: 1px solid var(--line-soft); border-radius: 8px; padding: 6px 11px; background: var(--surface);
+}
+.ctl label { text-transform: uppercase; letter-spacing: 0.08em; white-space: nowrap; }
+.ctl select, .ctl input[type="text"] {
+  font: inherit; font-family: var(--mono); font-size: 0.7rem; color: var(--ink);
+  background: var(--surface-2); border: 1px solid var(--line); border-radius: 6px; padding: 4px 7px; max-width: 190px;
+}
+.ctl output { color: var(--accent); min-width: 3.2em; text-align: right; }
+
+input[type="range"] {
+  -webkit-appearance: none; appearance: none; width: 118px; height: 3px;
+  border-radius: 999px; background: var(--line); cursor: pointer;
+}
+input[type="range"]::-webkit-slider-thumb {
+  -webkit-appearance: none; width: 13px; height: 13px; border: 0;
+  border-radius: 50%; background: var(--accent); cursor: pointer;
+}
+input[type="range"]::-moz-range-thumb {
+  width: 13px; height: 13px; border: 0; border-radius: 50%; background: var(--accent); cursor: pointer;
+}
+
+.seg { display: inline-flex; border: 1px solid var(--line); border-radius: 8px; overflow: hidden; }
+.seg button {
+  font-family: var(--mono); font-size: 0.67rem; padding: 7px 12px; cursor: pointer;
+  border: 0; background: transparent; color: var(--ink-faint); transition: all .18s var(--ease);
+}
+.seg button[aria-pressed="true"] { background: var(--accent); color: var(--paper); }
+
+.hint { font-size: 0.74rem; color: var(--ink-faint); font-style: italic; margin: 0; line-height: 1.5; }
+
+.code {
+  font-family: var(--mono); font-size: 0.69rem; line-height: 1.75; white-space: pre; overflow-x: auto;
+  background: var(--paper-deep); border: 1px solid var(--line-soft); border-radius: 8px;
+  padding: 11px 13px; color: var(--ink-soft); margin: 0;
+}
+.code b { color: var(--accent); font-weight: 500; }
+.code i { color: var(--ink-faint); }
+
+.d-table input, .d-table select {
+  font: inherit; font-family: var(--mono); font-size: 0.73rem; width: 100%; min-width: 60px;
+  background: transparent; border: 1px solid transparent; border-radius: 5px;
+  padding: 3px 5px; color: var(--ink);
+}
+.d-table input:hover, .d-table select:hover { border-color: var(--line); }
+.d-table input:focus, .d-table select:focus { border-color: var(--accent); background: var(--surface-2); outline: none; }
+.d-table td.mal { background: color-mix(in srgb, var(--bad) 15%, transparent); }
+.d-table td.num, .d-table th.num { text-align: right; font-family: var(--mono); }
+.d-table tr.sel td { background: var(--accent-soft); }
+.d-table tr[data-click] { cursor: pointer; }
+
+.d-scroll { max-height: 252px; overflow-y: auto; border: 1px solid var(--line-soft); border-radius: 8px; }
+.d-scroll .d-table th { position: sticky; top: 0; background: var(--surface); z-index: 1; }
+.d-scroll .d-table td:first-child, .d-scroll .d-table th:first-child { padding-left: 11px; }
+
+.legend { display: flex; flex-wrap: wrap; gap: 13px; font-family: var(--mono); font-size: 0.66rem; color: var(--ink-faint); }
+.legend i { display: inline-block; width: 9px; height: 9px; border-radius: 2px; margin-right: 5px; }
+
+.chart-svg { width: 100%; height: 132px; display: block; overflow: visible; }
+.chart-svg .bar { fill: var(--accent-line); cursor: pointer; transition: fill .18s var(--ease); }
+.chart-svg .bar:hover { fill: color-mix(in srgb, var(--accent) 70%, transparent); }
+.chart-svg .bar.on { fill: var(--accent); }
+.chart-svg .bar2 { fill: var(--line); pointer-events: none; }
+.chart-svg .lbl { fill: var(--ink-faint); font-family: var(--mono); font-size: 6.5px; }
+.chart-svg .val { fill: var(--ink-soft); font-family: var(--mono); font-size: 6px; }
+
+.fchips { display: flex; flex-wrap: wrap; gap: 6px; align-items: center; min-height: 24px; }
+.fchip {
+  font-family: var(--mono); font-size: 0.65rem; padding: 3px 10px; border-radius: 999px; cursor: pointer;
+  background: var(--accent-soft); border: 1px solid var(--accent-line); color: var(--accent);
+}
+.fchip::after { content: " ✕"; opacity: .55; }
+
+.plan-svg { width: 100%; height: auto; display: block; background: var(--surface); border: 1px solid var(--line-soft); border-radius: 8px; }
+.plan-svg .muro { fill: var(--line); }
+.plan-svg .sala { fill: var(--accent-soft); }
+.plan-svg .visto { fill: color-mix(in srgb, var(--accent) 14%, transparent); }
+.plan-svg .ruta { fill: none; stroke: var(--accent); stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+.plan-svg .ruta-base { fill: none; stroke: var(--ink-faint); stroke-width: 1.2; stroke-dasharray: 3 3; opacity: .7; }
+.plan-svg .poi { fill: var(--ink-faint); font-family: var(--mono); font-size: 4.2px; }
+.plan-svg .nodo-a { fill: var(--ok); } .plan-svg .nodo-b { fill: var(--accent); }
+.plan-svg .punto { fill: var(--ink-soft); }
+
+.pasos { display: grid; gap: 4px; }
+.pasos div {
+  font-size: 0.79rem; color: var(--ink-soft); padding: 6px 10px;
+  border-left: 2px solid var(--accent-line); background: var(--surface);
+}
+.pasos div b { color: var(--ink); font-weight: 500; }
+.pasos div.fin { border-left-color: var(--ok); }
+
+.mail {
+  font-family: var(--mono); font-size: 0.71rem; line-height: 1.7; white-space: pre-wrap;
+  background: var(--surface); border: 1px solid var(--line-soft); border-radius: 8px;
+  padding: 12px 14px; color: var(--ink-soft); max-height: 200px; overflow-y: auto; margin: 0;
+}
+
+.sensor { display: grid; grid-template-columns: 1fr auto auto; gap: 10px; align-items: center;
+  padding: 9px 11px; border: 1px solid var(--line-soft); border-radius: 8px; background: var(--surface); }
+.sensor .nm { font-size: 0.8rem; }
+.sensor .rg { font-family: var(--mono); font-size: 0.64rem; color: var(--ink-faint); }
+.sensor .vl { font-family: var(--mono); font-size: 0.92rem; min-width: 5.2em; text-align: right; }
+.sensor svg { width: 96px; height: 26px; }
+.sensor svg polyline { fill: none; stroke: var(--accent); stroke-width: 1.2; }
+.sensor.alarma { border-color: color-mix(in srgb, var(--bad) 45%, transparent); background: color-mix(in srgb, var(--bad) 8%, var(--surface)); }
+.sensor.alarma svg polyline { stroke: var(--bad); }
+
+.bot { display: grid; gap: 6px; padding: 9px 11px; border: 1px solid var(--line-soft); border-radius: 8px; background: var(--surface); }
+.bot .hd { display: flex; align-items: center; justify-content: space-between; gap: 10px; font-size: 0.8rem; }
+.bot .hd .mono { font-size: 0.7rem; color: var(--ink-faint); }
+
+@media (max-width: 620px) {
+  .sensor { grid-template-columns: 1fr auto; }
+  .sensor svg { display: none; }
+  .ctl select, .ctl input[type="text"] { max-width: 130px; }
+  /* Antes de amontonar cinco columnas en 390px, que la tabla scrollee. */
+  .d-scroll { overflow: auto; }
+  .d-scroll .d-table { min-width: 520px; }
+}
 </style>
 </head>
 
@@ -908,70 +1035,13 @@ footer.foot a:hover { color: var(--accent); }
       <div class="rail">
         <span class="idx">§ 02</span>
         <h2 class="rail-title">Laboratorio</h2>
-        <p class="rail-note">Dos procesos que normalmente solo se ven en un log, corriendo acá en el navegador.</p>
+        <p class="rail-note">Dos de los motores corriendo acá mismo, con la misma lógica del sistema real: el emparejador difuso y el ruteo A* sobre planta. Los otros cinco están dentro de sus fichas.</p>
       </div>
       <div class="band-body">
-        <p class="band-lead">Dale a ejecutar y mira lo que pasa <em>por dentro</em>.</p>
-        <div style="display:grid; gap:22px;">
-
-          <div class="demo" data-demo="etl">
-            <div class="demo-bar">
-              <span class="dot"></span><span class="dot"></span><span class="dot"></span>
-              <span class="demo-url">etl_master.py — consolidación difusa</span>
-            </div>
-            <div class="demo-body">
-              <div style="display:flex; justify-content:space-between; align-items:center; gap:14px; flex-wrap:wrap;">
-                <div>
-                  <div style="font-size:0.95rem; font-weight:500;">Cruzar dos fuentes que escriben los nombres distinto</div>
-                  <div style="font-size:0.8rem; color:var(--ink-faint);">Normalización con distancia de Levenshtein y umbral de revisión manual.</div>
-                </div>
-                <button class="run-btn" data-run="etl">▶ Ejecutar pipeline</button>
-              </div>
-              <div class="console" data-console>
-                <div class="ln show" style="color:var(--ink-faint)">Esperando orden de ejecución…<span class="cursor"></span></div>
-              </div>
-            </div>
-          </div>
-
-          <div class="demo" data-demo="ocr">
-            <div class="demo-bar">
-              <span class="dot"></span><span class="dot"></span><span class="dot"></span>
-              <span class="demo-url">auditor_inventario — PDF vs. maestra</span>
-            </div>
-            <div class="demo-body">
-              <div style="display:flex; justify-content:space-between; align-items:center; gap:14px; flex-wrap:wrap;">
-                <div>
-                  <div style="font-size:0.95rem; font-weight:500;">Leer el informe del auditor y cuadrarlo contra el Excel</div>
-                  <div style="font-size:0.8rem; color:var(--ink-faint);">OCR sobre el PDF, comparación celda a celda y marca de descuadres.</div>
-                </div>
-                <button class="run-btn" data-run="ocr">◎ Escanear y auditar</button>
-              </div>
-              <div class="d-compare">
-                <div class="side scan-pane">
-                  <div class="t">Informe externo (PDF)</div>
-                  <div class="scan-line" data-scan></div>
-                  <div class="pdf-mock">
-                    INFORME DE AUDITORÍA<br>
-                    ─────────────────<br>
-                    M-1010 · stock físico <mark data-pdf="1">45</mark><br>
-                    M-1015 · stock físico <mark data-pdf="2">22</mark><br>
-                    M-1020 · stock físico <mark data-pdf="3">150</mark>
-                  </div>
-                </div>
-                <div class="side">
-                  <div class="t">Maestra local (Excel)</div>
-                  <table class="d-table">
-                    <tr><th>Código</th><th>Categoría</th><th>Sistema</th><th>Estado</th></tr>
-                    <tr data-row="1"><td>M-1010</td><td>Insumos</td><td class="mono">45</td><td data-status="1">—</td></tr>
-                    <tr data-row="2"><td>M-1015</td><td>Insumos</td><td class="mono">12</td><td data-status="2">—</td></tr>
-                    <tr data-row="3"><td>M-1020</td><td>Medicam.</td><td class="mono">150</td><td data-status="3">—</td></tr>
-                  </table>
-                </div>
-              </div>
-              <p class="demo-note">Datos ficticios. El sistema real corre sobre el inventario completo y arma el borrador del correo con las diferencias.</p>
-            </div>
-          </div>
-
+        <p class="band-lead">Estas demos <em>calculan de verdad</em>: mueve un parámetro y los números se rehacen.</p>
+        <div style="display:grid; gap:26px;">
+          <div data-mount="DATA-02"></div>
+          <div data-mount="WEB-07"></div>
         </div>
       </div>
     </div>
@@ -1010,17 +1080,17 @@ footer.foot a:hover { color: var(--accent); }
       <div class="band-body">
         <div class="about">
           <div>
-            <p class="drop">Trabajo dentro de los sistemas de gestión de un hospital de alta complejidad, coordinando infraestructura que no puede fallar: agua caliente sanitaria, certificación de pabellones, equipos críticos. Ninguno de estos proyectos salió de un curso. Salieron de un martes cualquiera en que alguien necesitaba un número cuadrado antes del viernes.</p>
-            <p>Eso cambia cómo escribo software. Antes de tocar el código me siento a entender el proceso, porque la mitad de las veces el problema no es técnico: es una regla de negocio mal escrita hace años que nadie volvió a mirar. Encontrar eso vale más que cualquier framework.</p>
-            <p>Uso Python y SQL todos los días, pero mi ventaja real es que hablo los dos idiomas: el de la persona que sufre la planilla y el del sistema que la va a reemplazar.</p>
+            <p class="drop">Trabajo en el área de control y gestión de una concesionaria hospitalaria. Mi pega es tomar lo que produce la operación —camas, residuos, ropa lavada, niveles de servicio, no conformidades— y dejarlo en un estado en que se pueda auditar y decidir sobre él. Nada de eso llega ordenado: llega en planillas, en PDF escaneados y en sistemas que no se hablan entre sí.</p>
+            <p>Antes coordiné el mantenimiento de ese mismo recinto, y esa es la ventaja: conozco el proceso desde adentro. Cuando un indicador no cuadra, la mitad de las veces el problema no es técnico sino una regla de negocio escrita hace años que nadie volvió a mirar. Encontrar eso vale más que cualquier framework.</p>
+            <p>Uso Python, SQL y Power BI todos los días, pero lo que realmente me sirve es hablar los dos idiomas: el de quien sufre la planilla y el del sistema que la va a reemplazar.</p>
           </div>
           <div class="telemetry">
             <div class="telemetry-head"><span class="t">Ficha</span><span class="t">MP-01</span></div>
             <div class="telemetry-body">
+              <div class="tele-row"><span class="k">Cargo actual</span><span class="v">Analista de Procesos y Datos</span></div>
+              <div class="tele-row"><span class="k">Área</span><span class="v">Control y Gestión</span></div>
               <div class="tele-row"><span class="k">Base</span><span class="v">Ing. Automatización</span></div>
-              <div class="tele-row"><span class="k">Rol actual</span><span class="v">Coordinador de mantenimiento</span></div>
-              <div class="tele-row"><span class="k">Sector</span><span class="v">Salud pública</span></div>
-              <div class="tele-row"><span class="k">Idiomas</span><span class="v">Español · Inglés técnico</span></div>
+              <div class="tele-row"><span class="k">Sector</span><span class="v">Salud pública concesionada</span></div>
               <div class="tele-row"><span class="k">Modalidad</span><span class="v ok">Remoto o híbrido</span></div>
             </div>
           </div>
@@ -1030,14 +1100,30 @@ footer.foot a:hover { color: var(--accent); }
           <div class="exp-item">
             <div><span class="tag-label">Actualidad</span></div>
             <div>
+              <h3>Analista de Procesos y Datos</h3>
+              <div class="org">Área de Control y Gestión — concesionaria de un hospital de alta complejidad</div>
+              <p>Sigo los procesos clave del contrato de concesión y mantengo los indicadores críticos que miran la operación, la jefatura y la inspección fiscal cada mes. Buena parte de ese trabajo es el que terminé automatizando.</p>
+              <ul>
+                <li>Levantamiento y documentación de <b>procesos clave</b>, identificando cuellos de botella y desviaciones en flujos operativos y administrativos.</li>
+                <li>Reportes periódicos y ad-hoc: exigencias adicionales, campaña de invierno, <b>días cama ocupados</b> y otros compromisos contractuales.</li>
+                <li>Auditoría y actualización de los <b>reportes mensuales de inventario de camas</b>.</li>
+                <li>Indicadores por servicio concesionado (kilos de residuos por tipología, ropa lavada, aislamiento, desechables) y control de los <b>niveles de servicio</b> comprometidos.</li>
+                <li>Diseño de <b>paneles de control</b> a partir del sistema de trazabilidad, en trabajo conjunto con el área de TI.</li>
+                <li>Análisis de reclamos, no conformidades, indicadores centinela y multas, buscando patrones y causa raíz con datos.</li>
+                <li>Evidencia basada en datos y visualizaciones para <b>auditorías internas y externas</b>.</li>
+              </ul>
+            </div>
+          </div>
+          <div class="exp-item">
+            <div><span class="tag-label">Antes</span></div>
+            <div>
               <h3>Coordinador de Mantenimiento y Servicios Generales</h3>
-              <div class="org">Concesionaria — hospital de alta complejidad</div>
-              <p>Sostengo la continuidad operacional del recinto y, en paralelo, construyo las automatizaciones que hacen esa coordinación más rápida y con menos margen de error humano.</p>
+              <div class="org">Mismo recinto — continuidad operacional e infraestructura crítica</div>
+              <p>Años sosteniendo lo que no puede fallar: agua caliente sanitaria, certificación de pabellones, equipos críticos. De ahí salieron los primeros sistemas de este portafolio.</p>
               <ul>
                 <li>Supervisión de <b>sistemas BMS</b> y monitoreo de equipos industriales.</li>
-                <li>Contingencias y mantenimiento preventivo de infraestructura crítica: agua caliente sanitaria, certificación de pabellones, control de dureza y ppm.</li>
-                <li>Gestión de <b>niveles de servicio (SLA)</b> de subcontratos de mantenimiento, logística y seguridad.</li>
-                <li>Desarrollo de <b>RPA</b>, integración de datos y reportería (Power BI / Looker Studio) para el seguimiento de indicadores.</li>
+                <li>Contingencias y mantenimiento preventivo de infraestructura crítica; control de parámetros como dureza y ppm.</li>
+                <li>Gestión de <b>SLA</b> de subcontratos de mantenimiento, logística y seguridad.</li>
               </ul>
             </div>
           </div>
@@ -1160,60 +1246,62 @@ footer.foot a:hover { color: var(--accent); }
   <div class="sheet-body" id="sheetBody"></div>
 </div>
 
-<!-- ══════════════ PLANTILLAS DE DEMO ══════════════ -->
+<!-- ══════════════ PLANTILLAS DE DEMO ══════════════
+     Cada plantilla es solo el chasis: los motores de la sección 4 del
+     script llenan tablas, gráficos y planos con resultados calculados. -->
 
 <template id="tpl-OPS-01">
   <div class="demo" data-demo="panel">
     <div class="demo-bar"><span class="dot"></span><span class="dot"></span><span class="dot"></span><span class="demo-url">localhost:5100 — panel de control</span></div>
     <div class="demo-body">
       <div class="d-tabs" role="tablist">
-        <button role="tab" aria-selected="true" data-tab="bots">Bots</button>
-        <button role="tab" aria-selected="false" data-tab="monitor">Monitor</button>
-        <button role="tab" aria-selected="false" data-tab="rutas">Rutas</button>
-        <button role="tab" aria-selected="false" data-tab="excel">Excel</button>
+        <button role="tab" aria-selected="true" data-tab="bots">Cola de bots</button>
+        <button role="tab" aria-selected="false" data-tab="monitor">Monitor BMS</button>
+        <button role="tab" aria-selected="false" data-tab="rutas">Optimizador</button>
         <button role="tab" aria-selected="false" data-tab="ia">Asistente IA</button>
       </div>
+
       <div class="d-panel active" data-panel="bots">
-        <div class="mini-row">
-          <div class="mini"><div class="t">Activos</div><div class="v">3</div></div>
-          <div class="mini"><div class="t">Hoy OK</div><div class="v ok">12</div></div>
-          <div class="mini"><div class="t">Con error</div><div class="v bad">2</div></div>
+        <div class="ctl-row">
+          <button class="run-btn" data-bot-add>+ Encolar tarea</button>
+          <div class="ctl">
+            <label>Concurrencia</label>
+            <input type="range" min="1" max="4" value="2" data-bot-conc aria-label="Concurrencia">
+            <output data-bot-conc-out>2</output>
+          </div>
+          <button class="run-btn" data-bot-reset>↺ Vaciar cola</button>
         </div>
-        <div class="d-line"><span>Bot «Consolidado A»</span><span class="badge ok">completado · 00:42</span></div>
-        <div class="d-line"><span>Bot «Reporte B»</span><span class="badge warn">corriendo · 62%</span></div>
-        <div class="d-progress"><i style="width:62%"></i></div>
+        <p class="hint">Planificador real: cada tarea avanza según su duración, la concurrencia limita cuántas corren a la vez y una de cada cuatro falla a mitad de camino para que se vea el manejo de error.</p>
+        <div class="mini-row" data-bot-kpi></div>
+        <div style="display:grid; gap:8px;" data-bot-list></div>
+        <div class="console" data-bot-log style="height:132px"></div>
       </div>
+
       <div class="d-panel" data-panel="monitor">
-        <div class="mini-row">
-          <div class="mini"><div class="t">Equipos OK</div><div class="v ok">21</div></div>
-          <div class="mini"><div class="t">Por revisar</div><div class="v warn">1</div></div>
-        </div>
-        <div class="d-line"><span>Bomba agua caliente — Torre A</span><span class="badge ok">normal</span></div>
-        <div class="d-line"><span>Grupo electrógeno de respaldo</span><span class="badge ok">normal</span></div>
-        <div class="d-line"><span>Caldera pabellón 3</span><span class="badge warn">revisar ppm</span></div>
+        <p class="hint">Los valores se recalculan cada 1,2 s con un paseo acotado y se comparan contra el rango de cada equipo. La alarma no está escrita en el HTML: se dispara sola cuando el valor sale de rango.</p>
+        <div style="display:grid; gap:7px;" data-sensores></div>
+        <div class="console" data-sensor-log style="height:96px"></div>
       </div>
+
       <div class="d-panel" data-panel="rutas">
-        <div class="d-compare">
-          <div class="side"><div class="t">Ronda actual</div><div class="row">Zona B — aseo<span class="mono">3.0 h</span></div><div class="row">Zona C — retiro<span class="mono">2.2 h</span></div></div>
-          <div class="side"><div class="t">Ruta sugerida</div><div class="row diff">Zona B — aseo<span class="mono">1.5 h</span></div><div class="row diff">Zona C — retiro<span class="mono">1.4 h</span></div></div>
+        <div class="ctl-row">
+          <button class="run-btn" data-ruta-opt>▶ Optimizar recorrido</button>
+          <span class="legend">
+            <span><i style="background:var(--ink-faint)"></i>orden de la planilla</span>
+            <span><i style="background:var(--accent)"></i>ruta calculada</span>
+          </span>
         </div>
-        <div class="d-line"><span>Ahorro estimado por turno</span><span class="ok mono">2.3 h</span></div>
+        <svg class="plan-svg" viewBox="0 0 200 108" data-ruta-svg role="img" aria-label="Recorrido de la ronda por las zonas del recinto"></svg>
+        <div class="mini-row" data-ruta-kpi></div>
+        <p class="hint">Vecino más cercano sobre las distancias reales entre zonas. El ahorro que aparece no está escrito: sale de restar los dos recorridos.</p>
       </div>
-      <div class="d-panel" data-panel="excel">
-        <table class="d-table">
-          <tr><th>Fila</th><th>Regla validada</th><th>Estado</th></tr>
-          <tr class="hit"><td class="mono">142</td><td>Categoría asignada</td><td class="ok">OK</td></tr>
-          <tr class="miss"><td class="mono">187</td><td>Stock ≥ 0</td><td class="bad">Error</td></tr>
-          <tr class="hit"><td class="mono">203</td><td>Zona existe en maestra</td><td class="ok">OK</td></tr>
-        </table>
-      </div>
+
       <div class="d-panel" data-panel="ia">
         <div class="d-chat" data-chat>
           <div class="msg"><div class="avatar">IA</div><div class="bubble">Demo en vivo, conectada de verdad. Tengo cargados tres documentos ficticios: un contrato de mantenimiento preventivo, un SLA de aseo y un acta de recepción de obra. Pregúntame, por ejemplo, cuánto dura la garantía del ascensor.</div></div>
         </div>
         <div class="d-chat-input">
-          <label class="sr-only" for="chatInput">Tu pregunta al asistente</label>
-          <input type="text" id="chatInput" data-chat-input placeholder="Escribe tu pregunta…" maxlength="220">
+          <input type="text" data-chat-input aria-label="Tu pregunta al asistente" placeholder="Escribe tu pregunta…" maxlength="220">
           <button class="run-btn" type="button" data-chat-send>Enviar</button>
         </div>
         <p class="demo-note">Corre sobre un Worker de Cloudflare con límite de uso. Si no responde, es el rate-limit, no el código.</p>
@@ -1223,128 +1311,125 @@ footer.foot a:hover { color: var(--accent); }
 </template>
 
 <template id="tpl-DATA-02">
-  <div class="demo" data-demo="pipeline">
-    <div class="demo-bar"><span class="dot"></span><span class="dot"></span><span class="dot"></span><span class="demo-url">localhost:5000 — consolidación</span></div>
+  <div class="demo" data-demo="fuzzy">
+    <div class="demo-bar"><span class="dot"></span><span class="dot"></span><span class="dot"></span><span class="demo-url">motor de emparejamiento difuso — etl_master.py</span></div>
     <div class="demo-body">
-      <div class="d-file"><span class="ico">A</span><span>solicitudes_origen_A.xlsx</span><span class="size">4.2 MB</span></div>
-      <div class="d-file"><span class="ico">B</span><span>solicitudes_origen_B.csv</span><span class="size">1.8 MB</span></div>
-      <button class="run-btn" data-run="steps" style="justify-self:start">▶ Ejecutar</button>
-      <div class="d-steps">
-        <div class="d-step">1 · Cargar planilla origen A</div>
-        <div class="d-step">2 · Cargar planilla origen B</div>
-        <div class="d-step">3 · Normalizar nombres (fuzzy match)</div>
-        <div class="d-step">4 · Clasificar estado y exportar</div>
+      <p class="hint">Esto no es una animación: el navegador normaliza cada nombre y calcula la distancia de Levenshtein contra los diez candidatos de la otra fuente. Mueve el umbral y mira cómo se reclasifican las filas.</p>
+      <div class="ctl-row">
+        <div class="ctl">
+          <label>Umbral</label>
+          <input type="range" min="50" max="98" value="70" data-umbral aria-label="Umbral de similitud">
+          <output data-umbral-out>70%</output>
+        </div>
+        <button class="run-btn" data-fuzzy-run>▶ Correr el motor</button>
       </div>
-      <div class="d-progress"><i data-fill></i></div>
-      <table class="d-table">
-        <tr><th>Registro</th><th>Origen</th><th>Similitud</th><th>Estado</th></tr>
-        <tr><td class="mono">Registro-0142</td><td>A</td><td class="mono">94%</td><td data-cell="1">—</td></tr>
-        <tr><td class="mono">Registro-0143</td><td>B</td><td class="mono">61%</td><td data-cell="2">—</td></tr>
-      </table>
+      <div class="mini-row" data-fuzzy-kpi></div>
+      <div class="d-scroll">
+        <table class="d-table">
+          <thead><tr><th>Fuente A</th><th>Texto normalizado</th><th>Mejor candidato en B</th><th class="num">Similitud</th><th>Decisión</th></tr></thead>
+          <tbody data-fuzzy-body></tbody>
+        </table>
+      </div>
+      <div class="ctl-row">
+        <div class="ctl" style="flex:1">
+          <label>Prueba tú</label>
+          <input type="text" data-fuzzy-input aria-label="Nombre para probar contra la fuente B" placeholder="escribe un nombre como venga" style="flex:1; max-width:none">
+        </div>
+      </div>
+      <div class="d-line" data-fuzzy-libre><span>Escribe algo arriba y se compara al instante contra la fuente B.</span></div>
+      <div class="console" data-fuzzy-log style="height:118px"></div>
     </div>
   </div>
 </template>
 
 <template id="tpl-BI-03">
-  <div class="demo">
-    <div class="demo-bar"><span class="dot"></span><span class="dot"></span><span class="dot"></span><span class="demo-url">Resumen ejecutivo — Power BI</span></div>
+  <div class="demo" data-demo="bi">
+    <div class="demo-bar"><span class="dot"></span><span class="dot"></span><span class="dot"></span><span class="demo-url">resumen ejecutivo — modelo semántico</span></div>
     <div class="demo-body">
-      <div class="d-tabs" role="tablist">
-        <button role="tab" aria-selected="true" data-tab="resumen">Resumen</button>
-        <button role="tab" aria-selected="false" data-tab="detalle">Detalle</button>
+      <p class="hint">Modelo de 24 filas con las medidas recalculándose en vivo. Haz clic en un mes del gráfico o en una unidad de la tabla: todo lo demás se filtra, igual que el cross-filtering del informe real.</p>
+      <div class="fchips" data-bi-chips><span class="hint">Sin filtros — mostrando el total.</span></div>
+      <div style="display:flex; gap:14px; align-items:center; flex-wrap:wrap;">
+        <div class="d-donut" data-bi-donut style="--pct:0%"><div class="hole" data-bi-nsp>—</div></div>
+        <div class="mini-row" style="flex:1; min-width:190px;" data-bi-kpi></div>
       </div>
-      <div class="d-panel active" data-panel="resumen">
-        <div style="display:flex; gap:14px; align-items:center; flex-wrap:wrap;">
-          <div class="d-donut" style="--pct:86%"><div class="hole">86%</div></div>
-          <div class="mini-row" style="flex:1; min-width:180px;">
-            <div class="mini"><div class="t">Programados</div><div class="v">1.248</div></div>
-            <div class="mini"><div class="t">Pendientes</div><div class="v warn">174</div></div>
-            <div class="mini"><div class="t">Fuera de plazo</div><div class="v bad">31</div></div>
-          </div>
-        </div>
-        <div class="d-chart">
-          <div class="col" style="height:40%"></div><div class="col" style="height:70%"></div>
-          <div class="col" style="height:55%"></div><div class="col hi" style="height:92%"></div>
-          <div class="col" style="height:30%"></div><div class="col" style="height:64%"></div>
-        </div>
-        <div class="d-axis"><span>Ene</span><span>Feb</span><span>Mar</span><span>Abr</span><span>May</span><span>Jun</span></div>
-      </div>
-      <div class="d-panel" data-panel="detalle">
-        <table class="d-table">
-          <tr><th>Unidad</th><th>Programados</th><th>Cumplidos</th><th>NSP</th></tr>
-          <tr><td>Torre A</td><td class="mono">412</td><td class="mono">389</td><td class="ok mono">94%</td></tr>
-          <tr><td>Torre B</td><td class="mono">386</td><td class="mono">301</td><td class="warn mono">78%</td></tr>
-          <tr><td>Subterráneo</td><td class="mono">450</td><td class="mono">418</td><td class="ok mono">93%</td></tr>
-        </table>
-      </div>
+      <svg class="chart-svg" viewBox="0 0 200 96" data-bi-chart role="img" aria-label="Cumplimiento por mes"></svg>
+      <table class="d-table">
+        <thead><tr><th>Unidad</th><th class="num">Programados</th><th class="num">Cumplidos</th><th class="num">Fuera de plazo</th><th class="num">NSP</th></tr></thead>
+        <tbody data-bi-body></tbody>
+      </table>
+      <pre class="code" data-bi-code></pre>
     </div>
   </div>
 </template>
 
 <template id="tpl-OPS-04">
   <div class="demo" data-demo="auditoria">
-    <div class="demo-bar"><span class="dot"></span><span class="dot"></span><span class="dot"></span><span class="demo-url">localhost:5300 — auditoría de inventario</span></div>
+    <div class="demo-bar"><span class="dot"></span><span class="dot"></span><span class="dot"></span><span class="demo-url">localhost:5300 — validador de inventario</span></div>
     <div class="demo-body">
-      <button class="run-btn" data-run="auditoria" style="justify-self:start">▶ Recorrer auditoría</button>
-      <div class="d-tabs" role="tablist">
-        <button role="tab" aria-selected="true" data-tab="validar">Validar Excel</button>
-        <button role="tab" aria-selected="false" data-tab="comparar">Comparar PDF</button>
-        <button role="tab" aria-selected="false" data-tab="historico">Histórico</button>
+      <p class="hint">La tabla es editable. Cambia una categoría o un stock y el motor de reglas revalida al instante, recalcula los totales por zona y rehace el correo al auditor con las diferencias que existan en ese momento.</p>
+      <div class="ctl-row">
+        <button class="run-btn" data-aud-fix>⚙ Reparar automáticamente</button>
+        <button class="run-btn" data-aud-reset>↺ Volver al estado original</button>
       </div>
-      <div class="d-panel active" data-panel="validar">
-        <div class="d-checklist">
-          <div><span class="ok">✓</span><span>Stock total cuadra con la hoja maestra</span></div>
-          <div><span class="bad">✕</span><span>Zona A: 3 filas sin categoría asignada</span></div>
-          <div><span class="ok">✓</span><span>Fórmula de categoría viva contra la base maestra</span></div>
+      <div class="d-scroll">
+        <table class="d-table">
+          <thead><tr><th>Código</th><th>Categoría</th><th>Zona declarada</th><th>Zona según catálogo</th><th class="num">Stock</th></tr></thead>
+          <tbody data-aud-body></tbody>
+        </table>
+      </div>
+      <div style="display:grid; gap:8px;" data-aud-reglas></div>
+      <div class="d-compare">
+        <div class="side">
+          <div class="t">Cálculo en vivo</div>
+          <div data-aud-vivo></div>
+        </div>
+        <div class="side">
+          <div class="t">Informe del auditor (OCR)</div>
+          <div data-aud-pdf></div>
         </div>
       </div>
-      <div class="d-panel" data-panel="comparar">
-        <div class="d-compare">
-          <div class="side"><div class="t">Excel operativo</div><div class="row">Zona A<span class="mono">420</span></div><div class="row diff">Zona B<span class="mono">318</span></div></div>
-          <div class="side"><div class="t">Informe auditor (OCR)</div><div class="row">Zona A<span class="mono">420</span></div><div class="row diff">Zona B<span class="mono">311</span></div></div>
-        </div>
-        <div class="d-line"><span>Diferencia detectada</span><span class="warn mono">7 unidades — Zona B</span></div>
-      </div>
-      <div class="d-panel" data-panel="historico">
-        <div class="d-timeline">
-          <div class="tl-item ok"><div class="tl-date">Junio</div><div class="tl-body">0 diferencias — conciliado</div></div>
-          <div class="tl-item warn"><div class="tl-date">Mayo</div><div class="tl-body">7 diferencias — Zona B revisada</div></div>
-          <div class="tl-item ok"><div class="tl-date">Abril</div><div class="tl-body">0 diferencias — conciliado</div></div>
-        </div>
+      <div>
+        <div class="t" style="font-family:var(--mono); font-size:0.64rem; text-transform:uppercase; letter-spacing:0.1em; color:var(--ink-faint); margin-bottom:7px;">Borrador de correo generado</div>
+        <pre class="mail" data-aud-mail></pre>
       </div>
     </div>
   </div>
 </template>
 
 <template id="tpl-DATA-05">
-  <div class="demo">
-    <div class="demo-bar"><span class="dot"></span><span class="dot"></span><span class="dot"></span><span class="demo-url">SQL Server Agent — jobs nocturnos</span></div>
+  <div class="demo" data-demo="sql">
+    <div class="demo-bar"><span class="dot"></span><span class="dot"></span><span class="dot"></span><span class="demo-url">SQL Server — lógica de clasificación</span></div>
     <div class="demo-body">
-      <table class="d-table">
-        <tr><th>Job</th><th>Corrida</th><th>Duración</th><th>Estado</th></tr>
-        <tr><td class="mono">Tablas_Trabajo</td><td class="mono">03:56</td><td class="mono">4m 12s</td><td><span class="badge ok">OK</span></td></tr>
-        <tr><td class="mono">Reconstruye_Idx</td><td class="mono">04:20</td><td class="mono">11m 03s</td><td><span class="badge ok">OK</span></td></tr>
-        <tr><td class="mono">Restaura_Backup</td><td class="mono">05:10</td><td class="mono">—</td><td><span class="badge warn">deshabilitado</span></td></tr>
-      </table>
-      <div class="d-compare">
-        <div class="side"><div class="t">Clasificación antes</div><div class="row diff">Sin gestión<span class="mono">1.402</span></div></div>
-        <div class="side"><div class="t">Clasificación después</div><div class="row">Sin previsión<span class="mono">618</span></div><div class="row">Con previsión, sin OT<span class="mono">641</span></div><div class="row">Fuera de alcance<span class="mono">143</span></div></div>
+      <p class="hint">Los mismos 48 equipos pasan por las dos versiones del <code>CASE</code>. Cambia de lógica y mira cómo se mueven las cifras: no hay dos conjuntos de datos, hay dos formas de clasificar el mismo.</p>
+      <div class="ctl-row">
+        <div class="seg" role="group" aria-label="Versión de la lógica">
+          <button type="button" data-sql="viejo" aria-pressed="true">Lógica original</button>
+          <button type="button" data-sql="nuevo" aria-pressed="false">Lógica corregida</button>
+        </div>
       </div>
-      <p class="demo-note">Una sola categoría escondía tres situaciones distintas. Separarlas cambió las cifras que veía la jefatura.</p>
+      <div class="mini-row" data-sql-kpi></div>
+      <svg class="chart-svg" viewBox="0 0 200 84" data-sql-chart role="img" aria-label="Equipos por categoría"></svg>
+      <pre class="code" data-sql-code></pre>
+      <div class="d-line"><span>Total anual reportado — <span class="mono">COUNT(servicio)</span></span><span class="bad mono" data-sql-inflado>—</span></div>
+      <div class="d-line"><span>Total real — <span class="mono">COUNT(DISTINCT equipo_id)</span></span><span class="ok mono" data-sql-real>—</span></div>
+      <p class="hint" data-sql-nota></p>
     </div>
   </div>
 </template>
 
 <template id="tpl-AI-06">
-  <div class="demo">
-    <div class="demo-bar"><span class="dot"></span><span class="dot"></span><span class="dot"></span><span class="demo-url">asistente local — terminal</span></div>
+  <div class="demo" data-demo="agente">
+    <div class="demo-bar"><span class="dot"></span><span class="dot"></span><span class="dot"></span><span class="demo-url">asistente local — sesión con herramientas</span></div>
     <div class="demo-body">
-      <div class="d-chat">
-        <div class="msg user"><div class="avatar">M</div><div class="bubble">revisa el excel de stock y dime si hay filas duplicadas</div></div>
-        <div class="msg"><div class="avatar">IA</div><div class="bubble">Leí <code>stock_enero.xlsx</code>. Hay 3 filas duplicadas en la hoja «Enero» (12, 45 y 88), todas con el mismo código y distinta fecha de carga. ¿Las elimino dejando la más reciente?</div></div>
-        <div class="msg user"><div class="avatar">M</div><div class="bubble">sí, y déjame el respaldo</div></div>
-        <div class="msg"><div class="avatar">IA</div><div class="bubble">Listo. Copia en <code>stock_enero.bak.xlsx</code> y 3 filas eliminadas. El total pasó de 1.204 a 1.201 registros.</div></div>
+      <p class="hint">El agente no responde con texto guardado: ejecuta la herramienta sobre la tabla de abajo y reporta lo que encontró. Si eliminas duplicados, desaparecen de verdad.</p>
+      <div class="ctl-row" data-ag-cmds></div>
+      <div class="d-scroll" style="max-height:190px">
+        <table class="d-table">
+          <thead><tr><th>#</th><th>Código</th><th>Hoja</th><th class="num">Cantidad</th><th>Cargado</th></tr></thead>
+          <tbody data-ag-body></tbody>
+        </table>
       </div>
+      <div class="console" data-ag-log style="height:150px"></div>
       <div class="d-line"><span>Modelo principal</span><span class="badge ok">API en la nube, plan gratuito</span></div>
       <div class="d-line"><span>Respaldo sin conexión</span><span class="badge ok">Ollama local</span></div>
     </div>
@@ -1352,60 +1437,19 @@ footer.foot a:hover { color: var(--accent); }
 </template>
 
 <template id="tpl-WEB-07">
-  <div class="demo" data-demo="visor">
+  <div class="demo" data-demo="ruta">
     <div class="demo-bar"><span class="dot"></span><span class="dot"></span><span class="dot"></span><span class="demo-url">visor de planos — cómo llegar</span></div>
     <div class="demo-body">
-      <button class="run-btn" data-run="visor" style="justify-self:start">▶ Trazar ruta del piso</button>
-      <div class="d-tabs" role="tablist">
-        <button role="tab" aria-selected="false" data-tab="sub1">SUB-1</button>
-        <button role="tab" aria-selected="true" data-tab="p1">Piso 1</button>
-        <button role="tab" aria-selected="false" data-tab="p3">Piso 3</button>
-        <button role="tab" aria-selected="false" data-tab="p11">Piso 11</button>
+      <p class="hint">A* de verdad sobre la grilla del piso: elige origen y destino y el navegador explora los nodos, arma el camino más corto que respeta los muros y traduce el trazo a indicaciones habladas.</p>
+      <div class="ctl-row">
+        <div class="ctl"><label>Desde</label><select data-ruta-a aria-label="Punto de origen"></select></div>
+        <div class="ctl"><label>Hasta</label><select data-ruta-b aria-label="Punto de destino"></select></div>
+        <button class="run-btn" data-ruta-go>▶ Calcular ruta</button>
+        <div class="ctl"><label>Ver nodos explorados</label><input type="checkbox" data-ruta-nodos aria-label="Ver nodos explorados"></div>
       </div>
-      <div class="d-panel" data-panel="sub1">
-        <svg class="d-plan" viewBox="0 0 120 60" role="img" aria-label="Plano del subterráneo con la ruta trazada">
-          <rect class="room" x="5" y="10" width="30" height="40" rx="2"/><text class="room-label" x="20" y="20" font-size="5" text-anchor="middle">Acceso</text>
-          <rect class="room" x="85" y="10" width="30" height="40" rx="2"/><text class="room-label" x="100" y="20" font-size="4.4" text-anchor="middle">Sala máq.</text>
-          <path class="route" d="M20,30 L100,30"/><circle class="pin-start" cx="20" cy="30" r="3"/><circle class="pin-end" cx="100" cy="30" r="3"/>
-        </svg>
-        <div class="d-steps"><div class="d-step">Origen — acceso subterráneo</div><div class="d-step">Camina hasta la sala de máquinas</div></div>
-        <div class="d-line"><span>Puertas reconocidas en el piso</span><span class="ok mono">96</span></div>
-      </div>
-      <div class="d-panel active" data-panel="p1">
-        <svg class="d-plan" viewBox="0 0 120 60" role="img" aria-label="Plano del piso 1 con la ruta trazada">
-          <rect class="room" x="5" y="10" width="28" height="40" rx="2"/><text class="room-label" x="19" y="20" font-size="4.2" text-anchor="middle">Recepción</text>
-          <rect class="room" x="95" y="20" width="20" height="20" rx="2"/><text class="room-label" x="105" y="28" font-size="5" text-anchor="middle">Asc.</text>
-          <path class="route" d="M19,30 L105,30"/><circle class="pin-start" cx="19" cy="30" r="3"/><circle class="pin-end" cx="105" cy="30" r="3"/>
-        </svg>
-        <div class="d-steps">
-          <div class="d-step">Origen — recepción, torre A</div>
-          <div class="d-step">Sigue el pasillo público hasta el ascensor</div>
-          <div class="d-step">Sube al piso 3 · destino: toma de muestras</div>
-        </div>
-        <div class="d-line"><span>Puertas reconocidas en el piso</span><span class="ok mono">487</span></div>
-      </div>
-      <div class="d-panel" data-panel="p3">
-        <svg class="d-plan" viewBox="0 0 120 60" role="img" aria-label="Plano del piso 3 con la ruta trazada">
-          <rect class="room" x="5" y="15" width="20" height="30" rx="2"/><text class="room-label" x="15" y="25" font-size="5" text-anchor="middle">Asc.</text>
-          <rect class="room" x="90" y="2" width="28" height="28" rx="2"/><text class="room-label" x="104" y="12" font-size="5" text-anchor="middle">Box 4</text>
-          <path class="route" d="M15,30 L70,30 L70,16 L104,16"/><circle class="pin-start" cx="15" cy="30" r="3"/><circle class="pin-end" cx="104" cy="16" r="3"/>
-        </svg>
-        <div class="d-steps">
-          <div class="d-step">Bajas del ascensor — piso 3</div>
-          <div class="d-step">Camina 12 metros a la izquierda</div>
-          <div class="d-step">Llegaste — toma de muestras, box 4</div>
-        </div>
-        <div class="d-line"><span>Puertas reconocidas en el piso</span><span class="ok mono">312</span></div>
-      </div>
-      <div class="d-panel" data-panel="p11">
-        <svg class="d-plan" viewBox="0 0 120 60" role="img" aria-label="Plano del piso 11 con la ruta trazada">
-          <rect class="room" x="5" y="15" width="20" height="30" rx="2"/><text class="room-label" x="15" y="25" font-size="4.2" text-anchor="middle">Asc. B</text>
-          <rect class="room" x="90" y="15" width="28" height="30" rx="2"/><text class="room-label" x="104" y="25" font-size="4.6" text-anchor="middle">Terraza</text>
-          <path class="route" d="M15,30 L104,30"/><circle class="pin-start" cx="15" cy="30" r="3"/><circle class="pin-end" cx="104" cy="30" r="3"/>
-        </svg>
-        <div class="d-steps"><div class="d-step">Origen — ascensor torre B</div><div class="d-step">Llegaste — terraza técnica</div></div>
-        <div class="d-line"><span>Puertas reconocidas en el piso</span><span class="ok mono">54</span></div>
-      </div>
+      <svg class="plan-svg" viewBox="0 0 198 90" data-ruta-plan role="img" aria-label="Planta del piso con la ruta calculada"></svg>
+      <div class="mini-row" data-ruta-kpis></div>
+      <div class="pasos" data-ruta-pasos></div>
     </div>
   </div>
 </template>
@@ -1654,6 +1698,7 @@ function abrirFicha(p, origen) {
     sheet.classList.remove('open');
     backdrop.classList.remove('open');
     document.body.style.overflow = '';
+    limpiarDemos();
     document.getElementById('sheetBody').innerHTML = '';
     if (ultimoFoco) ultimoFoco.focus();
   }
@@ -1674,225 +1719,1165 @@ function abrirFicha(p, origen) {
 })();
 
 /* ============================================================
-   4. DEMOS — se inicializan sobre cualquier contenedor (scope),
-      porque las plantillas se clonan al abrir cada ficha.
+   4. MOTORES DE DEMO
+   Cada demo ejecuta la lógica real del proyecto sobre datos
+   ficticios: Levenshtein, A*, agregaciones con cross-filtering,
+   un motor de reglas y un planificador de tareas. Nada de los
+   números que se ven está escrito a mano — todos se calculan.
+   Se montan sobre cualquier scope porque las plantillas se
+   clonan tanto en el laboratorio como al abrir cada ficha.
    ============================================================ */
-function initDemos(scope) {
-  const root = scope || document;
+const MOTORES = {};
+const LIMPIEZAS = [];
 
-  // Pestañas genéricas
-  root.querySelectorAll('.d-tabs').forEach(function (tabs) {
-    const demo = tabs.closest('.demo');
-    tabs.querySelectorAll('[data-tab]').forEach(function (btn) {
-      btn.addEventListener('click', function () { activarTab(demo, btn.dataset.tab); });
-    });
-  });
-
-  // Pipeline por etapas
-  root.querySelectorAll('[data-run="steps"]').forEach(function (btn) {
-    const demo = btn.closest('.demo');
-    const steps = Array.from(demo.querySelectorAll('.d-step'));
-    const fill = demo.querySelector('[data-fill]');
-    const c1 = demo.querySelector('[data-cell="1"]');
-    const c2 = demo.querySelector('[data-cell="2"]');
-    btn.addEventListener('click', function () {
-      btn.disabled = true;
-      steps.forEach(function (s) { s.classList.remove('active', 'done'); });
-      if (c1) { c1.textContent = '—'; c1.className = ''; }
-      if (c2) { c2.textContent = '—'; c2.className = ''; }
-      let i = 0;
-      (function tick() {
-        if (i > 0) {
-          steps[i - 1].classList.replace('active', 'done');
-          if (fill) fill.style.width = (i * (100 / steps.length)) + '%';
-          if (i === 3 && c1) { c1.textContent = 'Cruzado'; c1.className = 'ok mono'; }
-          if (i === 4 && c2) { c2.textContent = 'A revisión'; c2.className = 'warn mono'; }
-        }
-        if (i >= steps.length) { btn.disabled = false; btn.textContent = '↺ Ejecutar de nuevo'; return; }
-        steps[i].classList.add('active');
-        i++;
-        setTimeout(tick, 620);
-      })();
-    });
-  });
-
-  // Recorrido de la auditoría
-  root.querySelectorAll('[data-run="auditoria"]').forEach(function (btn) {
-    const demo = btn.closest('.demo');
-    const orden = ['validar', 'comparar', 'historico'];
-    btn.addEventListener('click', function () {
-      btn.disabled = true;
-      let i = 0;
-      (function tick() {
-        activarTab(demo, orden[i]);
-        i++;
-        if (i >= orden.length) { btn.disabled = false; return; }
-        setTimeout(tick, 950);
-      })();
-    });
-  });
-
-  // Trazado de ruta del visor de planos
-  root.querySelectorAll('[data-run="visor"]').forEach(function (btn) {
-    const demo = btn.closest('.demo');
-    btn.addEventListener('click', function () {
-      const panel = demo.querySelector('.d-panel.active');
-      const ruta = panel.querySelector('.route');
-      if (ruta) { ruta.style.animation = 'none'; void ruta.getBBox(); ruta.style.animation = ''; }
-      const steps = Array.from(panel.querySelectorAll('.d-step'));
-      steps.forEach(function (s) { s.classList.remove('active', 'done'); });
-      btn.disabled = true;
-      let i = 0;
-      (function tick() {
-        if (i > 0) steps[i - 1].classList.replace('active', 'done');
-        if (i >= steps.length) { btn.disabled = false; return; }
-        steps[i].classList.add('active');
-        i++;
-        setTimeout(tick, 700);
-      })();
-    });
-  });
-
-  // Consola del ETL
-  root.querySelectorAll('[data-run="etl"]').forEach(function (btn) {
-    const demo = btn.closest('.demo');
-    const out = demo.querySelector('[data-console]');
-    const logs = [
-      { t: 'iniciando etl_master.py', c: 'info', d: 250 },
-      { t: '[extract] conectando a la API de origen…', c: '', d: 700 },
-      { t: '[extract] 4.521 registros obtenidos', c: 'ok', d: 850 },
-      { t: '[extract] leyendo archivo plano db_local.csv', c: '', d: 700 },
-      { t: '[transform] motor de similitud activo (Levenshtein)', c: 'info', d: 600 },
-      { t: '  «HOSPITAL S. JUAN DE DIOS» ≈ «Hosp. San Juan de Dios» → 89%', c: '', d: 900 },
-      { t: '  «CESFAM PEDRO AGUIRRE» ≈ «C.S.F. P. Aguirre Cerda» → 82%', c: '', d: 850 },
-      { t: '[warn] 14 registros bajo el umbral de 70% → revisión manual', c: 'warn', d: 1100 },
-      { t: '[load] escribiendo en la tabla de reporting…', c: '', d: 700 },
-      { t: 'ejecución completa · 4.2 s · 0 errores', c: 'ok', d: 450 }
-    ];
-    btn.addEventListener('click', async function () {
-      btn.disabled = true;
-      out.innerHTML = '';
-      for (const log of logs) {
-        await new Promise(function (r) { setTimeout(r, log.d); });
-        const ln = document.createElement('div');
-        ln.className = 'ln ' + log.c;
-        const hora = new Date().toLocaleTimeString('es-CL', { hour12: false });
-        ln.innerHTML = '<span class="tm">' + hora + '</span>  ' + log.t;
-        out.appendChild(ln);
-        requestAnimationFrame(function () { ln.classList.add('show'); out.scrollTop = out.scrollHeight; });
-      }
-      btn.disabled = false;
-      btn.textContent = '↺ Ejecutar de nuevo';
-    });
-  });
-
-  // Auditor con OCR
-  root.querySelectorAll('[data-run="ocr"]').forEach(function (btn) {
-    const demo = btn.closest('.demo');
-    const scan = demo.querySelector('[data-scan]');
-    const espera = function (ms) { return new Promise(function (r) { setTimeout(r, ms); }); };
-    btn.addEventListener('click', async function () {
-      btn.disabled = true;
-      demo.querySelectorAll('[data-row]').forEach(function (tr) { tr.className = ''; });
-      demo.querySelectorAll('[data-status]').forEach(function (td) { td.textContent = '—'; td.className = ''; });
-      demo.querySelectorAll('[data-pdf]').forEach(function (m) { m.classList.remove('lit'); });
-
-      scan.classList.remove('on'); void scan.offsetWidth; scan.classList.add('on');
-      await espera(1900);
-      scan.classList.remove('on');
-
-      const filas = [
-        { i: 1, ok: true,  txt: 'cuadra' },
-        { i: 2, ok: false, txt: 'descuadre −10' },
-        { i: 3, ok: true,  txt: 'cuadra' }
-      ];
-      for (const f of filas) {
-        demo.querySelector('[data-pdf="' + f.i + '"]').classList.add('lit');
-        await espera(520);
-        demo.querySelector('[data-row="' + f.i + '"]').className = f.ok ? 'hit' : 'miss';
-        const td = demo.querySelector('[data-status="' + f.i + '"]');
-        td.textContent = f.txt;
-        td.className = f.ok ? 'ok mono' : 'bad mono';
-        await espera(420);
-      }
-      btn.disabled = false;
-      btn.textContent = '↺ Auditar de nuevo';
-    });
-  });
-
-  // Asistente conectado a un Worker de Cloudflare (demo real, con rate-limit propio)
-  root.querySelectorAll('[data-chat]').forEach(function (chat) {
-    const cont = chat.closest('.d-panel') || chat.closest('.demo');
-    const input = cont.querySelector('[data-chat-input]');
-    const send = cont.querySelector('[data-chat-send]');
-    if (!input || !send) return;
-    const WORKER = 'https://asistente-legal-demo.marcelopoblete16.workers.dev';
-
-    function sesion() {
-      try {
-        let id = localStorage.getItem('asistenteSession');
-        if (!id) { id = (crypto.randomUUID ? crypto.randomUUID() : String(Date.now())); localStorage.setItem('asistenteSession', id); }
-        return id;
-      } catch (e) { return 'anon'; }
-    }
-
-    function burbuja(texto, esUsuario, extra) {
-      const msg = document.createElement('div');
-      msg.className = 'msg' + (esUsuario ? ' user' : '');
-      const av = document.createElement('div');
-      av.className = 'avatar'; av.textContent = esUsuario ? 'Tú' : 'IA';
-      const b = document.createElement('div');
-      b.className = 'bubble' + (extra ? ' ' + extra : '');
-      b.textContent = texto;
-      msg.appendChild(av); msg.appendChild(b);
-      chat.appendChild(msg);
-      chat.scrollTop = chat.scrollHeight;
-      return b;
-    }
-
-    function enviar() {
-      const texto = input.value.trim();
-      if (!texto) return;
-      burbuja(texto, true);
-      input.value = '';
-      input.disabled = true; send.disabled = true;
-      const pend = burbuja('Escribiendo…', false, 'pending');
-      fetch(WORKER, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ message: texto, sessionId: sesion() })
-      })
-        .then(function (r) { return r.json(); })
-        .then(function (d) {
-          pend.classList.remove('pending');
-          pend.textContent = d.reply || d.error || 'Sin respuesta.';
-          if (d.error) pend.classList.add('error');
-        })
-        .catch(function () {
-          pend.classList.remove('pending');
-          pend.classList.add('error');
-          pend.textContent = 'No pude contactar al asistente. Puede ser el límite de uso de la demo: intenta en un momento.';
-        })
-        .finally(function () {
-          input.disabled = false; send.disabled = false; input.focus();
-        });
-    }
-
-    send.addEventListener('click', enviar);
-    input.addEventListener('keydown', function (e) { if (e.key === 'Enter') enviar(); });
-  });
+/* Los motores que dejan temporizadores corriendo dentro de la ficha
+   registran acá cómo apagarse al cerrarla. */
+function alCerrar(root, fn) {
+  if (root.closest('#sheetBody')) LIMPIEZAS.push(fn);
+}
+function limpiarDemos() {
+  LIMPIEZAS.splice(0).forEach(function (f) { try { f(); } catch (e) {} });
 }
 
+const $1 = function (r, s) { return r.querySelector(s); };
+const $n = function (r, s) { return Array.prototype.slice.call(r.querySelectorAll(s)); };
+const nfm = new Intl.NumberFormat('es-CL');
+function pc(x, d) { return (x * 100).toFixed(d === undefined ? 1 : d).replace('.', ',') + '%'; }
+function esc(s) { return String(s).replace(/[&<>"]/g, function (c) { return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]; }); }
+
+/* Generador determinista: las cifras del portafolio no cambian entre visitas. */
+function rng(semilla) {
+  let s = semilla >>> 0;
+  return function () { s = (s * 1664525 + 1013904223) >>> 0; return s / 4294967296; };
+}
+
+function logear(cont, texto, clase) {
+  const ln = document.createElement('div');
+  ln.className = 'ln show ' + (clase || '');
+  ln.innerHTML = '<span class="tm">' + new Date().toLocaleTimeString('es-CL', { hour12: false }) + '</span>  ' + texto;
+  cont.appendChild(ln);
+  cont.scrollTop = cont.scrollHeight;
+  while (cont.children.length > 120) cont.removeChild(cont.firstChild);
+}
+
+/* ------------------------------------------------------------
+   DATA-02 · Emparejamiento difuso real (normalización + Levenshtein)
+   ------------------------------------------------------------ */
+const FUENTE_A = [
+  'HOSPITAL REGIONAL DEL NORTE',
+  'CENTRO DE SALUD FAMILIAR EL MIRADOR',
+  'CESFAM LOS AROMOS',
+  'C.R.S. VILLA ALEGRE',
+  'HOSP. SAN ANDRES DE LA COSTA',
+  'CESFAM DR. MANUEL ROJAS',
+  'HOSPITAL DE URGENCIA METROPOLITANO',
+  'LABORATORIO CENTRAL ZONA ORIENTE',
+  'CESFAM PUERTA SUR',
+  'POSTA RURAL CUESTA VIEJA'
+];
+/* La fuente B viene de otro sistema y de otras manos: abreviaturas,
+   tildes perdidas, un typo y un nombre truncado por el largo de campo. */
+const FUENTE_B = [
+  'Hosp. Regional Norte',
+  'Cesfam El Mirdaor',
+  'C.E.S.F.A.M. Los Aromo',
+  'CRS Villa Alegre Sur',
+  'Hospital San Andres',
+  'Cesfam Doctor M. Rojas',
+  'Hospital Urgencia Metropolitano',
+  'Bodega Central Zona Oriente',
+  'CESFAM Puerta Sur',
+  'Laboratorio Central Z. Oriente'
+];
+
+/* Diccionario de abreviaturas: la mitad del trabajo real está acá,
+   no en la distancia de edición. */
+const ABREV = {
+  hosp: 'hospital', hospi: 'hospital', dr: 'doctor', dra: 'doctora',
+  metrop: 'metropolitano', lab: 'laboratorio', z: 'zona', s: 'san', sta: 'santa', stgo: 'santiago'
+};
+
+function normalizar(txt) {
+  let t = String(txt).toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g, '');
+  t = t.replace(/[^a-z0-9]+/g, ' ').trim();
+  t = t.replace(/\bc e s f a m\b/g, 'cesfam').replace(/\bc r s\b/g, 'crs');
+  t = t.replace(/centro de salud familiar/g, 'cesfam');
+  t = t.split(' ').map(function (w) { return ABREV[w] || w; }).join(' ');
+  t = t.replace(/\bdel\b|\bde\b|\bla\b|\blos\b|\blas\b|\bel\b/g, ' ');
+  return t.replace(/\s+/g, ' ').trim();
+}
+
+function levenshtein(a, b) {
+  const m = a.length, n = b.length;
+  if (!m) return n;
+  if (!n) return m;
+  let prev = new Array(n + 1), cur = new Array(n + 1);
+  for (let j = 0; j <= n; j++) prev[j] = j;
+  for (let i = 1; i <= m; i++) {
+    cur[0] = i;
+    for (let j = 1; j <= n; j++) {
+      cur[j] = Math.min(prev[j] + 1, cur[j - 1] + 1, prev[j - 1] + (a.charAt(i - 1) === b.charAt(j - 1) ? 0 : 1));
+    }
+    const tmp = prev; prev = cur; cur = tmp;
+  }
+  return prev[n];
+}
+
+function similitud(a, b) {
+  const na = normalizar(a), nb = normalizar(b);
+  const largo = Math.max(na.length, nb.length);
+  return largo ? 1 - levenshtein(na, nb) / largo : 1;
+}
+
+function mejorCandidato(nombre, lista) {
+  let mejor = null, score = -1;
+  lista.forEach(function (c) {
+    const s = similitud(nombre, c);
+    if (s > score) { score = s; mejor = c; }
+  });
+  return { candidato: mejor, score: score };
+}
+
+MOTORES.fuzzy = function (root) {
+  const cuerpo = $1(root, '[data-fuzzy-body]');
+  const kpi = $1(root, '[data-fuzzy-kpi]');
+  const slider = $1(root, '[data-umbral]');
+  const salida = $1(root, '[data-umbral-out]');
+  const libre = $1(root, '[data-fuzzy-input]');
+  const libreOut = $1(root, '[data-fuzzy-libre]');
+  const log = $1(root, '[data-fuzzy-log]');
+  const btn = $1(root, '[data-fuzzy-run]');
+
+  const filas = FUENTE_A.map(function (a) {
+    const m = mejorCandidato(a, FUENTE_B);
+    return { a: a, norm: normalizar(a), b: m.candidato, score: m.score };
+  });
+
+  function pintar() {
+    const u = Number(slider.value) / 100;
+    salida.textContent = slider.value + '%';
+    let auto = 0, revision = 0, huerfano = 0;
+
+    cuerpo.innerHTML = filas.map(function (f) {
+      let estado, clase;
+      if (f.score >= u) { estado = 'cruce automático'; clase = 'ok'; auto++; }
+      else if (f.score >= 0.5) { estado = 'a revisión manual'; clase = 'warn'; revision++; }
+      else { estado = 'sin candidato'; clase = 'bad'; huerfano++; }
+      return '<tr>' +
+        '<td>' + esc(f.a) + '</td>' +
+        '<td class="mono" style="color:var(--ink-faint)">' + esc(f.norm) + '</td>' +
+        '<td>' + esc(f.b) + '</td>' +
+        '<td class="num ' + clase + '">' + pc(f.score) + '</td>' +
+        '<td class="' + clase + '">' + estado + '</td></tr>';
+    }).join('');
+
+    kpi.innerHTML =
+      '<div class="mini"><div class="t">Cruce automático</div><div class="v ok">' + auto + '</div></div>' +
+      '<div class="mini"><div class="t">A revisión</div><div class="v warn">' + revision + '</div></div>' +
+      '<div class="mini"><div class="t">Sin candidato</div><div class="v bad">' + huerfano + '</div></div>' +
+      '<div class="mini"><div class="t">Cobertura</div><div class="v">' + pc(auto / filas.length, 0) + '</div></div>';
+  }
+
+  slider.addEventListener('input', pintar);
+
+  libre.addEventListener('input', function () {
+    const v = libre.value.trim();
+    if (!v) {
+      libreOut.innerHTML = '<span>Escribe algo arriba y se compara al instante contra la fuente B.</span>';
+      return;
+    }
+    const m = mejorCandidato(v, FUENTE_B);
+    const u = Number(slider.value) / 100;
+    libreOut.innerHTML =
+      '<span>«' + esc(normalizar(v)) + '» → ' + esc(m.candidato) + '</span>' +
+      '<span class="mono ' + (m.score >= u ? 'ok' : 'warn') + '">' + pc(m.score) + '</span>';
+  });
+
+  btn.addEventListener('click', function () {
+    btn.disabled = true;
+    log.innerHTML = '';
+    const u = Number(slider.value) / 100;
+    logear(log, 'iniciando etl_master.py · umbral ' + slider.value + '%', 'info');
+    let i = 0;
+    const t = setInterval(function () {
+      if (i >= filas.length) {
+        clearInterval(t);
+        const ok = filas.filter(function (f) { return f.score >= u; }).length;
+        logear(log, '[load] ' + ok + ' de ' + filas.length + ' cruzados sin intervención', 'ok');
+        btn.disabled = false;
+        btn.textContent = '↺ Correr de nuevo';
+        return;
+      }
+      const f = filas[i];
+      logear(log,
+        '«' + esc(f.norm) + '» ≈ «' + esc(normalizar(f.b)) + '» → ' + pc(f.score),
+        f.score >= u ? '' : (f.score >= 0.5 ? 'warn' : 'bad'));
+      i++;
+    }, 260);
+    alCerrar(root, function () { clearInterval(t); });
+  });
+
+  pintar();
+  logear(log, 'motor cargado · ' + FUENTE_A.length + ' registros en A contra ' + FUENTE_B.length + ' en B', 'info');
+  logear(log, 'la tabla de arriba ya está calculada; el botón muestra el proceso paso a paso');
+};
+
+/* ------------------------------------------------------------
+   BI-03 · Modelo con medidas y cross-filtering reales
+   ------------------------------------------------------------ */
+MOTORES.bi = function (root) {
+  const MESES = ['Ene', 'Feb', 'Mar', 'Abr', 'May', 'Jun'];
+  const UNIDADES = ['Torre A', 'Torre B', 'Subterráneo', 'Consultorio'];
+  const r = rng(20260805);
+  const HECHOS = [];
+  MESES.forEach(function (mes) {
+    UNIDADES.forEach(function (u) {
+      const prog = 38 + Math.round(r() * 62);
+      const cump = Math.round(prog * (0.68 + r() * 0.30));
+      const fuera = Math.round((prog - cump) * (0.25 + r() * 0.55));
+      HECHOS.push({ mes: mes, unidad: u, prog: prog, cump: cump, fuera: fuera });
+    });
+  });
+
+  const filtro = { mes: null, unidad: null };
+  const chips = $1(root, '[data-bi-chips]');
+  const donut = $1(root, '[data-bi-donut]');
+  const nspEl = $1(root, '[data-bi-nsp]');
+  const kpi = $1(root, '[data-bi-kpi]');
+  const chart = $1(root, '[data-bi-chart]');
+  const cuerpo = $1(root, '[data-bi-body]');
+  const code = $1(root, '[data-bi-code]');
+
+  function vista() {
+    return HECHOS.filter(function (h) {
+      return (!filtro.mes || h.mes === filtro.mes) && (!filtro.unidad || h.unidad === filtro.unidad);
+    });
+  }
+  function medir(rows) {
+    const prog = rows.reduce(function (a, h) { return a + h.prog; }, 0);
+    const cump = rows.reduce(function (a, h) { return a + h.cump; }, 0);
+    const fuera = rows.reduce(function (a, h) { return a + h.fuera; }, 0);
+    return { prog: prog, cump: cump, fuera: fuera, nsp: prog ? cump / prog : 0 };
+  }
+
+  function pintar() {
+    const v = vista(), m = medir(v);
+
+    donut.style.setProperty('--pct', (m.nsp * 100).toFixed(1) + '%');
+    nspEl.textContent = pc(m.nsp, 0);
+
+    kpi.innerHTML =
+      '<div class="mini"><div class="t">Programados</div><div class="v">' + nfm.format(m.prog) + '</div></div>' +
+      '<div class="mini"><div class="t">Cumplidos</div><div class="v ok">' + nfm.format(m.cump) + '</div></div>' +
+      '<div class="mini"><div class="t">Pendientes</div><div class="v warn">' + nfm.format(m.prog - m.cump) + '</div></div>' +
+      '<div class="mini"><div class="t">Fuera de plazo</div><div class="v bad">' + nfm.format(m.fuera) + '</div></div>';
+
+    // Gráfico por mes: respeta el filtro de unidad, no el de mes (así se ve el contexto).
+    const porMes = MESES.map(function (mes) {
+      const rows = HECHOS.filter(function (h) {
+        return h.mes === mes && (!filtro.unidad || h.unidad === filtro.unidad);
+      });
+      return { mes: mes, m: medir(rows) };
+    });
+    const tope = Math.max.apply(null, porMes.map(function (x) { return x.m.prog; }));
+    const ancho = 200 / MESES.length;
+    chart.innerHTML = porMes.map(function (x, i) {
+      const hProg = (x.m.prog / tope) * 62;
+      const hCump = (x.m.cump / tope) * 62;
+      const x0 = i * ancho + ancho * 0.18;
+      const w = ancho * 0.64;
+      const sel = filtro.mes === x.mes ? ' on' : '';
+      return '<rect class="bar2" x="' + x0.toFixed(1) + '" y="' + (70 - hProg).toFixed(1) + '" width="' + w.toFixed(1) + '" height="' + hProg.toFixed(1) + '" rx="1"></rect>' +
+        '<rect class="bar' + sel + '" data-mes="' + x.mes + '" x="' + x0.toFixed(1) + '" y="' + (70 - hCump).toFixed(1) + '" width="' + w.toFixed(1) + '" height="' + hCump.toFixed(1) + '" rx="1"><title>' + x.mes + ': ' + pc(x.m.nsp, 0) + '</title></rect>' +
+        '<text class="val" x="' + (x0 + w / 2).toFixed(1) + '" y="' + (66 - hProg).toFixed(1) + '" text-anchor="middle">' + pc(x.m.nsp, 0) + '</text>' +
+        '<text class="lbl" x="' + (x0 + w / 2).toFixed(1) + '" y="80" text-anchor="middle">' + x.mes + '</text>';
+    }).join('') + '<text class="lbl" x="0" y="92">barra clara = programados · barra llena = cumplidos · clic para filtrar</text>';
+
+    $n(chart, '[data-mes]').forEach(function (b) {
+      b.addEventListener('click', function () {
+        filtro.mes = filtro.mes === b.dataset.mes ? null : b.dataset.mes;
+        pintar();
+      });
+    });
+
+    // Tabla por unidad: respeta el filtro de mes, no el de unidad.
+    cuerpo.innerHTML = UNIDADES.map(function (u) {
+      const rows = HECHOS.filter(function (h) {
+        return h.unidad === u && (!filtro.mes || h.mes === filtro.mes);
+      });
+      const mm = medir(rows);
+      const clase = mm.nsp >= 0.9 ? 'ok' : (mm.nsp >= 0.8 ? 'warn' : 'bad');
+      return '<tr data-click data-unidad="' + u + '"' + (filtro.unidad === u ? ' class="sel"' : '') + '>' +
+        '<td>' + u + '</td>' +
+        '<td class="num">' + nfm.format(mm.prog) + '</td>' +
+        '<td class="num">' + nfm.format(mm.cump) + '</td>' +
+        '<td class="num">' + nfm.format(mm.fuera) + '</td>' +
+        '<td class="num ' + clase + '">' + pc(mm.nsp, 0) + '</td></tr>';
+    }).join('');
+
+    $n(cuerpo, '[data-unidad]').forEach(function (tr) {
+      tr.addEventListener('click', function () {
+        filtro.unidad = filtro.unidad === tr.dataset.unidad ? null : tr.dataset.unidad;
+        pintar();
+      });
+    });
+
+    const activos = [];
+    if (filtro.mes) activos.push({ k: 'mes', v: filtro.mes });
+    if (filtro.unidad) activos.push({ k: 'unidad', v: filtro.unidad });
+    chips.innerHTML = activos.length
+      ? activos.map(function (a) { return '<button class="fchip" data-quitar="' + a.k + '">' + a.k + ': ' + a.v + '</button>'; }).join('') +
+        '<span class="hint">' + v.length + ' de ' + HECHOS.length + ' filas</span>'
+      : '<span class="hint">Sin filtros — mostrando las ' + HECHOS.length + ' filas del modelo.</span>';
+    $n(chips, '[data-quitar]').forEach(function (b) {
+      b.addEventListener('click', function () { filtro[b.dataset.quitar] = null; pintar(); });
+    });
+
+    code.innerHTML =
+      '<i>-- la medida que alimenta el anillo, evaluada en el contexto de filtro actual</i>\n' +
+      'NSP := <b>DIVIDE</b>( <b>SUM</b>( Hechos[Cumplidos] ), <b>SUM</b>( Hechos[Programados] ) )\n' +
+      '<i>-- contexto vigente: </i>' + (activos.length ? activos.map(function (a) { return a.k + ' = "' + a.v + '"'; }).join(' , ') : 'sin filtros') + '\n' +
+      '<i>-- resultado: </i>' + nfm.format(m.cump) + ' / ' + nfm.format(m.prog) + ' = <b>' + pc(m.nsp) + '</b>';
+  }
+
+  pintar();
+};
+
+/* ------------------------------------------------------------
+   OPS-04 · Motor de reglas sobre una tabla editable
+   ------------------------------------------------------------ */
+const CATALOGO = {
+  'Insumo clínico': 'Zona A',
+  'Medicamento': 'Zona A',
+  'Mobiliario': 'Zona B',
+  'Equipo médico': 'Zona B',
+  'Aseo': 'Zona C'
+};
+const INVENTARIO_BASE = [
+  { cod: 'M-1010', cat: 'Insumo clínico', zona: 'Zona A', stock: 45 },
+  { cod: 'M-1015', cat: 'Insumo clínico', zona: 'Zona A', stock: 12 },
+  { cod: 'M-1020', cat: 'Medicamento', zona: 'Zona A', stock: 150 },
+  { cod: 'B-2001', cat: 'Mobiliario', zona: 'Zona A', stock: 88 },
+  { cod: 'B-2007', cat: 'Equipo médico', zona: 'Zona B', stock: 34 },
+  { cod: 'C-3002', cat: 'Aseo', zona: 'Zona B', stock: -4 },
+  { cod: 'C-3010', cat: 'Aseo', zona: 'Zona C', stock: 61 },
+  { cod: 'M-1044', cat: '', zona: 'Zona A', stock: 0 }
+];
+const INFORME_AUDITOR = { 'Zona A': 207, 'Zona B': 122, 'Zona C': 61 };
+
+MOTORES.auditoria = function (root) {
+  const cuerpo = $1(root, '[data-aud-body]');
+  const reglasBox = $1(root, '[data-aud-reglas]');
+  const vivoBox = $1(root, '[data-aud-vivo]');
+  const pdfBox = $1(root, '[data-aud-pdf]');
+  const mail = $1(root, '[data-aud-mail]');
+  let filas = INVENTARIO_BASE.map(function (f) { return Object.assign({}, f); });
+
+  const cats = Object.keys(CATALOGO);
+  function zonaCorrecta(cat) { return CATALOGO[cat] || null; }
+
+  function evaluar() {
+    const problemas = [];
+    filas.forEach(function (f) {
+      f.errores = [];
+      if (!f.cat) f.errores.push('sin categoría asignada');
+      else if (!CATALOGO[f.cat]) f.errores.push('categoría fuera del catálogo');
+      if (!(f.stock >= 0)) f.errores.push('stock negativo');
+      const zc = zonaCorrecta(f.cat);
+      if (zc && f.zona !== zc) f.errores.push('zona declarada no corresponde a la categoría');
+      if (f.errores.length) problemas.push(f);
+    });
+    return problemas;
+  }
+
+  /* Suma por la zona DECLARADA en la planilla y con el stock tal cual viene:
+     ese es justamente el número que se le manda al auditor y que no cuadra
+     mientras las reglas no estén todas en verde. */
+  function totales() {
+    const t = { 'Zona A': 0, 'Zona B': 0, 'Zona C': 0 };
+    filas.forEach(function (f) {
+      if (t[f.zona] !== undefined) t[f.zona] += Number(f.stock) || 0;
+    });
+    return t;
+  }
+
+  function pintar() {
+    cuerpo.innerHTML = filas.map(function (f, i) {
+      const zc = zonaCorrecta(f.cat);
+      const malCat = !f.cat || !CATALOGO[f.cat];
+      const malZona = zc && f.zona !== zc;
+      const malStock = !(f.stock >= 0);
+      return '<tr>' +
+        '<td class="mono">' + f.cod + '</td>' +
+        '<td class="' + (malCat ? 'mal' : '') + '"><select data-i="' + i + '" data-campo="cat">' +
+          '<option value="">— sin asignar —</option>' +
+          cats.map(function (c) { return '<option' + (c === f.cat ? ' selected' : '') + '>' + c + '</option>'; }).join('') +
+        '</select></td>' +
+        '<td class="' + (malZona ? 'mal' : '') + '"><select data-i="' + i + '" data-campo="zona">' +
+          ['Zona A', 'Zona B', 'Zona C'].map(function (z) { return '<option' + (z === f.zona ? ' selected' : '') + '>' + z + '</option>'; }).join('') +
+        '</select></td>' +
+        '<td class="mono" style="color:var(--ink-faint)">' + (zc || '—') + '</td>' +
+        '<td class="num ' + (malStock ? 'mal' : '') + '"><input type="number" data-i="' + i + '" data-campo="stock" value="' + f.stock + '"></td>' +
+        '</tr>';
+    }).join('');
+
+    $n(cuerpo, '[data-campo]').forEach(function (el) {
+      el.addEventListener('change', function () {
+        const f = filas[Number(el.dataset.i)];
+        if (el.dataset.campo === 'stock') f.stock = Number(el.value);
+        else f[el.dataset.campo] = el.value;
+        pintar();
+      });
+    });
+
+    const problemas = evaluar();
+    const t = totales();
+
+    const reglas = [
+      { n: 'Toda fila tiene categoría del catálogo', ok: !filas.some(function (f) { return !f.cat || !CATALOGO[f.cat]; }) },
+      { n: 'Stock mayor o igual a cero', ok: !filas.some(function (f) { return !(f.stock >= 0); }) },
+      { n: 'Zona declarada = zona que dicta la categoría', ok: !filas.some(function (f) { const z = zonaCorrecta(f.cat); return z && f.zona !== z; }) },
+      { n: 'Totales por zona cuadran con el informe externo', ok: Object.keys(INFORME_AUDITOR).every(function (z) { return t[z] === INFORME_AUDITOR[z]; }) }
+    ];
+    reglasBox.innerHTML = reglas.map(function (r) {
+      return '<div class="d-line"><span>' + r.n + '</span><span class="badge ' + (r.ok ? 'ok">cumple' : 'bad">falla') + '</span></div>';
+    }).join('');
+
+    vivoBox.innerHTML = Object.keys(INFORME_AUDITOR).map(function (z) {
+      const dif = t[z] - INFORME_AUDITOR[z];
+      return '<div class="row' + (dif ? ' diff' : '') + '">' + z + '<span class="mono">' + nfm.format(t[z]) + '</span></div>';
+    }).join('');
+    pdfBox.innerHTML = Object.keys(INFORME_AUDITOR).map(function (z) {
+      const dif = t[z] - INFORME_AUDITOR[z];
+      return '<div class="row' + (dif ? ' diff' : '') + '">' + z + '<span class="mono">' + nfm.format(INFORME_AUDITOR[z]) + '</span></div>';
+    }).join('');
+
+    const difs = Object.keys(INFORME_AUDITOR)
+      .map(function (z) { return { z: z, d: t[z] - INFORME_AUDITOR[z] }; })
+      .filter(function (x) { return x.d !== 0; });
+
+    const fecha = new Date().toLocaleDateString('es-CL', { day: '2-digit', month: 'long', year: 'numeric' });
+    mail.textContent =
+      'Para: auditoria.externa@ejemplo.cl\n' +
+      'Asunto: Conciliación de inventario — ' + fecha + '\n\n' +
+      'Estimados:\n\n' +
+      (difs.length
+        ? 'Al cruzar nuestra maestra con el informe recibido quedan ' + difs.length + ' diferencia(s):\n\n' +
+          difs.map(function (x) {
+            return '  · ' + x.z + ': nuestro registro ' + nfm.format(t[x.z]) +
+              ' vs. informe ' + nfm.format(INFORME_AUDITOR[x.z]) +
+              '  (' + (x.d > 0 ? '+' : '') + nfm.format(x.d) + ')';
+          }).join('\n')
+        : 'Cruzamos nuestra maestra con el informe recibido y las tres zonas cuadran.') +
+      (problemas.length
+        ? '\n\n' + (difs.length ? 'Además, ' : '') + problemas.length + ' fila(s) de la maestra no pasan las reglas internas y quedan en revisión:\n' +
+          problemas.map(function (p) { return '  · ' + p.cod + ': ' + p.errores.join('; '); }).join('\n')
+        : '') +
+      '\n\n' +
+      (difs.length || problemas.length
+        ? 'Quedamos atentos para revisar en conjunto antes del cierre.'
+        : 'Damos por conciliado el período.') +
+      '\n\nSaludos,\nMarcelo Poblete';
+  }
+
+  $1(root, '[data-aud-fix]').addEventListener('click', function () {
+    filas.forEach(function (f) {
+      const z = zonaCorrecta(f.cat);
+      if (z) f.zona = z;
+      if (!(f.stock >= 0)) f.stock = 0;
+    });
+    pintar();
+  });
+  $1(root, '[data-aud-reset]').addEventListener('click', function () {
+    filas = INVENTARIO_BASE.map(function (f) { return Object.assign({}, f); });
+    pintar();
+  });
+
+  pintar();
+};
+
+/* ------------------------------------------------------------
+   DATA-05 · Las dos versiones del CASE sobre el mismo universo
+   ------------------------------------------------------------ */
+MOTORES.sql = function (root) {
+  const SERVICIOS = ['Clima', 'Electricidad', 'Agua', 'Gases', 'Ascensores'];
+  const r = rng(77410);
+  const EQUIPOS = [];
+  for (let i = 0; i < 48; i++) {
+    const alcance = r() > 0.14;
+    const prevision = alcance && r() > 0.30;
+    const ot = prevision && r() > 0.38;
+    EQUIPOS.push({ id: 'EQ-' + (1000 + i), servicio: SERVICIOS[i % SERVICIOS.length], alcance: alcance, prevision: prevision, ot: ot });
+  }
+
+  function viejo(e) { return (!e.prevision || !e.ot) ? 'Sin gestión' : 'Gestionado'; }
+  function nuevo(e) {
+    if (!e.alcance) return 'Fuera de alcance';
+    if (!e.prevision) return 'Sin previsión';
+    if (!e.ot) return 'Con previsión, sin OT';
+    return 'Gestionado';
+  }
+
+  const kpi = $1(root, '[data-sql-kpi]');
+  const chart = $1(root, '[data-sql-chart]');
+  const code = $1(root, '[data-sql-code]');
+  const inflado = $1(root, '[data-sql-inflado]');
+  const real = $1(root, '[data-sql-real]');
+  const nota = $1(root, '[data-sql-nota]');
+  let modo = 'viejo';
+
+  const SQL = {
+    viejo:
+      '<b>CASE</b>\n' +
+      '  <b>WHEN</b> prevision = 0 <b>OR</b> orden_trabajo <b>IS NULL</b>\n' +
+      '    <b>THEN</b> \'Sin gestión\'\n' +
+      '  <b>ELSE</b> \'Gestionado\'\n' +
+      '<b>END</b>\n' +
+      '<i>-- mete en la misma bolsa al equipo que nadie previó\n' +
+      '-- y al que sí se previó pero no alcanzó a tener OT</i>',
+    nuevo:
+      '<b>CASE</b>\n' +
+      '  <b>WHEN</b> en_alcance = 0            <b>THEN</b> \'Fuera de alcance\'\n' +
+      '  <b>WHEN</b> prevision = 0             <b>THEN</b> \'Sin previsión\'\n' +
+      '  <b>WHEN</b> orden_trabajo <b>IS NULL</b>   <b>THEN</b> \'Con previsión, sin OT\'\n' +
+      '  <b>ELSE</b> \'Gestionado\'\n' +
+      '<b>END</b>\n' +
+      '<i>-- tres situaciones distintas, tres decisiones distintas</i>'
+  };
+
+  function pintar() {
+    const f = modo === 'viejo' ? viejo : nuevo;
+    const conteo = {};
+    EQUIPOS.forEach(function (e) { const k = f(e); conteo[k] = (conteo[k] || 0) + 1; });
+    const claves = Object.keys(conteo).sort(function (a, b) { return conteo[b] - conteo[a]; });
+
+    kpi.innerHTML = claves.map(function (k) {
+      const clase = k === 'Gestionado' ? 'ok' : (k === 'Fuera de alcance' ? '' : (k === 'Sin gestión' ? 'bad' : 'warn'));
+      return '<div class="mini"><div class="t">' + k + '</div><div class="v ' + clase + '">' + conteo[k] + '</div></div>';
+    }).join('');
+
+    const tope = Math.max.apply(null, claves.map(function (k) { return conteo[k]; }));
+    const ancho = 200 / claves.length;
+    chart.innerHTML = claves.map(function (k, i) {
+      const h = (conteo[k] / tope) * 50;
+      const x0 = i * ancho + ancho * 0.16, w = ancho * 0.68;
+      return '<rect class="bar on" x="' + x0.toFixed(1) + '" y="' + (58 - h).toFixed(1) + '" width="' + w.toFixed(1) + '" height="' + h.toFixed(1) + '" rx="1"></rect>' +
+        '<text class="val" x="' + (x0 + w / 2).toFixed(1) + '" y="' + (54 - h).toFixed(1) + '" text-anchor="middle">' + conteo[k] + '</text>' +
+        '<text class="lbl" x="' + (x0 + w / 2).toFixed(1) + '" y="68" text-anchor="middle">' + k.split(',')[0] + '</text>';
+    }).join('');
+
+    code.innerHTML = SQL[modo];
+
+    // El otro bug: contar por una columna que se repite en vez del identificador.
+    const porServicio = EQUIPOS.length * 1;
+    const filasDetalle = EQUIPOS.reduce(function (a, e) { return a + (e.prevision ? 2 : 1); }, 0);
+    inflado.textContent = nfm.format(filasDetalle) + ' equipos';
+    real.textContent = nfm.format(porServicio) + ' equipos';
+    nota.textContent = modo === 'viejo'
+      ? 'Con esta lógica, ' + (conteo['Sin gestión'] || 0) + ' equipos aparecen como abandonados. La jefatura tomaba decisiones sobre ese número.'
+      : 'Al separar, solo ' + (conteo['Sin previsión'] || 0) + ' están realmente sin previsión: el resto tiene previsión pendiente de OT o ni siquiera entra en el contrato.';
+  }
+
+  $n(root, '[data-sql]').forEach(function (b) {
+    b.addEventListener('click', function () {
+      modo = b.dataset.sql;
+      $n(root, '[data-sql]').forEach(function (o) { o.setAttribute('aria-pressed', String(o === b)); });
+      pintar();
+    });
+  });
+
+  pintar();
+};
+
+/* ------------------------------------------------------------
+   AI-06 · Agente que ejecuta herramientas sobre la tabla visible
+   ------------------------------------------------------------ */
+MOTORES.agente = function (root) {
+  const BASE = [
+    { cod: 'M-1010', hoja: 'Enero', cant: 45, fecha: '02-01' },
+    { cod: 'M-1015', hoja: 'Enero', cant: 12, fecha: '02-01' },
+    { cod: 'M-1010', hoja: 'Enero', cant: 45, fecha: '09-01' },
+    { cod: 'M-1020', hoja: 'Enero', cant: 150, fecha: '03-01' },
+    { cod: 'B-2001', hoja: 'Enero', cant: 88, fecha: '04-01' },
+    { cod: 'M-1015', hoja: 'Enero', cant: 12, fecha: '11-01' },
+    { cod: 'C-3010', hoja: 'Enero', cant: 61, fecha: '05-01' },
+    { cod: 'B-2001', hoja: 'Enero', cant: 88, fecha: '12-01' }
+  ];
+  let filas = BASE.map(function (f) { return Object.assign({}, f); });
+  const cuerpo = $1(root, '[data-ag-body]');
+  const log = $1(root, '[data-ag-log]');
+  const cmds = $1(root, '[data-ag-cmds]');
+
+  function duplicados() {
+    const visto = {}, dup = [];
+    filas.forEach(function (f, i) {
+      const k = f.cod + '|' + f.cant;
+      if (visto[k] !== undefined) dup.push({ i: i, cod: f.cod, original: visto[k] + 1 });
+      else visto[k] = i;
+    });
+    return dup;
+  }
+
+  function pintar() {
+    const dup = duplicados().map(function (d) { return d.i; });
+    cuerpo.innerHTML = filas.map(function (f, i) {
+      return '<tr class="' + (dup.indexOf(i) !== -1 ? 'miss' : '') + '">' +
+        '<td class="mono">' + (i + 1) + '</td><td class="mono">' + f.cod + '</td><td>' + f.hoja + '</td>' +
+        '<td class="num">' + f.cant + '</td><td class="mono">' + f.fecha + '</td></tr>';
+    }).join('');
+  }
+
+  const ACCIONES = [
+    {
+      etiqueta: 'busca duplicados',
+      correr: function () {
+        logear(log, '> busca duplicados en el excel de stock');
+        const dup = duplicados();
+        logear(log, 'herramienta: leer_excel("stock_enero.xlsx") → ' + filas.length + ' filas', 'info');
+        if (!dup.length) { logear(log, 'No quedan duplicados: cada código aparece una sola vez.', 'ok'); return; }
+        logear(log, 'Encontré ' + dup.length + ' fila(s) duplicada(s): ' +
+          dup.map(function (d) { return 'fila ' + (d.i + 1) + ' (' + d.cod + ', ya estaba en la ' + d.original + ')'; }).join(', ') + '.', 'warn');
+        logear(log, '¿Las elimino dejando la carga más antigua? Usa el comando de limpieza.');
+      }
+    },
+    {
+      etiqueta: 'respalda y limpia',
+      correr: function () {
+        const dup = duplicados();
+        logear(log, '> respalda el archivo y elimina los duplicados');
+        logear(log, 'herramienta: copiar("stock_enero.xlsx" → "stock_enero.bak.xlsx")', 'info');
+        if (!dup.length) { logear(log, 'Nada que eliminar: el archivo ya está limpio.', 'ok'); return; }
+        const antes = filas.length;
+        const quitar = dup.map(function (d) { return d.i; });
+        filas = filas.filter(function (_, i) { return quitar.indexOf(i) === -1; });
+        pintar();
+        logear(log, 'herramienta: escribir_excel() → ' + dup.length + ' filas eliminadas', 'info');
+        logear(log, 'Listo. El total pasó de ' + antes + ' a ' + filas.length + ' registros y el respaldo quedó guardado.', 'ok');
+      }
+    },
+    {
+      etiqueta: 'resume el archivo',
+      correr: function () {
+        logear(log, '> hazme un resumen de la hoja');
+        const total = filas.reduce(function (a, f) { return a + f.cant; }, 0);
+        const codigos = filas.map(function (f) { return f.cod; }).filter(function (v, i, a) { return a.indexOf(v) === i; });
+        const mayor = filas.slice().sort(function (a, b) { return b.cant - a.cant; })[0];
+        logear(log, 'La hoja «Enero» tiene ' + filas.length + ' filas y ' + codigos.length + ' códigos distintos, con ' +
+          nfm.format(total) + ' unidades en total. El de mayor stock es ' + mayor.cod + ' con ' + mayor.cant + '.', 'ok');
+      }
+    },
+    {
+      etiqueta: 'restaurar',
+      correr: function () {
+        filas = BASE.map(function (f) { return Object.assign({}, f); });
+        pintar();
+        log.innerHTML = '';
+        logear(log, 'Restauré el archivo desde el respaldo. Volvimos a ' + filas.length + ' filas.', 'info');
+      }
+    }
+  ];
+
+  cmds.innerHTML = ACCIONES.map(function (a, i) {
+    return '<button class="run-btn" data-ag="' + i + '">' + a.etiqueta + '</button>';
+  }).join('');
+  $n(cmds, '[data-ag]').forEach(function (b) {
+    b.addEventListener('click', function () { ACCIONES[Number(b.dataset.ag)].correr(); });
+  });
+
+  pintar();
+  logear(log, 'Sesión iniciada. Tengo acceso de lectura y escritura a la carpeta de trabajo.', 'info');
+};
+
+/* ------------------------------------------------------------
+   WEB-07 · A* real sobre la grilla del piso
+   ------------------------------------------------------------ */
+const PLANTA = [
+  '#################################',
+  '#.....#.......#.........#.......#',
+  '#.....#.......#.........#.......#',
+  '#.....#.......#.........#.......#',
+  '###.#####.#######.#########.#####',
+  '#...............................#',
+  '#...............................#',
+  '###.######.###########.######.###',
+  '#.....#.......#..........#......#',
+  '#.....#.......#..........#......#',
+  '#.....#.......#..........#......#',
+  '###.######.#########.#######.####',
+  '#...............................#',
+  '#...............................#',
+  '#################################'
+];
+const PUNTOS = [
+  { n: 'Recepción', f: 2, c: 3 },
+  { n: 'Admisión', f: 2, c: 10 },
+  { n: 'Toma de muestras', f: 2, c: 20 },
+  { n: 'Farmacia', f: 2, c: 28 },
+  { n: 'Sala de máquinas', f: 9, c: 3 },
+  { n: 'Bodega central', f: 9, c: 10 },
+  { n: 'Pabellón 3', f: 9, c: 20 },
+  { n: 'Ascensor torre B', f: 9, c: 28 },
+  { n: 'Salida de urgencia', f: 13, c: 16 }
+];
+
+function libre(f, c) {
+  return f >= 0 && f < PLANTA.length && c >= 0 && c < PLANTA[0].length && PLANTA[f].charAt(c) !== '#';
+}
+
+/* A* con heurística Manhattan sobre 4 vecinos. Devuelve el camino y
+   cuántos nodos hubo que evaluar para encontrarlo. */
+function aEstrella(inicio, fin) {
+  const clave = function (f, c) { return f + ',' + c; };
+  const abiertos = [{ f: inicio.f, c: inicio.c, g: 0, h: 0 }];
+  const deDonde = {}, gScore = {};
+  const cerrados = {};
+  gScore[clave(inicio.f, inicio.c)] = 0;
+  const h = function (f, c) { return Math.abs(f - fin.f) + Math.abs(c - fin.c); };
+
+  while (abiertos.length) {
+    let mejor = 0;
+    for (let i = 1; i < abiertos.length; i++) {
+      if (abiertos[i].g + abiertos[i].h < abiertos[mejor].g + abiertos[mejor].h) mejor = i;
+    }
+    const act = abiertos.splice(mejor, 1)[0];
+    const k = clave(act.f, act.c);
+    if (cerrados[k]) continue;
+    cerrados[k] = true;
+
+    if (act.f === fin.f && act.c === fin.c) {
+      const camino = [];
+      let cur = k;
+      while (cur) { const p = cur.split(','); camino.unshift({ f: +p[0], c: +p[1] }); cur = deDonde[cur]; }
+      return { camino: camino, evaluados: Object.keys(cerrados).length, vistos: cerrados };
+    }
+
+    [[1, 0], [-1, 0], [0, 1], [0, -1]].forEach(function (d) {
+      const nf = act.f + d[0], nc = act.c + d[1], nk = clave(nf, nc);
+      if (!libre(nf, nc) || cerrados[nk]) return;
+      const g = act.g + 1;
+      if (gScore[nk] !== undefined && g >= gScore[nk]) return;
+      gScore[nk] = g;
+      deDonde[nk] = k;
+      abiertos.push({ f: nf, c: nc, g: g, h: h(nf, nc) });
+    });
+  }
+  return { camino: [], evaluados: Object.keys(cerrados).length, vistos: cerrados };
+}
+
+/* Traduce el trazo a indicaciones: agrupa tramos rectos y nombra los giros. */
+function indicaciones(camino, destino) {
+  if (camino.length < 2) return [];
+  const dir = function (a, b) {
+    if (b.f > a.f) return 'S'; if (b.f < a.f) return 'N';
+    if (b.c > a.c) return 'E'; return 'O';
+  };
+  const giro = function (de, a) {
+    const orden = ['N', 'E', 'S', 'O'];
+    const d = (orden.indexOf(a) - orden.indexOf(de) + 4) % 4;
+    return d === 1 ? 'derecha' : (d === 3 ? 'izquierda' : 'atrás');
+  };
+  const pasos = [];
+  let actual = dir(camino[0], camino[1]), largo = 0, previa = null;
+  for (let i = 1; i < camino.length; i++) {
+    const d = dir(camino[i - 1], camino[i]);
+    if (d === actual) { largo++; continue; }
+    pasos.push({ dir: actual, metros: largo * 1.8, giro: previa ? giro(previa, actual) : null });
+    previa = actual; actual = d; largo = 1;
+  }
+  pasos.push({ dir: actual, metros: largo * 1.8, giro: previa ? giro(previa, actual) : null });
+
+  return pasos.map(function (p, i) {
+    const m = Math.round(p.metros);
+    if (i === 0) return 'Sal del recinto y avanza <b>' + m + ' m</b>.';
+    return 'Gira a la <b>' + p.giro + '</b> y sigue <b>' + m + ' m</b>.';
+  }).concat(['Llegaste — <b>' + destino + '</b>.']);
+}
+
+MOTORES.ruta = function (root) {
+  const svg = $1(root, '[data-ruta-plan]');
+  const selA = $1(root, '[data-ruta-a]');
+  const selB = $1(root, '[data-ruta-b]');
+  const btn = $1(root, '[data-ruta-go]');
+  const chk = $1(root, '[data-ruta-nodos]');
+  const kpis = $1(root, '[data-ruta-kpis]');
+  const pasos = $1(root, '[data-ruta-pasos]');
+  const CS = 6;
+
+  const opciones = PUNTOS.map(function (p, i) { return '<option value="' + i + '">' + p.n + '</option>'; }).join('');
+  selA.innerHTML = opciones; selB.innerHTML = opciones;
+  selA.value = '0'; selB.value = '6';
+
+  function dibujar(res, a, b) {
+    let html = '';
+    for (let f = 0; f < PLANTA.length; f++) {
+      for (let c = 0; c < PLANTA[f].length; c++) {
+        if (PLANTA[f].charAt(c) === '#') {
+          html += '<rect class="muro" x="' + (c * CS) + '" y="' + (f * CS) + '" width="' + CS + '" height="' + CS + '"/>';
+        }
+      }
+    }
+    if (res && chk.checked) {
+      Object.keys(res.vistos).forEach(function (k) {
+        const p = k.split(',');
+        html += '<rect class="visto" x="' + (p[1] * CS) + '" y="' + (p[0] * CS) + '" width="' + CS + '" height="' + CS + '"/>';
+      });
+    }
+    PUNTOS.forEach(function (p) {
+      html += '<circle class="punto" cx="' + (p.c * CS + CS / 2) + '" cy="' + (p.f * CS + CS / 2) + '" r="1.4"/>';
+    });
+    if (res && res.camino.length) {
+      const d = res.camino.map(function (p) { return (p.c * CS + CS / 2).toFixed(1) + ',' + (p.f * CS + CS / 2).toFixed(1); }).join(' ');
+      html += '<polyline class="ruta" points="' + d + '"/>';
+      html += '<circle class="nodo-a" cx="' + (a.c * CS + CS / 2) + '" cy="' + (a.f * CS + CS / 2) + '" r="2.6"/>';
+      html += '<circle class="nodo-b" cx="' + (b.c * CS + CS / 2) + '" cy="' + (b.f * CS + CS / 2) + '" r="2.6"/>';
+      html += '<text class="poi" x="' + (a.c * CS - 2) + '" y="' + (a.f * CS - 1.5) + '">' + a.n + '</text>';
+      html += '<text class="poi" x="' + (b.c * CS - 2) + '" y="' + (b.f * CS - 1.5) + '">' + b.n + '</text>';
+    }
+    svg.innerHTML = html;
+  }
+
+  function calcular() {
+    const a = PUNTOS[Number(selA.value)], b = PUNTOS[Number(selB.value)];
+    if (a === b) {
+      kpis.innerHTML = '<div class="mini"><div class="t">Ruta</div><div class="v warn">ya estás ahí</div></div>';
+      pasos.innerHTML = '';
+      dibujar(null, a, b);
+      return;
+    }
+    const t0 = performance.now();
+    const res = aEstrella(a, b);
+    const ms = performance.now() - t0;
+
+    dibujar(res, a, b);
+    const metros = Math.round((res.camino.length - 1) * 1.8);
+    kpis.innerHTML =
+      '<div class="mini"><div class="t">Distancia</div><div class="v">' + metros + ' m</div></div>' +
+      '<div class="mini"><div class="t">Nodos evaluados</div><div class="v">' + res.evaluados + '</div></div>' +
+      '<div class="mini"><div class="t">Celdas del camino</div><div class="v">' + res.camino.length + '</div></div>' +
+      '<div class="mini"><div class="t">Cálculo</div><div class="v ok">' + ms.toFixed(1) + ' ms</div></div>';
+
+    const ind = indicaciones(res.camino, b.n);
+    pasos.innerHTML = ind.map(function (s, i) {
+      return '<div' + (i === ind.length - 1 ? ' class="fin"' : '') + '>' + s + '</div>';
+    }).join('');
+  }
+
+  btn.addEventListener('click', calcular);
+  selA.addEventListener('change', calcular);
+  selB.addEventListener('change', calcular);
+  chk.addEventListener('change', calcular);
+  calcular();
+};
+
+/* ------------------------------------------------------------
+   OPS-01 · Panel: planificador de tareas, monitor y optimizador
+   ------------------------------------------------------------ */
+MOTORES.panel = function (root) {
+  montarBots(root);
+  montarSensores(root);
+  montarRutaRonda(root);
+  montarChat(root);
+};
+
+function montarBots(root) {
+  const TAREAS = ['Consolidado mensual', 'Reporte de SLA', 'Carga de avisos', 'Cierre de OT', 'Respaldo de planillas', 'Indicadores de jefatura'];
+  const lista = $1(root, '[data-bot-list]');
+  const kpi = $1(root, '[data-bot-kpi]');
+  const log = $1(root, '[data-bot-log]');
+  const conc = $1(root, '[data-bot-conc]');
+  const concOut = $1(root, '[data-bot-conc-out]');
+  const r = rng(4242);
+  let cola = [], n = 0;
+
+  function encolar() {
+    n++;
+    const dur = 2600 + Math.round(r() * 4200);
+    cola.push({
+      id: n, nombre: TAREAS[(n - 1) % TAREAS.length], dur: dur,
+      prog: 0, estado: 'en cola',
+      falla: n % 4 === 0 ? 0.55 + r() * 0.25 : null
+    });
+    logear(log, 'encolada #' + n + ' «' + TAREAS[(n - 1) % TAREAS.length] + '» · duración estimada ' + (dur / 1000).toFixed(1) + ' s', 'info');
+    pintar();
+  }
+
+  function pintar() {
+    kpi.innerHTML =
+      '<div class="mini"><div class="t">En cola</div><div class="v">' + cola.filter(function (b) { return b.estado === 'en cola'; }).length + '</div></div>' +
+      '<div class="mini"><div class="t">Corriendo</div><div class="v warn">' + cola.filter(function (b) { return b.estado === 'corriendo'; }).length + '</div></div>' +
+      '<div class="mini"><div class="t">Completadas</div><div class="v ok">' + cola.filter(function (b) { return b.estado === 'ok'; }).length + '</div></div>' +
+      '<div class="mini"><div class="t">Con error</div><div class="v bad">' + cola.filter(function (b) { return b.estado === 'error'; }).length + '</div></div>';
+
+    lista.innerHTML = cola.slice(-5).map(function (b) {
+      const badge = b.estado === 'ok' ? '<span class="badge ok">completada</span>'
+        : b.estado === 'error' ? '<span class="badge bad">error</span>'
+        : b.estado === 'corriendo' ? '<span class="badge warn">' + Math.round(b.prog) + '%</span>'
+        : '<span class="badge">en cola</span>';
+      return '<div class="bot"><div class="hd"><span>#' + b.id + ' · ' + b.nombre + '</span>' + badge + '</div>' +
+        '<div class="d-progress"><i style="width:' + Math.round(b.prog) + '%; background:' +
+          (b.estado === 'error' ? 'var(--bad)' : b.estado === 'ok' ? 'var(--ok)' : 'var(--accent)') + '"></i></div></div>';
+    }).join('') || '<p class="hint">La cola está vacía. Encola una tarea para ver el planificador trabajando.</p>';
+  }
+
+  const PASO = 120;
+  const timer = setInterval(function () {
+    const max = Number(conc.value);
+    let corriendo = cola.filter(function (b) { return b.estado === 'corriendo'; });
+    cola.forEach(function (b) {
+      if (b.estado === 'en cola' && corriendo.length < max) {
+        b.estado = 'corriendo';
+        corriendo.push(b);
+        logear(log, '#' + b.id + ' iniciada');
+      }
+    });
+    let cambio = false;
+    corriendo.forEach(function (b) {
+      b.prog += (PASO / b.dur) * 100;
+      cambio = true;
+      if (b.falla !== null && b.prog >= b.falla * 100) {
+        b.estado = 'error';
+        b.prog = Math.min(100, b.prog);
+        logear(log, '#' + b.id + ' falló al ' + Math.round(b.prog) + '%: origen no disponible — reintento programado', 'bad');
+        b.falla = null;
+      } else if (b.prog >= 100) {
+        b.prog = 100;
+        b.estado = 'ok';
+        logear(log, '#' + b.id + ' completada en ' + (b.dur / 1000).toFixed(1) + ' s', 'ok');
+      }
+    });
+    if (cambio || cola.some(function (b) { return b.estado === 'en cola'; })) pintar();
+  }, PASO);
+  alCerrar(root, function () { clearInterval(timer); });
+
+  conc.addEventListener('input', function () { concOut.textContent = conc.value; });
+  $1(root, '[data-bot-add]').addEventListener('click', encolar);
+  $1(root, '[data-bot-reset]').addEventListener('click', function () {
+    cola = []; n = 0; log.innerHTML = ''; pintar();
+    logear(log, 'cola vaciada', 'info');
+  });
+
+  pintar();
+  encolar(); encolar();
+}
+
+function montarSensores(root) {
+  const cont = $1(root, '[data-sensores]');
+  const log = $1(root, '[data-sensor-log]');
+  const r = rng(9091);
+  const SENSORES = [
+    { n: 'Agua caliente sanitaria — Torre A', u: '°C', v: 58, min: 55, max: 62, paso: 0.9 },
+    { n: 'Dureza del agua — planta', u: 'ppm', v: 118, min: 80, max: 150, paso: 9 },
+    { n: 'Presión diferencial — pabellón 3', u: 'Pa', v: 12.4, min: 8, max: 18, paso: 1.4 },
+    { n: 'Carga grupo electrógeno', u: '%', v: 34, min: 0, max: 70, paso: 5 },
+    { n: 'Cámara de vacunas', u: '°C', v: 5.2, min: 2, max: 8, paso: 0.7 }
+  ];
+  SENSORES.forEach(function (s) { s.hist = [s.v]; s.alarma = false; });
+
+  function pintar() {
+    cont.innerHTML = SENSORES.map(function (s, i) {
+      const puntos = s.hist.map(function (v, j) {
+        const rango = s.max - s.min || 1;
+        const y = 24 - Math.max(0, Math.min(1, (v - s.min) / rango)) * 22;
+        return (j * (96 / Math.max(1, s.hist.length - 1))).toFixed(1) + ',' + y.toFixed(1);
+      }).join(' ');
+      return '<div class="sensor' + (s.alarma ? ' alarma' : '') + '">' +
+        '<div><div class="nm">' + s.n + '</div><div class="rg">rango ' + s.min + '–' + s.max + ' ' + s.u + '</div></div>' +
+        '<svg viewBox="0 0 96 26" aria-hidden="true"><polyline points="' + puntos + '"/></svg>' +
+        '<div class="vl ' + (s.alarma ? 'bad' : 'ok') + '">' + s.v.toFixed(1).replace('.', ',') + ' ' + s.u + '</div>' +
+        '</div>';
+    }).join('');
+  }
+
+  const timer = setInterval(function () {
+    SENSORES.forEach(function (s) {
+      s.v = Math.round((s.v + (r() - 0.5) * 2 * s.paso) * 10) / 10;
+      s.hist.push(s.v);
+      if (s.hist.length > 24) s.hist.shift();
+      const fuera = s.v < s.min || s.v > s.max;
+      if (fuera && !s.alarma) logear(log, 'ALARMA · ' + s.n + ' = ' + s.v + ' ' + s.u + ' (fuera de ' + s.min + '–' + s.max + ')', 'bad');
+      if (!fuera && s.alarma) logear(log, s.n + ' volvió a rango (' + s.v + ' ' + s.u + ')', 'ok');
+      s.alarma = fuera;
+    });
+    pintar();
+  }, 1200);
+  alCerrar(root, function () { clearInterval(timer); });
+
+  pintar();
+  logear(log, 'monitor conectado · 5 equipos · muestreo cada 1,2 s', 'info');
+}
+
+function montarRutaRonda(root) {
+  /* Orden tal como viene en la planilla: por código de zona, que es como
+     se listan en el sistema, no por cercanía. De ahí el zig-zag. */
+  const ZONAS = [
+    { n: 'Base', x: 16, y: 90 }, { n: 'Z1', x: 170, y: 74 }, { n: 'Z2', x: 46, y: 24 },
+    { n: 'Z3', x: 150, y: 30 }, { n: 'Z4', x: 60, y: 90 }, { n: 'Z5', x: 100, y: 18 },
+    { n: 'Z6', x: 128, y: 88 }, { n: 'Z7', x: 84, y: 56 }
+  ];
+  const METRO = 3;      // cada unidad del plano equivale a 3 m
+  const M_POR_MIN = 75; // caminata a ~4,5 km/h
+  const svg = $1(root, '[data-ruta-svg]');
+  const kpi = $1(root, '[data-ruta-kpi]');
+  const btn = $1(root, '[data-ruta-opt]');
+
+  function dist(a, b) { return Math.sqrt((a.x - b.x) * (a.x - b.x) + (a.y - b.y) * (a.y - b.y)); }
+  function largo(orden) {
+    let t = 0;
+    for (let i = 1; i < orden.length; i++) t += dist(orden[i - 1], orden[i]);
+    return t;
+  }
+  /* Vecino más cercano desde la base y después 2-opt: la misma heurística
+     del panel real. El 2-opt deshace los cruces que deja el vecino más
+     cercano, que es donde se pierde la mayor parte del recorrido. */
+  function optimizar() {
+    const pend = ZONAS.slice(1);
+    let orden = [ZONAS[0]];
+    while (pend.length) {
+      let mejor = 0;
+      for (let i = 1; i < pend.length; i++) {
+        if (dist(orden[orden.length - 1], pend[i]) < dist(orden[orden.length - 1], pend[mejor])) mejor = i;
+      }
+      orden.push(pend.splice(mejor, 1)[0]);
+    }
+    let mejoro = true;
+    while (mejoro) {
+      mejoro = false;
+      for (let i = 1; i < orden.length - 1; i++) {
+        for (let j = i + 1; j < orden.length; j++) {
+          const candidato = orden.slice(0, i).concat(orden.slice(i, j + 1).reverse(), orden.slice(j + 1));
+          if (largo(candidato) < largo(orden) - 0.001) { orden = candidato; mejoro = true; }
+        }
+      }
+    }
+    return orden;
+  }
+
+  function poly(orden, clase) {
+    return '<polyline class="' + clase + '" points="' + orden.map(function (p) { return p.x + ',' + p.y; }).join(' ') + '"/>';
+  }
+  function dibujar(opt) {
+    let html = poly(ZONAS, 'ruta-base');
+    if (opt) html += poly(opt, 'ruta');
+    html += ZONAS.map(function (p) {
+      return '<circle class="punto" cx="' + p.x + '" cy="' + p.y + '" r="2.6"/>' +
+        '<text class="poi" x="' + (p.x + 4) + '" y="' + (p.y + 1.5) + '">' + p.n + '</text>';
+    }).join('');
+    svg.innerHTML = html;
+
+    const base = largo(ZONAS) * METRO;
+    const nuevo = opt ? largo(opt) * METRO : null;
+    kpi.innerHTML =
+      '<div class="mini"><div class="t">Orden de planilla</div><div class="v">' + nfm.format(Math.round(base)) + ' m</div></div>' +
+      (nuevo !== null
+        ? '<div class="mini"><div class="t">Ruta calculada</div><div class="v ok">' + nfm.format(Math.round(nuevo)) + ' m</div></div>' +
+          '<div class="mini"><div class="t">Ahorro</div><div class="v ok">' + pc(1 - nuevo / base, 0) + '</div></div>' +
+          '<div class="mini"><div class="t">Menos por ronda</div><div class="v">' + Math.round((base - nuevo) / M_POR_MIN) + ' min</div></div>'
+        : '<div class="mini"><div class="t">Ruta calculada</div><div class="v">—</div></div>');
+  }
+
+  btn.addEventListener('click', function () { dibujar(optimizar()); });
+  dibujar(null);
+}
+
+/* Asistente conectado a un Worker de Cloudflare (demo real, con rate-limit propio) */
+function montarChat(root) {
+  const chat = $1(root, '[data-chat]');
+  if (!chat) return;
+  const cont = chat.closest('.d-panel') || chat.closest('.demo');
+  const input = $1(cont, '[data-chat-input]');
+  const send = $1(cont, '[data-chat-send]');
+  if (!input || !send) return;
+  const WORKER = 'https://asistente-legal-demo.marcelopoblete16.workers.dev';
+
+  function sesion() {
+    try {
+      let id = localStorage.getItem('asistenteSession');
+      if (!id) { id = (crypto.randomUUID ? crypto.randomUUID() : String(Date.now())); localStorage.setItem('asistenteSession', id); }
+      return id;
+    } catch (e) { return 'anon'; }
+  }
+
+  function burbuja(texto, esUsuario, extra) {
+    const msg = document.createElement('div');
+    msg.className = 'msg' + (esUsuario ? ' user' : '');
+    const av = document.createElement('div');
+    av.className = 'avatar'; av.textContent = esUsuario ? 'Tú' : 'IA';
+    const b = document.createElement('div');
+    b.className = 'bubble' + (extra ? ' ' + extra : '');
+    b.textContent = texto;
+    msg.appendChild(av); msg.appendChild(b);
+    chat.appendChild(msg);
+    chat.scrollTop = chat.scrollHeight;
+    return b;
+  }
+
+  function enviar() {
+    const texto = input.value.trim();
+    if (!texto) return;
+    burbuja(texto, true);
+    input.value = '';
+    input.disabled = true; send.disabled = true;
+    const pend = burbuja('Escribiendo…', false, 'pending');
+    fetch(WORKER, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ message: texto, sessionId: sesion() })
+    })
+      .then(function (r) { return r.json(); })
+      .then(function (d) {
+        pend.classList.remove('pending');
+        pend.textContent = d.reply || d.error || 'Sin respuesta.';
+        if (d.error) pend.classList.add('error');
+      })
+      .catch(function () {
+        pend.classList.remove('pending');
+        pend.classList.add('error');
+        pend.textContent = 'No pude contactar al asistente. Puede ser el límite de uso de la demo: intenta en un momento.';
+      })
+      .finally(function () { input.disabled = false; send.disabled = false; input.focus(); });
+  }
+
+  send.addEventListener('click', enviar);
+  input.addEventListener('keydown', function (e) { if (e.key === 'Enter') enviar(); });
+}
+
+/* ------------------------------------------------------------
+   Arranque: pestañas genéricas + montaje de cada motor
+   ------------------------------------------------------------ */
 function activarTab(demo, nombre) {
-  demo.querySelectorAll('.d-tabs [data-tab]').forEach(function (b) {
+  $n(demo, '.d-tabs [data-tab]').forEach(function (b) {
     b.setAttribute('aria-selected', String(b.dataset.tab === nombre));
   });
-  demo.querySelectorAll('.d-panel').forEach(function (p) {
+  $n(demo, '.d-panel').forEach(function (p) {
     p.classList.toggle('active', p.dataset.panel === nombre);
   });
 }
 
+function initDemos(scope) {
+  const root = scope || document;
+  $n(root, '.d-tabs').forEach(function (tabs) {
+    const demo = tabs.closest('.demo');
+    $n(tabs, '[data-tab]').forEach(function (btn) {
+      btn.addEventListener('click', function () { activarTab(demo, btn.dataset.tab); });
+    });
+  });
+  $n(root, '[data-demo]').forEach(function (el) {
+    if (el.dataset.listo) return;
+    el.dataset.listo = '1';
+    const motor = MOTORES[el.dataset.demo];
+    if (motor) motor(el);
+  });
+}
+
+/* El laboratorio muestra dos motores completos reusando las mismas
+   plantillas de las fichas, sin duplicar una línea de HTML. */
+$n(document, '[data-mount]').forEach(function (slot) {
+  const tpl = document.getElementById('tpl-' + slot.dataset.mount);
+  if (tpl) slot.appendChild(tpl.content.cloneNode(true));
+});
+
 initDemos(document);
+
 
 /* ============================================================
    5. CROMO: tema, progreso, nav activa, contadores, reloj
