@@ -931,30 +931,62 @@ input[type="range"]::-moz-range-thumb {
 .ctl input[type="checkbox"] { accent-color: var(--accent); width: 15px; height: 15px; }
 
 /* ============================================================
-   BOT-01 — unidad de ronda
+   BOT-01 — unidad de ronda articulada
    Vive en z-index 1, o sea por debajo de <main>: por eso se pierde
    detrás de las tarjetas, que son lo único opaco de la página, y se
-   ve en los márgenes. La burbuja va en una capa aparte, arriba.
+   ve en los márgenes. Cuando hay una ficha abierta sube a 90, entre
+   el velo (90) y la hoja (91), para asomarse por el borde.
    ============================================================ */
 .bot-capa {
   position: fixed; top: 0; left: 0; z-index: 1;
-  width: 46px; height: 36px; pointer-events: none;
+  width: 62px; height: 50px; pointer-events: none;
   will-change: transform;
 }
+.bot-capa.encima { z-index: 90; }
 .bot-capa svg { width: 100%; height: 100%; overflow: visible; }
-.bot-chasis { fill: var(--surface-2); stroke: var(--accent); stroke-width: 1.6; }
-.bot-linea { stroke: var(--accent); stroke-width: 1.6; fill: none; stroke-linecap: round; }
-.bot-rueda { fill: none; stroke: var(--accent); stroke-width: 1.4; }
-.bot-radio { stroke: var(--accent-line); stroke-width: 1; }
-.bot-ojo { fill: var(--paper); }
+
+.bot-todo { transform-box: view-box; transform-origin: 26px 38px; transition: transform .7s var(--ease); }
+.bot-capa.trepa .bot-todo { transform: rotate(-11deg); }
+
+.bot-chasis { fill: var(--surface-2); stroke: var(--accent); stroke-width: 1.5; }
+.bot-linea { stroke: var(--accent); stroke-width: 1.5; fill: none; stroke-linecap: round; stroke-linejoin: round; }
+.bot-tenue { stroke: var(--accent-line); stroke-width: 1.1; fill: none; stroke-linecap: round; }
+.bot-oruga { fill: none; stroke: var(--accent); stroke-width: 1.6; }
+.bot-rodillo { fill: var(--paper); stroke: var(--accent-line); stroke-width: 1; }
+.bot-radio { stroke: var(--accent); stroke-width: 1.1; }
+.bot-panel { fill: var(--accent-soft); stroke: var(--accent-line); stroke-width: .9; }
+.bot-lente { fill: var(--paper-deep); stroke: var(--accent); stroke-width: 1.2; }
+.bot-pupila { fill: var(--accent); transition: r .35s var(--ease); }
 .bot-led { fill: var(--ok); }
-.bot-haz { fill: var(--accent); opacity: 0; transition: opacity .4s var(--ease); }
-.bot-capa.mirando .bot-haz { opacity: .16; }
+.bot-chispa { fill: var(--accent); animation: bot-late 2.4s var(--ease) infinite; }
+@keyframes bot-late { 0%, 100% { opacity: .35; } 50% { opacity: 1; } }
+
+.bot-haz { fill: var(--accent); opacity: 0; transition: opacity .45s var(--ease); }
+.bot-capa.mirando .bot-haz { opacity: .15; }
+.bot-capa.mirando .bot-pupila { r: 1.7; }
+
+/* Mástil, brazo y antebrazo se mueven por separado: plegados en ronda,
+   extendidos y hacia arriba cuando se cuelga de un borde. */
+.bot-mastil { transform-box: view-box; transform-origin: 24px 18px; transition: transform .45s var(--ease); }
+.bot-capa.mirando .bot-mastil { transform: rotate(7deg); }
+.bot-capa.trepa .bot-mastil { transform: rotate(-6deg); }
+
+.bot-brazo { transform-box: view-box; transform-origin: 43px 22px; transform: rotate(26deg); transition: transform .6s var(--ease); }
+.bot-capa.trepa .bot-brazo { transform: rotate(-28deg); }
+.bot-capa.mirando .bot-brazo { transform: rotate(16deg); }
+
+.bot-antebrazo { transform-box: view-box; transform-origin: 52px 16px; transform: rotate(34deg); transition: transform .6s var(--ease); }
+.bot-capa.trepa .bot-antebrazo { transform: rotate(-22deg); }
+
+@media (prefers-reduced-motion: reduce) {
+  .bot-chispa { animation: none; }
+}
 
 .bot-ui { position: fixed; inset: 0; z-index: 41; pointer-events: none; }
+.bot-ui.encima { z-index: 92; }
 .bot-hit {
-  position: absolute; width: 58px; height: 48px; margin: -6px;
-  border-radius: 12px; pointer-events: auto; cursor: pointer;
+  position: absolute; width: 74px; height: 62px; margin: -6px;
+  border-radius: 14px; pointer-events: auto; cursor: pointer;
 }
 .bot-globo {
   position: absolute; max-width: 268px; pointer-events: auto;
@@ -986,6 +1018,7 @@ input[type="range"]::-moz-range-thumb {
 @media (max-width: 1023px) {
   .bot-capa, .bot-ui { display: none; }
 }
+
 @media (max-width: 620px) {
   .sensor { grid-template-columns: 1fr auto; }
   .sensor svg { display: none; }
@@ -1357,20 +1390,50 @@ input[type="range"]::-moz-range-thumb {
 </div>
 
 
-<!-- BOT-01: la unidad de ronda y su burbuja, en capas separadas -->
+<!-- BOT-01: chasis con oruga, mástil sensor y brazo articulado.
+     Cada grupo se anima por separado según el estado. -->
 <div class="bot-capa" id="botCapa" aria-hidden="true">
-  <svg viewBox="0 0 46 36">
-    <path class="bot-haz" d="M23 6 L38 -4 L38 16 Z"/>
-    <circle class="bot-rueda" cx="16" cy="28" r="4.6"/>
-    <path class="bot-radio" d="M16 23.4v9.2M11.4 28h9.2"/>
-    <circle class="bot-rueda" cx="30" cy="28" r="4.6"/>
-    <path class="bot-radio" d="M30 23.4v9.2M25.4 28h9.2"/>
-    <rect class="bot-chasis" x="8" y="13" width="30" height="13" rx="5"/>
-    <path class="bot-linea" d="M23 13V8"/>
-    <circle class="bot-chasis" cx="23" cy="6" r="3.4"/>
-    <circle class="bot-ojo" cx="23" cy="6" r="1.3"/>
-    <circle class="bot-led" cx="33" cy="19.5" r="1.3"/>
-    <path class="bot-linea" d="M12 13V9.5M12 9.5h2.5"/>
+  <svg viewBox="0 0 62 50">
+    <g class="bot-todo">
+      <path class="bot-haz" d="M24 8 L47 -2 L47 18 Z"/>
+
+      <g class="bot-tren">
+        <rect class="bot-oruga" x="6" y="31" width="42" height="13" rx="6.5"/>
+        <path class="bot-tenue" d="M10 31h34M10 44h34"/>
+        <circle class="bot-rodillo" cx="14" cy="37.5" r="4.4"/>
+        <path class="bot-radio bot-eje" data-cx="14" d="M14 33.1v8.8M9.6 37.5h8.8"/>
+        <circle class="bot-rodillo" cx="27" cy="37.5" r="3"/>
+        <path class="bot-radio bot-eje" data-cx="27" d="M27 34.5v6M24 37.5h6"/>
+        <circle class="bot-rodillo" cx="40" cy="37.5" r="4.4"/>
+        <path class="bot-radio bot-eje" data-cx="40" d="M40 33.1v8.8M35.6 37.5h8.8"/>
+      </g>
+
+      <g class="bot-cuerpo">
+        <path class="bot-chasis" d="M11 18h32a5 5 0 0 1 5 5v8H6v-8a5 5 0 0 1 5-5z"/>
+        <rect class="bot-panel" x="12" y="22" width="13" height="6" rx="1.5"/>
+        <path class="bot-tenue" d="M30 23h11M30 26.5h11M30 30h7"/>
+        <circle class="bot-led" cx="45" cy="21.5" r="1.4"/>
+      </g>
+
+      <g class="bot-mastil">
+        <path class="bot-linea" d="M24 18v-5"/>
+        <path class="bot-tenue" d="M21 15h6"/>
+        <rect class="bot-chasis" x="16" y="4" width="17" height="10" rx="4.5"/>
+        <circle class="bot-lente" cx="24" cy="9" r="2.9"/>
+        <circle class="bot-pupila" cx="24" cy="9" r="1.2"/>
+        <path class="bot-linea" d="M31 4V-1"/>
+        <circle class="bot-chispa" cx="31" cy="-2" r="1.3"/>
+      </g>
+
+      <g class="bot-brazo">
+        <path class="bot-linea" d="M43 22l9-6"/>
+        <circle class="bot-rodillo" cx="43" cy="22" r="1.8"/>
+        <g class="bot-antebrazo">
+          <path class="bot-linea" d="M52 16l8-5"/>
+          <path class="bot-linea" d="M60 11l2.5-2.5M60 11l.5 3.4"/>
+        </g>
+      </g>
+    </g>
   </svg>
 </div>
 <div class="bot-ui" id="botUI">
@@ -4008,10 +4071,10 @@ initDemos(document);
 
 /* ============================================================
    6. BOT-01 — unidad de ronda
-   Patrulla el margen izquierdo persiguiendo su objetivo con un lazo
-   de primer orden (por eso frena suave en vez de teletransportarse),
-   comenta la sección que estás mirando y cada tanto se mete detrás
-   de una tarjeta, donde el z-index lo esconde de verdad.
+   Persigue su objetivo con un lazo de primer orden (por eso frena
+   suave), comenta la sección que estás mirando, se mete detrás de
+   las tarjetas y baja por el pasillo que queda entre las columnas.
+   Cuando abres una ficha trepa por el borde de la hoja y se asoma.
    ============================================================ */
 (function () {
   const capa = document.getElementById('botCapa');
@@ -4046,19 +4109,20 @@ initDemos(document);
     'Si te pierdo de vista es porque estoy detrás de una tarjeta.',
     'Turno tranquilo.'
   ];
-  const DETRAS = [
-    'Estoy detrás de esta tarjeta. Sigue tú.',
-    'Acá atrás no hay nada. Solo yo.',
-    'Buen escondite.',
-    'Inspección de la cara oculta: conforme.'
-  ];
+  const DETRAS = ['Estoy detrás de esta tarjeta. Sigue tú.', 'Acá atrás no hay nada. Solo yo.',
+                  'Buen escondite.', 'Inspección de la cara oculta: conforme.'];
+  const ASOMADO = ['Me cuelgo del borde. No quiero perderme esta.',
+                   'Baja hasta «El proceso, paso a paso»: ahí está lo bueno.',
+                   'La demo de acá adentro calcula de verdad. Dale.',
+                   'Desde acá se ve todo. Sigue leyendo, yo aguanto.'];
+  const PASILLO = ['Bajando por el pasillo entre las tarjetas.', 'Ronda por el corredor central.'];
 
-  const bot = { x: 60, y: 260, tx: 60, ty: 260, rueda: 0, dir: 1, estado: 'carril', espera: 0 };
+  const bot = { x: 60, y: 260, tx: 60, ty: 260, rueda: 0, dir: 1, estado: 'carril', espera: 0, desde: 0 };
   let ultimoMsg = 0, seccionVista = '', temporizador = 0;
 
   function carrilX() {
     const ancho = Math.min(1180, window.innerWidth - Math.min(88, Math.max(28, window.innerWidth * 0.06)));
-    return Math.max(14, (window.innerWidth - ancho) / 2 / 2 - 10);
+    return Math.max(14, (window.innerWidth - ancho) / 2 / 2 - 14);
   }
 
   function decir(t, ms) {
@@ -4069,44 +4133,47 @@ initDemos(document);
     temporizador = setTimeout(function () { globo.classList.remove('on'); }, ms || 6500);
     ultimoMsg = Date.now();
   }
+  function frase(l) { return l[Math.floor(Math.random() * l.length)]; }
 
-  function frase(lista) { return lista[Math.floor(Math.random() * lista.length)]; }
-
-  /* Qué sección estás mirando: la que cruza el tercio superior. */
   function seccionActiva() {
-    const ids = Object.keys(SECCION);
     let activa = 'inicio';
-    ids.forEach(function (id) {
+    Object.keys(SECCION).forEach(function (id) {
       const el = document.getElementById(id);
       if (el && el.getBoundingClientRect().top <= window.innerHeight * 0.34) activa = id;
     });
     return activa;
   }
-
-  function tarjetaVisible() {
-    const vis = $n(document, '.card').filter(function (c) {
+  function tarjetasVisibles() {
+    return $n(document, '.card').filter(function (c) {
       const r = c.getBoundingClientRect();
       return !c.classList.contains('hidden') && r.top > 80 && r.bottom < window.innerHeight - 40;
     });
-    return vis.length ? vis[Math.floor(Math.random() * vis.length)] : null;
   }
 
   function paso() {
     if (apagado) return;
-    const k = reduce ? 1 : 0.055;   // ganancia del lazo: cuánto corrige por cuadro
+    const k = reduce ? 1 : (bot.estado === 'asomado' ? 0.09 : 0.055);
     const dx = bot.tx - bot.x, dy = bot.ty - bot.y;
     bot.x += dx * k;
     bot.y += dy * k;
     const v = Math.sqrt(dx * dx + dy * dy) * k;
-    bot.rueda += v * 7;
+    if (bot.estado !== 'asomado') bot.rueda += v * 7;
     if (Math.abs(dx) > 0.4) bot.dir = dx > 0 ? 1 : -1;
 
     capa.style.transform = 'translate3d(' + bot.x.toFixed(1) + 'px,' + bot.y.toFixed(1) + 'px,0) scaleX(' + bot.dir + ')';
-    $n(capa, '.bot-radio').forEach(function (r, i) {
-      r.setAttribute('transform', 'rotate(' + bot.rueda.toFixed(1) + ' ' + (i ? 30 : 16) + ' 28)');
+    $n(capa, '.bot-eje').forEach(function (e) {
+      const cx = e.getAttribute('data-cx');
+      e.setAttribute('transform', 'rotate(' + bot.rueda.toFixed(1) + ' ' + cx + ' 37.5)');
     });
     hit.style.transform = 'translate3d(' + bot.x.toFixed(1) + 'px,' + bot.y.toFixed(1) + 'px,0)';
-    globo.style.left = Math.min(window.innerWidth - 290, bot.x + 58) + 'px';
+
+    /* Asomado la burbuja iría encima de la hoja: solo se muestra si el
+       margen izquierdo da el ancho, y siempre hacia afuera. */
+    if (bot.estado === 'asomado') {
+      globo.style.left = Math.max(12, bot.x - 262) + 'px';
+    } else {
+      globo.style.left = Math.min(window.innerWidth - 290, bot.x + 70) + 'px';
+    }
     globo.style.top = Math.max(78, Math.min(window.innerHeight - 130, bot.y - 14)) + 'px';
 
     if (v < 0.35 && bot.estado === 'excursion' && !bot.espera) {
@@ -4114,15 +4181,22 @@ initDemos(document);
       capa.classList.remove('mirando');
       decir(frase(DETRAS), 4200);
     }
-    if (bot.espera && Date.now() - bot.espera > 3200) {
-      bot.espera = 0;
-      bot.estado = 'carril';
-    }
+    if (bot.espera && Date.now() - bot.espera > 3200) { bot.espera = 0; bot.estado = 'carril'; }
     requestAnimationFrame(paso);
   }
 
   function rumbo() {
     if (apagado) return;
+
+    if (bot.estado === 'asomado') {
+      const hoja = document.getElementById('sheet').getBoundingClientRect();
+      /* Se cuelga del canto izquierdo: la mitad del cuerpo queda tapada
+         por la hoja, que está en z-index 91. */
+      bot.tx = hoja.left - 34;
+      bot.ty = hoja.top + 120 + Math.sin((Date.now() - bot.desde) / 2100) * 110;
+      return;
+    }
+
     const sec = seccionActiva();
     if (sec !== seccionVista) {
       seccionVista = sec;
@@ -4132,26 +4206,71 @@ initDemos(document);
     }
     if (bot.estado === 'carril') {
       bot.tx = carrilX();
-      /* Se deja llevar por la sección visible, con un vaivén suave para
-         que no parezca un ascensor. */
       bot.ty = window.innerHeight * 0.42 + Math.sin(Date.now() / 2600) * 90;
+    } else if (bot.estado === 'pasillo') {
+      /* Baja por el hueco entre las dos columnas de tarjetas: aparece y
+         desaparece a medida que pasa por detrás de cada una. */
+      const t = (Date.now() - bot.desde) / 6500;
+      bot.ty = 110 + t * (window.innerHeight - 200);
+      if (t >= 1) bot.estado = 'carril';
     }
   }
 
   function excursion() {
     if (apagado || bot.estado !== 'carril') return;
-    const c = tarjetaVisible();
-    if (!c) return;
+    const vis = tarjetasVisibles();
+    if (!vis.length) return;
+
+    /* Dos formas de jugar con las tarjetas: esconderse detrás de una,
+       o bajar por el pasillo que queda entre las columnas. */
+    if (vis.length > 1 && Math.random() < 0.45) {
+      const r0 = vis[0].getBoundingClientRect(), r1 = vis[1].getBoundingClientRect();
+      if (Math.abs(r0.top - r1.top) < 30 && r1.left > r0.right) {
+        bot.tx = (r0.right + r1.left) / 2 - 31;
+        bot.desde = Date.now();
+        bot.estado = 'pasillo';
+        capa.classList.add('mirando');
+        setTimeout(function () { capa.classList.remove('mirando'); }, 2200);
+        if (Date.now() - ultimoMsg > 8000) decir(frase(PASILLO), 4200);
+        return;
+      }
+    }
+    const c = vis[Math.floor(Math.random() * vis.length)];
     const r = c.getBoundingClientRect();
-    bot.tx = r.left + r.width / 2 - 23;
-    bot.ty = r.top + r.height / 2 - 18;
+    bot.tx = r.left + r.width / 2 - 31;
+    bot.ty = r.top + r.height / 2 - 25;
     bot.estado = 'excursion';
     capa.classList.add('mirando');
   }
 
   function ocio() {
-    if (apagado) return;
+    if (apagado || bot.estado === 'asomado') return;
     if (Date.now() - ultimoMsg > 24000) decir(frase(OCIO), 5000);
+  }
+
+  /* Se engancha a la apertura de la ficha mirando la clase de la hoja,
+     sin tocar abrirFicha. */
+  const hoja = document.getElementById('sheet');
+  if (hoja) {
+    new MutationObserver(function () {
+      if (apagado) return;
+      const abierta = hoja.classList.contains('open');
+      if (abierta && bot.estado !== 'asomado') {
+        bot.estado = 'asomado';
+        bot.desde = Date.now();
+        bot.espera = 0;
+        capa.classList.add('encima', 'trepa', 'mirando');
+        ui.classList.add('encima');
+        const r = hoja.getBoundingClientRect();
+        setTimeout(function () {
+          if (bot.estado === 'asomado' && r.left > 300) decir(frase(ASOMADO), 6000);
+        }, 1400);
+      } else if (!abierta && bot.estado === 'asomado') {
+        bot.estado = 'carril';
+        capa.classList.remove('encima', 'trepa', 'mirando');
+        ui.classList.remove('encima');
+      }
+    }).observe(hoja, { attributes: true, attributeFilter: ['class'] });
   }
 
   function encender() {
@@ -4185,14 +4304,12 @@ initDemos(document);
       Object.keys(MOTORES).length + ' motores corriendo y cero dependencias externas.'])), 5200);
   });
   hit.addEventListener('mouseenter', function () { capa.classList.add('mirando'); });
-  hit.addEventListener('mouseleave', function () { capa.classList.remove('mirando'); });
+  hit.addEventListener('mouseleave', function () { if (bot.estado !== 'asomado') capa.classList.remove('mirando'); });
 
-  /* Reacciona a lo que haces, no solo a dónde estás. */
   document.addEventListener('click', function (e) {
     if (apagado || Date.now() - ultimoMsg < 5000) return;
     const chip = e.target.closest('.chip[data-filter]');
     if (chip) { decir('Filtrando por «' + chip.textContent.replace(/\d+$/, '').trim() + '». Los contadores salen de los propios datos.', 5000); return; }
-    if (e.target.closest('.card')) { decir('Ahí adentro está el proceso completo: qué pasó, qué se hizo y qué costó encontrar.', 5500); return; }
     if (e.target.closest('.run-btn')) { decir('Eso está calculando de verdad. Ningún número de esta página está escrito a mano.', 5500); }
   }, true);
 
@@ -4204,9 +4321,9 @@ initDemos(document);
   } else {
     window.addEventListener('scroll', rumbo, { passive: true });
     window.addEventListener('resize', rumbo);
-    setInterval(rumbo, 900);
+    setInterval(rumbo, 700);
     setInterval(ocio, 9000);
-    if (!reduce) setInterval(excursion, 26000);
+    if (!reduce) setInterval(excursion, 22000);
     rumbo();
     requestAnimationFrame(paso);
     setTimeout(function () { decir(frase(SECCION.inicio), 7000); }, 2600);
