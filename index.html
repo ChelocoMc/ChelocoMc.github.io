@@ -1016,7 +1016,7 @@ input[type="range"]::-moz-range-thumb {
           </div>
           <div class="tele-row"><span class="k">Paneles Flask activos</span><span class="v">3 puertos</span></div>
           <div class="tele-row"><span class="k">Jobs nocturnos SQL</span><span class="v ok">sin errores</span></div>
-          <div class="tele-row"><span class="k">Modelos Power BI</span><span class="v">2 en producción</span></div>
+          <div class="tele-row"><span class="k">Modelos Power BI</span><span class="v">3 en producción</span></div>
           <div class="tele-row"><span class="k">Última corrida</span><span class="v mono" id="teleTime">03:56</span></div>
         </div>
       </aside>
@@ -1090,7 +1090,7 @@ input[type="range"]::-moz-range-thumb {
         <div class="svc-list">
           <div class="svc"><span class="n">01</span><h3>Automatizar una planilla</h3><p>Ese cruce de Excel que toma media jornada cada mes queda en un script que corre en segundos, deja registro de lo que hizo y avisa cuando algo no cuadra.</p></div>
           <div class="svc"><span class="n">02</span><h3>Dashboards internos a medida</h3><p>Un panel web propio para mirar procesos en vivo, sin licencias por usuario ni pelear con una herramienta que hace el 60% de lo que necesitas.</p></div>
-          <div class="svc"><span class="n">03</span><h3>Modelos e informes en Power BI</h3><p>Modelado, medidas DAX y, sobre todo, desatascar modelos que no cargan y nadie sabe por qué. Ese es el trabajo que más me piden.</p></div>
+          <div class="svc"><span class="n">03</span><h3>Modelos e informes en Power BI</h3><p>Diseño y construcción del modelo completo: orígenes, estrella, calendario, medidas DAX y páginas por audiencia, conectado y actualizándose solo. Y si ya tienes uno que no abre, también lo desatasco.</p></div>
           <div class="svc"><span class="n">04</span><h3>Integración y mantención SQL Server</h3><p>Reviso jobs, consultas T-SQL y lógica de negocio que entrega cifras equivocadas sin que el sistema marque error en ninguna parte.</p></div>
           <div class="svc"><span class="n">05</span><h3>Asistentes de IA aplicados</h3><p>Agentes con acceso real a tus archivos y herramientas, con opción de correr en local cuando los datos no pueden salir de la red.</p></div>
           <div class="svc"><span class="n">06</span><h3>Diagnóstico de un sistema existente</h3><p>Algo ya construido falla y el que lo hizo no está. Reviso el código o el modelo, encuentro la causa raíz y te la dejo documentada, con o sin arreglo.</p></div>
@@ -1380,7 +1380,7 @@ input[type="range"]::-moz-range-thumb {
   <div class="demo" data-demo="bi">
     <div class="demo-bar"><span class="dot"></span><span class="dot"></span><span class="dot"></span><span class="demo-url">resumen ejecutivo — modelo semántico</span></div>
     <div class="demo-body">
-      <p class="hint">Modelo de 24 filas con las medidas recalculándose en vivo. Haz clic en un mes del gráfico o en una unidad de la tabla: todo lo demás se filtra, igual que el cross-filtering del informe real.</p>
+      <p class="hint">Un modelo en miniatura: tabla de hechos, dimensiones de mes y unidad, y la medida evaluándose en el contexto de filtro. Haz clic en un mes del gráfico o en una unidad de la tabla y mira cómo se propaga el filtro por el resto, igual que en el informe real.</p>
       <div class="fchips" data-bi-chips><span class="hint">Sin filtros — mostrando el total.</span></div>
       <div style="display:flex; gap:14px; align-items:center; flex-wrap:wrap;">
         <div class="d-donut" data-bi-donut style="--pct:0%"><div class="hole" data-bi-nsp>—</div></div>
@@ -1630,27 +1630,30 @@ const PROYECTOS = [
   },
   {
     ref: 'BI-03', areas: ['bi', 'sql', 'datos'],
-    titulo: 'Modelo de Business Intelligence',
-    kicker: 'El reporte ejecutivo vivía en un Excel estático que alguien actualizaba a mano.',
+    titulo: 'Modelos y tableros en Power BI',
+    kicker: 'Los informes de gestión se armaban a mano en Excel, llegaban tarde y cada área tenía su propia versión de la cifra.',
     glyph: '<svg viewBox="0 0 48 48" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M6 42V26M17 42V14M28 42V32M39 42V8"/><path d="M4 42h40" stroke-width="1.2"/></svg>',
-    metricas: [{ v: '0', k: 'errores de carga' }, { v: '2', k: 'orígenes' }, { v: '86%', k: 'KPI cumplimiento' }],
-    tags: ['Power BI', 'DAX', 'Power Query (M)', 'SQL Server', 'SharePoint'],
-    contexto: 'La jefatura decidía con cifras de cumplimiento que salían de un Excel actualizado a mano. Además del riesgo obvio, el archivo dejaba de cuadrar apenas alguien cambiaba una fila en el origen.',
-    solucion: 'Modelo semántico en Power BI con Power Query y DAX, conectado directo a SharePoint y SQL Server, con actualización programada por gateway. Lo interesante no fue construirlo sino dejarlo cargando: el modelo fallaba con un mensaje que no decía dónde.',
-    cita: '«Se esperaba el token Literal», sin línea ni columna. Terminé instalando el parser oficial de M para que el propio motor me dijera dónde miraba.',
+    metricas: [{ v: '8', k: 'tablas por modelo' }, { v: '1,07 M', k: 'filas en el hecho' }, { v: '6', k: 'páginas' }],
+    tags: ['Power BI', 'DAX', 'Power Query (M)', 'Modelo en estrella', 'SQL Server', 'SharePoint', 'Gateway'],
+    contexto: 'La jefatura decidía con planillas que alguien consolidaba a mano cada mes. Además de llegar tarde, cada área traía su propia versión del mismo número, así que las reuniones empezaban discutiendo cuál cifra era la buena en vez de qué hacer con ella.',
+    solucion: 'Diseñé y construí los modelos desde la base de datos hasta la página: modelo en estrella con hechos y dimensiones propias, un calendario que entiende el período contractual del negocio, medidas en DAX organizadas por tema, y páginas separadas por audiencia. Van tres modelos construidos así, conectados por puerta de enlace a SQL Server y SharePoint, y se actualizan solos.',
+    cita: 'Un tablero no se salva con visuales bonitos. Si el modelo está mal armado, cada pregunta nueva obliga a rehacerlo entero.',
     proceso: [
-      { t: 'Reproducir el error en aislamiento', d: 'El mensaje no decía consulta ni línea. Lo primero fue armar un archivo mínimo e ir agregando consultas de a una hasta que volviera a fallar, para tener un caso chico con el que trabajar.' },
-      { t: 'Traer una herramienta que sí hable', d: 'Como la interfaz no daba pistas, instalé el analizador oficial del lenguaje de consultas y le pasé cada consulta por separado. Él sí dijo dónde miraba y qué esperaba encontrar.' },
-      { t: 'Separar sintaxis de datos', d: 'Con la carga arreglada aparecieron miles de filas con error, que era otro problema completamente distinto: conversión de tipos y valores heredados de Excel. Mezclar ambos diagnósticos era la trampa.' },
-      { t: 'Rehacer los cálculos con variables', d: 'Una columna calculada dependía de otra creada en el mismo bloque. En vez de buscar el orden mágico, se recalculó con variables intermedias, que es la forma que no depende del orden.' },
-      { t: 'Programar la actualización y avisar', d: 'El modelo quedó conectado por puerta de enlace con actualización programada, y el informe muestra la fecha del último refresco. Un tablero que se cayó ayer y nadie lo nota es peor que no tener tablero.' }
+      { t: 'Empezar por la decisión, no por el dato', d: 'La primera conversación no es sobre qué datos hay, sino sobre qué decisión se toma con ellos y cada cuánto. Eso define qué medidas hacen falta y, sobre todo, cuáles no.' },
+      { t: 'Levantar los orígenes de verdad', d: 'Ubicar de dónde sale cada cifra —tablas de SQL, listas de SharePoint, planillas de proveedores— y qué tan confiable es cada una. Ahí es cuando aparece que dos áreas usan tablas distintas para el mismo concepto.' },
+      { t: 'Modelo en estrella, no una tabla gigante', d: 'Hechos al centro y dimensiones alrededor, con las relaciones en una sola dirección. Cuesta más al principio y es lo que permite que agregar una pregunta nueva después sea agregar una medida, no rehacer el modelo.' },
+      { t: 'Dimensiones que hablan el idioma del negocio', d: 'La tabla de servicios no guarda solo el nombre: guarda su peso contractual, la sigla con que aparece en los informes y quién lo ejecuta. Y el calendario incorpora el período contractual, que no coincide con el año calendario.' },
+      { t: 'Medidas en DAX, ordenadas', d: 'Las medidas se agrupan por tema y se escriben con variables intermedias en lugar de expresiones anidadas. Una medida que nadie puede leer en seis meses es una medida que nadie va a poder corregir.' },
+      { t: 'Una página por audiencia', d: 'Resumen ejecutivo para quien mira treinta segundos, operación del día para quien la usa a diario, y detalle para quien tiene que auditar el número. La misma verdad contada tres veces distintas.' },
+      { t: 'Publicar y que se mantenga solo', d: 'Puerta de enlace hacia la base de datos, actualización programada y la fecha del último refresco visible en el informe. Un tablero que se cayó ayer y nadie lo nota es peor que no tener tablero.' }
     ],
     detalle: [
-      { t: 'Diagnóstico sin pistas', d: 'Power BI Desktop reportaba «se esperaba el token Literal» sin indicar línea ni consulta. Instalé el parser oficial de Microsoft para el lenguaje M (Node.js) y aislé consulta por consulta hasta dar con un operador de coalescencia <code>??</code> que ese motor no soporta.' },
-      { t: 'Regla de DAX', d: 'Una columna calculada referenciaba a otra creada en el mismo bloque de agregación, algo que DAX no permite y que tampoco marca como error evidente. Se resolvió recalculando con variables.' },
-      { t: 'Errores de datos, no de sintaxis', d: 'Al arreglar la carga aparecieron miles de filas con errores de importación por conversión de tipos y valores <code>#N/A</code> heredados de Excel. Se resolvieron con manejo explícito de errores y conversión regional de números (coma decimal).' }
+      { t: 'Por qué estrella y no una tabla ancha', d: 'Con una sola tabla ancha todo funciona hasta la primera pregunta que no estaba prevista. Separar hechos de dimensiones deja el modelo abierto: filtrar por servicio, por período o por tipo de aviso es agregar una relación, no reconstruir la consulta.' },
+      { t: 'Calendario a medida del contrato', d: 'El período que importa corre del 18 de abril al 17 de octubre, no de enero a diciembre. Se agregó como columna del calendario, así que cualquier visual puede segmentar por semestre contractual sin que nadie recalcule nada a mano.' },
+      { t: 'Cuando el modelo no abre', d: 'También me toca desatascar. Power BI reportaba «se esperaba el token Literal» sin decir línea ni consulta: instalé el analizador oficial del lenguaje M para aislar consulta por consulta y dar con un operador que ese motor no soporta. Aparte, una columna calculada referenciaba a otra creada en el mismo bloque de agregación, algo que DAX no permite aunque no lo marque como error evidente.' },
+      { t: 'Errores de datos, no de sintaxis', d: 'Con la carga arreglada aparecieron miles de filas con error por conversión de tipos y valores <code>#N/A</code> heredados de Excel. Se resolvieron con manejo explícito de errores y conversión regional de números, que es otro problema y conviene no mezclarlo con el anterior.' }
     ],
-    resultado: 'Tablero ejecutivo con KPIs de cumplimiento actualizados solos y <b>cero errores de carga</b> tras la auditoría completa del modelo.'
+    resultado: '<b>Tres modelos</b> construidos y actualizándose solos, con las cifras de gestión disponibles el primer día del mes en vez de la tercera semana.'
   },
   {
     ref: 'OPS-04', areas: ['python', 'datos'],
