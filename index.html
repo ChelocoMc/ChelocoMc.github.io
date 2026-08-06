@@ -508,6 +508,22 @@ nav.links a[aria-current="true"] { color: var(--accent); background: var(--accen
   font-family: var(--mono); font-size: 0.84em; background: var(--accent-soft);
   color: var(--accent); padding: 1px 5px; border-radius: 4px;
 }
+
+.proceso { list-style: none; margin: 0; padding: 0; counter-reset: paso; }
+.proceso li {
+  position: relative; margin-left: 13px; padding: 0 0 20px 32px;
+  border-left: 1px solid var(--line);
+}
+.proceso li:last-child { border-left-color: transparent; padding-bottom: 0; }
+.proceso li::before {
+  counter-increment: paso; content: counter(paso, decimal-leading-zero);
+  position: absolute; left: -13px; top: -3px; width: 26px; height: 26px;
+  display: grid; place-items: center; border-radius: 50%;
+  background: var(--paper); border: 1px solid var(--accent-line);
+  color: var(--accent); font-family: var(--mono); font-size: 0.62rem;
+}
+.proceso b { display: block; color: var(--ink); font-weight: 500; margin-bottom: 4px; }
+.proceso span { display: block; font-size: 0.9rem; color: var(--ink-soft); line-height: 1.55; }
 .result-box {
   border: 1px solid var(--accent-line); border-radius: 11px; background: var(--accent-soft);
   padding: 16px 18px; font-size: 0.95rem; color: var(--ink);
@@ -1572,6 +1588,14 @@ const PROYECTOS = [
     contexto: 'Existía un panel en Streamlit que había crecido a ~1.500 líneas en un solo archivo. Cada tarea larga bloqueaba la interfaz completa: si alguien lanzaba un consolidado, el resto de la gente veía la pantalla congelada. Agregar un módulo nuevo se había vuelto imposible sin romper otro.',
     solucion: 'Lo reescribí como una aplicación Flask por capas —núcleo, rutas, estático— sin ningún framework de build en el frontend. Las métricas viajan por Server-Sent Events, así que el navegador recibe el avance en vivo en vez de preguntar cada dos segundos si ya terminó.',
     cita: 'Migrar no fue portar código: fue separar seis responsabilidades que vivían en el mismo archivo.',
+    proceso: [
+      { t: 'Inventario de lo que ya existía', d: 'Leí las mil quinientas líneas del script antiguo anotando qué hacía cada bloque y cuáles compartían estado. Aparecieron seis responsabilidades distintas conviviendo en el mismo archivo, y esa fue la estructura del proyecto.' },
+      { t: 'Fijar el criterio de aceptación', d: 'Antes de tocar nada dejé corriendo la versión vieja y guardé su salida para cada módulo con los mismos datos de entrada. La versión nueva no se daba por buena por verse mejor: tenía que devolver exactamente lo mismo.' },
+      { t: 'Encontrar la causa del bloqueo', d: 'El diagnóstico habitual era «Streamlit no aguanta». La causa real era que la tarea larga corría en el mismo hilo que atendía la pantalla. Cambiar de framework sin arreglar eso habría dado el mismo problema con otra ropa.' },
+      { t: 'Migrar de a un módulo', d: 'Núcleo, rutas y estático separados; cada módulo se reescribía completo, se comparaba contra la salida guardada y recién ahí se apagaba el equivalente antiguo. Nunca hubo un día sin herramienta funcionando.' },
+      { t: 'Avance en vivo, no encuestas', d: 'El progreso viaja por Server-Sent Events desde el proceso que trabaja. El navegador no pregunta cada dos segundos si ya terminó: se entera cuando pasa algo.' },
+      { t: 'Salida gradual', d: 'La versión antigua quedó disponible como respaldo hasta que pasó una semana completa sin que nadie la abriera. Ese fue el momento de borrarla.' }
+    ],
     detalle: [
       { t: 'Arquitectura', d: 'Backend Flask puro con rutas separadas por módulo (bots, optimizador de rutas, validación de Excel, hospital, asistente IA). El frontend consume SSE directo, sin polling ni dependencias de build.' },
       { t: 'Módulo de IA', d: 'Capa RAG sobre la documentación interna con un modelo local vía Ollama, orquestable desde el mismo panel junto a otros proveedores según disponibilidad.' },
@@ -1589,6 +1613,14 @@ const PROYECTOS = [
     contexto: 'Dos fuentes de solicitudes que había que cruzar todos los meses. El problema no era el volumen sino la escritura: «HOSPITAL S. JUAN DE DIOS» y «Hosp. San Juan de Dios» son la misma entidad para una persona y dos entidades distintas para un JOIN. El cruce se hacía a ojo y no dejaba rastro de por qué se emparejó cada fila.',
     solucion: 'Un pipeline en pandas que normaliza el texto y empareja por distancia de Levenshtein, con un umbral explícito: sobre 70% se cruza automático, bajo eso se manda a revisión manual con la evidencia del puntaje. Cada corrida deja registro, así que el resultado es reproducible.',
     cita: 'El bug más caro fue el que no fallaba: siete líneas que en la próxima versión de pandas simplemente dejarían de hacer nada.',
+    proceso: [
+      { t: 'Medir el tamaño del problema', d: 'Exporté una muestra de las dos fuentes y conté cuántos registros cruzaban por igualdad exacta. Ese número explicaba, sin discusión, por qué el proceso seguía siendo manual.' },
+      { t: 'Normalizar antes de comparar', d: 'La mitad del trabajo se resuelve antes de medir nada: minúsculas, tildes, puntuación, artículos y un diccionario de abreviaturas del rubro. Recién con el texto parejo tiene sentido calcular distancias.' },
+      { t: 'Elegir el umbral con evidencia', d: 'Corrí el emparejamiento sobre pares ya validados a mano y miré dónde caía el corte entre acierto y error. El umbral salió de esos datos, no de una corazonada.' },
+      { t: 'Diseñar la revisión manual', d: 'Lo que queda bajo el umbral no se descarta ni se fuerza: sale en una lista aparte con su puntaje y su mejor candidato, para que una persona decida en segundos en vez de buscar a ciegas.' },
+      { t: 'Auditar el propio código', d: 'Antes de cerrar hice una pasada buscando llamadas que hoy funcionan y en la próxima versión de la librería dejarían de hacerlo en silencio. Ahí aparecieron las siete asignaciones encadenadas.' },
+      { t: 'Dejarlo reproducible', d: 'Cada corrida escribe su resultado y su registro. Si alguien pregunta por qué dos registros se cruzaron hace tres meses, la respuesta está guardada.' }
+    ],
     detalle: [
       { t: 'Bug silencioso encontrado', d: 'El código usaba asignaciones encadenadas del tipo <code>df[col].fillna(inplace=True)</code> en siete lugares. Funcionan en pandas antiguo, pero en pandas 3.0 se convierten en un no-op: la columna queda igual y nadie se entera. Se corrigieron todas antes de que llegaran a producción.' },
       { t: 'Seguridad', d: 'Los endpoints de carga armaban rutas de archivo concatenando el año y el nombre que mandaba el navegador, sin validar nada. Se agregó validación de formato y <code>secure_filename</code>.' },
@@ -1606,6 +1638,13 @@ const PROYECTOS = [
     contexto: 'La jefatura decidía con cifras de cumplimiento que salían de un Excel actualizado a mano. Además del riesgo obvio, el archivo dejaba de cuadrar apenas alguien cambiaba una fila en el origen.',
     solucion: 'Modelo semántico en Power BI con Power Query y DAX, conectado directo a SharePoint y SQL Server, con actualización programada por gateway. Lo interesante no fue construirlo sino dejarlo cargando: el modelo fallaba con un mensaje que no decía dónde.',
     cita: '«Se esperaba el token Literal», sin línea ni columna. Terminé instalando el parser oficial de M para que el propio motor me dijera dónde miraba.',
+    proceso: [
+      { t: 'Reproducir el error en aislamiento', d: 'El mensaje no decía consulta ni línea. Lo primero fue armar un archivo mínimo e ir agregando consultas de a una hasta que volviera a fallar, para tener un caso chico con el que trabajar.' },
+      { t: 'Traer una herramienta que sí hable', d: 'Como la interfaz no daba pistas, instalé el analizador oficial del lenguaje de consultas y le pasé cada consulta por separado. Él sí dijo dónde miraba y qué esperaba encontrar.' },
+      { t: 'Separar sintaxis de datos', d: 'Con la carga arreglada aparecieron miles de filas con error, que era otro problema completamente distinto: conversión de tipos y valores heredados de Excel. Mezclar ambos diagnósticos era la trampa.' },
+      { t: 'Rehacer los cálculos con variables', d: 'Una columna calculada dependía de otra creada en el mismo bloque. En vez de buscar el orden mágico, se recalculó con variables intermedias, que es la forma que no depende del orden.' },
+      { t: 'Programar la actualización y avisar', d: 'El modelo quedó conectado por puerta de enlace con actualización programada, y el informe muestra la fecha del último refresco. Un tablero que se cayó ayer y nadie lo nota es peor que no tener tablero.' }
+    ],
     detalle: [
       { t: 'Diagnóstico sin pistas', d: 'Power BI Desktop reportaba «se esperaba el token Literal» sin indicar línea ni consulta. Instalé el parser oficial de Microsoft para el lenguaje M (Node.js) y aislé consulta por consulta hasta dar con un operador de coalescencia <code>??</code> que ese motor no soporta.' },
       { t: 'Regla de DAX', d: 'Una columna calculada referenciaba a otra creada en el mismo bloque de agregación, algo que DAX no permite y que tampoco marca como error evidente. Se resolvió recalculando con variables.' },
@@ -1623,6 +1662,14 @@ const PROYECTOS = [
     contexto: 'Cada mes había que comparar el inventario operativo contra el informe de un auditor externo que llega en PDF. El cruce era manual, y cuando aparecía una diferencia nadie sabía si el error estaba en el Excel, en el PDF o en la interpretación de la regla.',
     solucion: 'Un dashboard que valida las reglas de negocio sobre el Excel, repara automáticamente lo reparable vía automatización COM, lee el PDF del auditor con OCR y compara celda a celda. Al final arma el borrador del correo con las diferencias listas para enviar.',
     cita: 'La diferencia con la auditoría no era un error de cálculo: era un supuesto sobre qué columna definía la zona, arrastrado desde la primera versión de la planilla.',
+    proceso: [
+      { t: 'Conciliar un mes a mano primero', d: 'Antes de escribir una línea hice el cruce completo de un mes a mano. Sin ese trabajo previo no habría sabido qué automatizar ni cuál era la respuesta correcta contra la que comparar.' },
+      { t: 'Perseguir la diferencia hasta el origen', d: 'La brecha contra la auditoría externa no venía de un error de suma. Venía de un supuesto: se asumía que la zona la definía la columna «Zona», cuando en realidad la definía la categoría del área.' },
+      { t: 'Convertir la regla en dato vivo', d: 'En vez de escribir la zona correcta en cada archivo, la categoría quedó como fórmula contra una base maestra. Corregir la maestra corrige los seis meses de una vez, y la regla queda en un solo lugar.' },
+      { t: 'Automatizar validación y reparación', d: 'Las reglas de negocio pasaron a un motor que las evalúa todas en cada corrida, marca la fila exacta que falla y repara automáticamente lo que es reparable sin criterio humano.' },
+      { t: 'Cerrar el ciclo con el correo', d: 'El proceso no termina en un informe: termina en el borrador del correo al auditor con las diferencias del mes redactadas. Lo que sigue es leerlo y enviarlo.' },
+      { t: 'Historial versionado', d: 'Cada revisión queda guardada. Cuando alguien pregunta qué se envió en mayo, no hay que reconstruirlo de memoria.' }
+    ],
     detalle: [
       { t: 'Regla de negocio no documentada', d: 'La clasificación de zonas no dependía de la columna «Zona» del Excel, sino de la categoría real de cada área. Ese supuesto estaba mal en la fórmula original y era la causa de las diferencias contra la auditoría externa.' },
       { t: 'Dato vivo, no estático', d: 'La columna de categoría quedó como fórmula <code>VLOOKUP</code> contra una base maestra: editar la base actualiza los seis meses de reportes de una vez, en lugar de tocarlos uno por uno.' },
@@ -1640,6 +1687,13 @@ const PROYECTOS = [
     contexto: 'Un conjunto de jobs corría cada madrugada para dejar las tablas de reporting listas. Dos problemas conviviendo: las cifras que producían estaban mal por lógica de negocio, y uno de los jobs llevaba tiempo fallando todas las noches sin que nadie revisara el historial.',
     solucion: 'Revisé la lógica T-SQL contra el proceso real, corregí la clasificación y los conteos, y reparé el job de indexación agregando guardas para que sea seguro re-ejecutarlo sin dejar la base a medias.',
     cita: 'Un CASE metía en la misma bolsa a los equipos sin previsión y a los que sí tenían previsión pero no orden de trabajo. No es lo mismo, y la jefatura decidía con esa bolsa.',
+    proceso: [
+      { t: 'Mirar el historial que nadie miraba', d: 'Lo primero fue abrir el registro de ejecuciones de los procesos nocturnos. Uno llevaba meses fallando todas las noches sin que nadie se enterara, porque el error no le llegaba a ninguna persona.' },
+      { t: 'Contrastar la lógica con la operación', d: 'La consulta decía una cosa y quien opera describía otra. Sentarme a preguntar qué significaba cada categoría fue lo que destapó que una sola bolsa mezclaba tres situaciones distintas.' },
+      { t: 'Corregir con guardas', d: 'Las correcciones quedaron seguras de re-ejecutar: si el proceso se corre dos veces no duplica ni deja la tabla a medias. Un arreglo que solo funciona la primera vez no es un arreglo.' },
+      { t: 'Re-validar contra el origen', d: 'Las cifras corregidas se recalcularon desde los datos crudos y se compararon con lo que venía informándose. Ese contraste fue el que puso número al impacto del error.' },
+      { t: 'Dejar aviso de fallo', d: 'El proceso ahora avisa cuando falla. Es la parte más barata del trabajo y la que evita que el próximo error dure meses.' }
+    ],
     detalle: [
       { t: 'Clasificación incorrecta', d: 'Un <code>CASE</code> agrupaba en una sola categoría dos situaciones distintas: equipos sin previsión asignada frente a equipos con previsión pero sin orden de trabajo. Se separó en tres categorías reales, lo que cambió las cifras del reporte de jefatura.' },
       { t: 'Conteo mal referenciado', d: 'Una tabla resumen contaba filas por una columna que no era la correcta, inflando el total anual. Se corrigió el <code>COUNT</code> a la columna de identificador único.' },
@@ -1657,6 +1711,13 @@ const PROYECTOS = [
     contexto: 'Muchas tareas chicas y repetitivas —revisar un archivo, generar un borrador, buscar una inconsistencia— que no justifican escribir un script cada vez, pero que sumadas se comen la mañana.',
     solucion: 'Configuré un agente con acceso real al sistema de archivos: un modelo en la nube de plan gratuito como cerebro principal y un modelo local por Ollama como respaldo cuando no hay conexión o el dato no puede salir de la máquina.',
     cita: 'La gracia no es el modelo: es que tenga permiso de tocar archivos de verdad y que exista un plan B cuando la API se cae.',
+    proceso: [
+      { t: 'Anotar las tareas de una semana', d: 'Antes de configurar nada apunté durante una semana qué tareas repetía y cuánto tardaba cada una. Casi todas eran cortas; el costo estaba en la suma, no en ninguna en particular.' },
+      { t: 'Elegir dos cerebros, no uno', d: 'Un modelo en la nube de plan gratuito para lo que requiere razonamiento largo, y uno local para cuando no hay conexión o el dato no puede salir del equipo. El respaldo no es un lujo: es lo que permite depender de la herramienta.' },
+      { t: 'Dar herramientas de verdad', d: 'Sin acceso real a los archivos, un asistente es un chat. Con acceso, resuelve. La contrapartida es que toda operación destructiva pide confirmación explícita antes de ejecutarse.' },
+      { t: 'Probar en una carpeta de juguete', d: 'Todo se ensayó primero sobre copias. El día que el agente borró lo que no correspondía —porque ese día llega— no había nada real que perder.' },
+      { t: 'Respaldo antes de escribir', d: 'Cualquier operación que modifica un archivo hace copia primero. Es una línea de código y es la diferencia entre una herramienta útil y una que da miedo usar.' }
+    ],
     detalle: [
       { t: 'Doble cerebro', d: 'Modelo en la nube por API para las tareas que requieren razonamiento largo, y modelo local cuantizado como respaldo automático ante caída de red o datos que no deben salir del equipo.' },
       { t: 'Herramientas reales', d: 'El agente lee, escribe y mueve archivos desde línea de comandos, con confirmación explícita antes de cualquier operación destructiva.' }
@@ -1673,6 +1734,14 @@ const PROYECTOS = [
     contexto: 'Un hospital grande es un laberinto para quien llega por primera vez, y también para el personal nuevo. Los planos existen, pero en PDF: sirven para construir, no para orientarse un martes a las ocho de la mañana.',
     solucion: 'Un visor web que carga los planos de cada piso, permite buscar un recinto en lenguaje natural y traza la ruta guiada paso a paso, incluso cambiando de piso por ascensor o escalera. Para que la ruta no atraviese muros, el sistema reconoce automáticamente dónde están las puertas.',
     cita: 'El template matching confundía el arco de una puerta con cualquier curva del plano. Pasar a un clasificador entrenado subió el recall de 59% a 95%.',
+    proceso: [
+      { t: 'Normalizar los planos', d: 'Los PDF venían con rotaciones y márgenes distintos, así que el texto extraído y la imagen dibujada no coincidían. Emparejar ambos sistemas de coordenadas fue el primer trabajo, y sin eso nada de lo demás cuadra.' },
+      { t: 'Convertir el dibujo en grafo', d: 'Un plano es un dibujo, no un mapa. Hubo que sacar las líneas centrales de los pasillos y armar un grafo, agregando conectores verticales para escaleras y ascensores, que es lo que permite rutas entre pisos.' },
+      { t: 'Rutear y probar contra el edificio', d: 'Con A* sobre ese grafo salieron las primeras rutas. Varias eran correctas en el papel e imposibles en la realidad, y esas comparaciones fueron las que afinaron el grafo.' },
+      { t: 'Fallar con el reconocimiento de puertas', d: 'El primer intento buscaba el arco de puerta por comparación de plantillas. En un plano denso confundía cualquier curva: reconocía poco más de la mitad. Se descartó entero.' },
+      { t: 'Etiquetar a mano y entrenar', d: 'Marqué puertas a mano para armar un conjunto de entrenamiento y cambié a un clasificador con descriptores de gradiente. El reconocimiento subió a alrededor del noventa y cinco por ciento y barre un piso completo en segundos.' },
+      { t: 'Traducir el trazo a palabras', d: 'Una línea sobre un plano no le sirve a quien va apurado por un pasillo. El último paso fue detectar los cambios de dirección y convertirlos en indicaciones habladas, con distancias.' }
+    ],
     detalle: [
       { t: 'Ruteo real', d: 'A* sobre un grafo de líneas centrales de pasillo, con conectores verticales (escaleras y ascensores) para armar rutas entre pisos. El trazo va por el medio del pasillo y el sistema describe el camino en lenguaje natural.' },
       { t: 'Pipeline de planos', d: 'Normalización del <code>/Rotate</code> y el <code>MediaBox</code> de cada PDF para que el texto extraído y la imagen renderizada coincidan; tiles cacheados y render en alta definición según el zoom.' },
@@ -1690,6 +1759,14 @@ const PROYECTOS = [
     contexto: 'Un archivo de correspondencia de casi dieciocho mil PDF —cartas enviadas y oficios recibidos a lo largo de seis años— y una pregunta que había que responder con evidencia: qué solicitudes fueron comunicadas formalmente, en qué carta y qué respondió la contraparte. Buscar a mano era imposible, y 2.536 de esas cartas eran escaneos: ni el buscador del sistema operativo las veía.',
     solucion: 'Un pipeline que primero indexa el texto de todo lo que sí tiene capa de texto, después pasa OCR solo sobre lo escaneado —dieciséis procesos en paralelo, reanudable, porque una corrida completa toma media hora— y finalmente cruza cada documento contra la base de solicitudes. El resultado es un Excel donde cada solicitud tiene el documento que la comunicó, la fecha y la respuesta.',
     cita: 'El correlativo se reinicia cada año. La llave nunca fue el número: era el par (año, número), y 308 de 893 números aparecían en más de un año.',
+    proceso: [
+      { t: 'Separar lo legible de lo escaneado', d: 'Primer recuento: cuántos documentos tienen capa de texto y cuántos son imagen pura. La respuesta define el costo del proyecto, porque el OCR es lo caro y conviene hacerlo una sola vez.' },
+      { t: 'Indexar y guardar en caché', d: 'El texto de cada documento se extrae una vez y se guarda. Las corridas siguientes leen el índice, así que probar una regla nueva pasa de tomar horas a tomar segundos.' },
+      { t: 'OCR reanudable', d: 'Media hora en dieciséis procesos, con avance parcial escrito a disco. Un proceso de esa duración se va a cortar alguna vez; el diseño asume que va a pasar y retoma donde iba.' },
+      { t: 'Definir la llave real', d: 'El cruce por número suelto mezclaba expedientes de años distintos porque el correlativo se reinicia cada enero. La llave verdadera es el par año y número, y el año se saca del propio correlativo del documento.' },
+      { t: 'Escribir reglas con contexto', d: 'Un número por sí solo no dice nada. Lo que decide es qué palabra viene antes, si continúa una lista y si el valor es un año plausible. Cada regla se agregó por un falso positivo concreto que había que explicar.' },
+      { t: 'Auditarse y validar contra lo humano', d: 'Ocho verificaciones corren sobre el resultado y escriben un informe. La prueba final fue contra un centenar de emparejamientos hechos a mano: ahí se ve si el algoritmo sirve o solo parece que sirve.' }
+    ],
     detalle: [
       { t: 'Escaneos sin capa de texto', d: 'Las páginas se rasterizan con PyMuPDF a 200 dpi y pasan por Tesseract en español. Corre en dieciséis procesos y guarda avance parcial en un <code>.jsonl</code>, así que si se corta se retoma donde iba en vez de empezar de cero.' },
       { t: 'La llave compuesta', d: 'El correlativo de las solicitudes se reinicia cada enero. Cruzar por número suelto mezclaba expedientes de años distintos; la llave correcta es <code>(año, número)</code>, y el año se saca del propio correlativo del documento porque la fecha escrita a veces viene mal tipeada.' },
@@ -1708,6 +1785,14 @@ const PROYECTOS = [
     contexto: 'El indicador de nivel de servicio define pagos y descuentos, y lo calcula un tercero. Internamente se seguía con un tablero que nunca coincidía: a veces por décimas, a veces por servicios enteros. Sin poder reproducir el número oficial, cualquier discusión partía perdida.',
     solucion: 'Reconstruí la fórmula desde la base de origen hasta que coincidió: catorce de quince servicios exactos y el quinceavo desviado en 0,01 por redondeo. Lo interesante fue que el criterio no estaba en ninguna medida documentada, sino repartido en los filtros de un visual y en cinco detalles que, cambiando cualquiera, rompen la coincidencia.',
     cita: 'El campo «apelado» era una cadena vacía, no un nulo. Filtrar con IS NULL borraba cuatro servicios completos del cálculo.',
+    proceso: [
+      { t: 'Conseguir un resultado oficial', d: 'Sin un número contra el cual comparar, esto no se puede hacer. El punto de partida fue obtener el indicador ya informado de un período cerrado y tratarlo como la respuesta correcta.' },
+      { t: 'Reconstruir desde la tabla base', d: 'En vez de intentar arreglar el tablero que había, partí de la tabla de origen y armé el cálculo desde cero. Heredar los supuestos del informe anterior era heredar el error.' },
+      { t: 'Aislar variable por variable', d: 'Cada decisión —qué fecha define el período, si los apelados descuentan, qué tipos de registro entran— se cambió de a una viendo el efecto en el número. Cambiar dos a la vez y volver a fallar no enseña nada.' },
+      { t: 'Verificar el corte del período', d: 'El período contractual no es calendario. La fórmula de corte se comprobó contra el universo completo de más de un millón de filas, no contra una muestra.' },
+      { t: 'Documentar dónde vivía el criterio', d: 'El hallazgo incómodo: el criterio no estaba en ninguna medida, sino en los filtros de un visual. Por eso copiar la medida a otro informe daba otro resultado. Eso quedó escrito, que era el verdadero entregable.' },
+      { t: 'Llevarlo al tablero', d: 'Recién con el cálculo cuadrando se construyó el informe. Un tablero bonito sobre una cifra equivocada es peor que no tener tablero.' }
+    ],
     detalle: [
       { t: 'No es un conteo, son puntos', d: 'Cada incumplimiento pesa distinto según la criticidad de la zona. Contar incidencias en vez de sumar su ponderación da un número que no se parece en nada al oficial.' },
       { t: 'El período no es calendario', d: 'El semestre contractual corre del 18 de abril al 17 de octubre y viceversa, y cuenta por fecha de validación, no por fecha de apertura. La fórmula de corte se verificó contra 1.072.179 filas sin una sola diferencia.' },
@@ -1726,6 +1811,14 @@ const PROYECTOS = [
     contexto: 'Cinco servicios facturan todos los meses y cada uno respalda con documentos distintos: carátulas en Excel, prefacturas en PDF, guías de kilos, anexos de dotación. El libro que consolida todo eso se llenaba a mano, y comprobar una cifra significaba abrir seis archivos en cuatro carpetas.',
     solucion: 'Levanté el mapeo verificado de cada cifra del libro hasta el documento y la celda exacta que la respalda, dejé los 289 respaldos ordenados por servicio y mes con un índice de brechas, y crucé lo facturado contra lo respaldado mes a mes.',
     cita: 'Una factura repetía exactamente los kilos del mes anterior. Cobraba 7.707 kilos de más y llevaba meses pasando.',
+    proceso: [
+      { t: 'Ordenar antes de analizar', d: 'No se puede conciliar lo que está disperso. El primer trabajo fue juntar todos los respaldos por servicio y por mes en una estructura predecible, con un índice de lo que falta.' },
+      { t: 'Mapear cada cifra a su documento', d: 'Para cada valor del libro se buscó el documento y la celda exacta que lo respalda. Donde no hubo respaldo quedó anotado como brecha abierta, no completado con la cifra que calzaba.' },
+      { t: 'Leer PDF con criterio, no literal', d: 'Las prefacturas parten una misma categoría en dos líneas. Leer la cantidad tal como aparece duplica o pierde volumen; hay que validarla contra el monto del ítem.' },
+      { t: 'Cruzar la serie completa', d: 'Comparar un mes aislado no muestra nada. Recién al poner los seis meses en fila apareció el que repetía el valor del anterior, que es el patrón que delata un documento reutilizado.' },
+      { t: 'Valorizar y redactar', d: 'Una brecha en kilos no discute con nadie; una brecha en unidades de fomento sí. Cada diferencia se valoriza con la tarifa del contrato y sale redactada como observación.' },
+      { t: 'Dejarlo repetible', d: 'El mapeo quedó documentado para que el mes siguiente sea correr el cruce, no repetir la investigación.' }
+    ],
     detalle: [
       { t: 'Mapeo cifra a cifra', d: 'Cada valor del libro quedó trazado a su origen: tarifas unitarias de la carátula del proveedor, kilos desde la glosa de la factura, dotación desde el anexo. Donde el libro y el respaldo no cuadraban quedó anotado como brecha abierta, no maquillado.' },
       { t: 'Documento repetido', d: 'Comparar la serie mensual de kilos facturados contra la guía dejó a la vista un mes que repetía el valor del anterior: un exceso de 7.707 kilos, del orden de 274 unidades de fomento.' },
@@ -1744,6 +1837,14 @@ const PROYECTOS = [
     contexto: 'La mayoría de los sitios de una PYME o de un profesional no necesitan un framework: necesitan cargar rápido, verse bien en el teléfono, poder editarse sin una cadena de herramientas y no costar una suscripción mensual para siempre.',
     solucion: 'Este portafolio es el ejemplo: un solo archivo HTML con su CSS y su JavaScript adentro, tipografías cargadas del proveedor y nada más. Los motores que ves corriendo en las otras fichas son JavaScript plano. Se publica gratis y se actualiza empujando un cambio al repositorio.',
     cita: 'Sin build no hay build que se rompa. El sitio que entregas es exactamente el archivo que editas.',
+    proceso: [
+      { t: 'Decidir qué no usar', d: 'La primera decisión fue por descarte: sin framework, sin compilador, sin librería de componentes. Todo lo que se agrega hay que mantenerlo después, y este sitio tiene que seguir abriendo en tres años.' },
+      { t: 'Definir el sistema antes de la página', d: 'Tipografías, escala, ritmo y color se definieron primero como variables. Después la página se arma con eso. Al revés se termina con veinte tonos de gris y ninguna razón para ninguno.' },
+      { t: 'Escribir el contenido primero', d: 'El texto se escribió antes que el diseño. Es más fácil diseñar alrededor de lo que hay que decir que rellenar una plantilla bonita con lo que quepa.' },
+      { t: 'Convertir el contenido en datos', d: 'Los proyectos viven en una estructura de datos, no en el HTML. Agregar uno es agregar un objeto: los filtros, los contadores y las tarjetas se rehacen solos.' },
+      { t: 'Verificar en navegador de verdad', d: 'Cada cambio se rindió en un navegador real a 390, 768 y 1440 píxeles, en tema claro y oscuro. Ahí aparecieron cosas que el código no muestra, como que las capturas de escritorio mienten sobre el ancho del móvil.' },
+      { t: 'Publicar sin costo recurrente', d: 'Alojamiento gratuito con certificado incluido y dominio propio si se quiere. La actualización es empujar el archivo; no hay panel que aprender ni suscripción que renovar.' }
+    ],
     detalle: [
       { t: 'Accesible por defecto', d: 'Navegación por teclado, foco visible, diálogos con trampa de foco y cierre con Escape, contraste verificado en tema claro y oscuro, y respeto por <code>prefers-reduced-motion</code> para quien prefiere menos movimiento.' },
       { t: 'Tema claro y oscuro reales', d: 'Toda la paleta vive en custom properties, con la preferencia del sistema como punto de partida y un interruptor que recuerda la elección. No es un filtro invertido encima.' },
@@ -1844,6 +1945,9 @@ function abrirFicha(p, origen) {
     '<div><h4>Qué construí</h4><p>' + p.solucion + '</p>' +
       (p.cita ? '<p class="sheet-quote" style="margin-top:16px">' + p.cita + '</p>' : '') + '</div>' +
     '<div data-demo-slot><h4>Demo</h4></div>' +
+    (p.proceso ? '<div><h4>El proceso, paso a paso</h4><ol class="proceso">' +
+      p.proceso.map(function (s) { return '<li><b>' + s.t + '</b><span>' + s.d + '</span></li>'; }).join('') +
+      '</ol></div>' : '') +
     '<div><h4>Bajo el capó</h4><ul class="detail-list">' +
       p.detalle.map(function (d) { return '<li><b>' + d.t + '</b>' + d.d + '</li>'; }).join('') +
     '</ul></div>' +
