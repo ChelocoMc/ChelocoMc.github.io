@@ -4880,9 +4880,9 @@ document.getElementById('year').textContent = new Date().getFullYear();
   const botCamera = new THREE.PerspectiveCamera(50, 1, 0.1, 1000);
   botCamera.position.set(0, 5, 80);
 
-  const ironRed = 0x900000;
-  const ironGold = 0xD4AF37;
-  const cyanGlow = 0x00FFFF;
+  const ironRed = 0xAA0000; // Rojo brillante "Hot Rod" que se oscurece con el metalness
+  const ironGold = 0xFFBA00; // Oro/Amarillo más cálido
+  const cyanGlow = 0x00E5FF; // Azul cian del reactor ARC
 
   const redMat = new THREE.MeshPhysicalMaterial({ color: ironRed, metalness: 0.85, roughness: 0.15, clearcoat: 1.0 });
   const goldMat = new THREE.MeshPhysicalMaterial({ color: ironGold, metalness: 0.95, roughness: 0.1, clearcoat: 1.0 });
