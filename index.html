@@ -4690,108 +4690,180 @@ document.getElementById('year').textContent = new Date().getFullYear();
   const botCamera = new THREE.PerspectiveCamera(50, 1, 0.1, 1000);
   botCamera.position.set(0, 5, 80);
 
-  const botMaterial = new THREE.MeshStandardMaterial({ color: 0xdddddd, roughness: 0.3, metalness: 0.5 });
-  const accentMaterial = new THREE.MeshStandardMaterial({ color: 0x4dabf7, emissive: 0x228be6, roughness: 0.2, metalness: 0.8 });
+  const plateMat = new THREE.MeshPhysicalMaterial({ color: 0xffffff, metalness: 0.1, roughness: 0.1, clearcoat: 1.0 });
+  const jointMat = new THREE.MeshStandardMaterial({ color: 0x111111, metalness: 0.8, roughness: 0.4 });
+  const glowMat = new THREE.MeshStandardMaterial({ color: 0x00f0ff, emissive: 0x00f0ff, emissiveIntensity: 1.5 });
+
+  function createLimb(r1, r2, len, mat) {
+    const geo = new THREE.CylinderGeometry(r1, r2, len, 16);
+    geo.translate(0, -len/2, 0);
+    return new THREE.Mesh(geo, mat);
+  }
 
   const robotGroup = new THREE.Group();
   botScene.add(robotGroup);
 
-  const bodyGeo = new THREE.BoxGeometry(16, 20, 12);
-  const bodyMesh = new THREE.Mesh(bodyGeo, botMaterial);
-  robotGroup.add(bodyMesh);
+  const torsoGeo = new THREE.BoxGeometry(12, 16, 8);
+  const torso = new THREE.Mesh(torsoGeo, plateMat);
+  torso.position.y = 10;
+  robotGroup.add(torso);
 
-  const headGeo = new THREE.BoxGeometry(20, 16, 14);
-  const headMesh = new THREE.Mesh(headGeo, botMaterial);
-  headMesh.position.y = 20;
-  bodyMesh.add(headMesh);
+  const coreGeo = new THREE.CircleGeometry(3, 16);
+  const core = new THREE.Mesh(coreGeo, glowMat);
+  core.position.set(0, 2, 4.1);
+  torso.add(core);
 
-  const eyeGeo = new THREE.BoxGeometry(14, 5, 2);
-  const eyeMesh = new THREE.Mesh(eyeGeo, accentMaterial);
-  eyeMesh.position.set(0, 2, 7.5);
-  headMesh.add(eyeMesh);
+  const headGeo = new THREE.BoxGeometry(10, 10, 10);
+  const head = new THREE.Mesh(headGeo, plateMat);
+  head.position.y = 14;
+  torso.add(head);
 
-  const armGeo = new THREE.CylinderGeometry(2.5, 2, 18);
-  armGeo.translate(0, -9, 0);
-  const armL = new THREE.Mesh(armGeo, botMaterial);
-  armL.position.set(-10, 10, 0);
-  const armR = new THREE.Mesh(armGeo, botMaterial);
-  armR.position.set(10, 10, 0);
-  bodyMesh.add(armL);
-  bodyMesh.add(armR);
+  const visorGeo = new THREE.BoxGeometry(10.2, 4, 10.2);
+  const visor = new THREE.Mesh(visorGeo, glowMat);
+  visor.position.y = 1;
+  head.add(visor);
 
-  const legGeo = new THREE.CylinderGeometry(2.5, 1.5, 20);
-  legGeo.translate(0, -10, 0);
-  const legL = new THREE.Mesh(legGeo, botMaterial);
-  legL.position.set(-5, -10, 0);
-  const legR = new THREE.Mesh(legGeo, botMaterial);
-  legR.position.set(5, -10, 0);
-  bodyMesh.add(legL);
-  bodyMesh.add(legR);
+  const shoulderGeo = new THREE.SphereGeometry(3, 16, 16);
+  const shoulderL = new THREE.Mesh(shoulderGeo, jointMat);
+  shoulderL.position.set(-8, 6, 0);
+  torso.add(shoulderL);
+  
+  const upperArmL = createLimb(2, 1.5, 9, plateMat);
+  shoulderL.add(upperArmL);
+  
+  const elbowL = new THREE.Mesh(new THREE.SphereGeometry(1.8, 16, 16), jointMat);
+  elbowL.position.set(0, -9, 0);
+  upperArmL.add(elbowL);
+  
+  const lowerArmL = createLimb(1.5, 1, 9, plateMat);
+  elbowL.add(lowerArmL);
+
+  const shoulderR = new THREE.Mesh(shoulderGeo, jointMat);
+  shoulderR.position.set(8, 6, 0);
+  torso.add(shoulderR);
+
+  const upperArmR = createLimb(2, 1.5, 9, plateMat);
+  shoulderR.add(upperArmR);
+  
+  const elbowR = new THREE.Mesh(new THREE.SphereGeometry(1.8, 16, 16), jointMat);
+  elbowR.position.set(0, -9, 0);
+  upperArmR.add(elbowR);
+  
+  const lowerArmR = createLimb(1.5, 1, 9, plateMat);
+  elbowR.add(lowerArmR);
+
+  const pelvisGeo = new THREE.BoxGeometry(10, 4, 6);
+  const pelvis = new THREE.Mesh(pelvisGeo, jointMat);
+  pelvis.position.y = -10;
+  torso.add(pelvis);
+
+  const hipGeo = new THREE.SphereGeometry(2.5, 16, 16);
+  
+  const hipL = new THREE.Mesh(hipGeo, jointMat);
+  hipL.position.set(-3.5, -2, 0);
+  pelvis.add(hipL);
+  
+  const thighL = createLimb(2.5, 2, 10, plateMat);
+  hipL.add(thighL);
+  
+  const kneeL = new THREE.Mesh(new THREE.SphereGeometry(2.2, 16, 16), jointMat);
+  kneeL.position.set(0, -10, 0);
+  thighL.add(kneeL);
+  
+  const calfL = createLimb(2, 1.5, 11, plateMat);
+  kneeL.add(calfL);
+
+  const hipR = new THREE.Mesh(hipGeo, jointMat);
+  hipR.position.set(3.5, -2, 0);
+  pelvis.add(hipR);
+
+  const thighR = createLimb(2.5, 2, 10, plateMat);
+  hipR.add(thighR);
+  
+  const kneeR = new THREE.Mesh(new THREE.SphereGeometry(2.2, 16, 16), jointMat);
+  kneeR.position.set(0, -10, 0);
+  thighR.add(kneeR);
+  
+  const calfR = createLimb(2, 1.5, 11, plateMat);
+  kneeR.add(calfR);
 
   const ufoGroup = new THREE.Group();
-  const ufoBaseGeo = new THREE.TorusGeometry(15, 4, 16, 50);
-  const ufoBase = new THREE.Mesh(ufoBaseGeo, botMaterial);
+  const ufoBaseGeo = new THREE.TorusGeometry(14, 4, 16, 50);
+  const ufoBase = new THREE.Mesh(ufoBaseGeo, plateMat);
   ufoBase.rotation.x = Math.PI / 2;
-  const ufoDomeGeo = new THREE.SphereGeometry(12, 16, 16, 0, Math.PI * 2, 0, Math.PI / 2);
-  const ufoDome = new THREE.Mesh(ufoDomeGeo, accentMaterial);
+  const ufoDomeGeo = new THREE.SphereGeometry(10, 16, 16, 0, Math.PI * 2, 0, Math.PI / 2);
+  const ufoDome = new THREE.Mesh(ufoDomeGeo, glowMat);
+  ufoDome.material.transparent = true;
+  ufoDome.material.opacity = 0.8;
   ufoGroup.add(ufoBase);
   ufoGroup.add(ufoDome);
-  ufoGroup.position.y = -15;
+  ufoGroup.position.y = -5;
   ufoGroup.visible = false;
-  bodyMesh.add(ufoGroup);
+  torso.add(ufoGroup);
 
-  const botLight = new THREE.AmbientLight(0xffffff, 0.7);
+  const botLight = new THREE.AmbientLight(0xffffff, 0.9);
   botScene.add(botLight);
-  const botDirLight = new THREE.DirectionalLight(0xffffff, 1.5);
+  const botDirLight = new THREE.DirectionalLight(0xffffff, 2);
   botDirLight.position.set(20, 40, 50);
   botScene.add(botDirLight);
 
   window.updateBot3D = function(v, botData, capaElement) {
-    robotGroup.rotation.z = -botData.vx * 0.05;
-    robotGroup.rotation.x = -botData.vy * 0.05;
+    const t = Date.now() / 150;
+    const isMoving = v > 0.1;
+    const isPulsando = capaElement.classList.contains('pulsando');
+    const isMirando = capaElement.classList.contains('mirando');
+    const isNave = capaElement.classList.contains('nave');
 
-    if (capaElement.classList.contains('nave')) {
-       legL.visible = false;
-       legR.visible = false;
+    let tThighL = 0, tCalfL = 0, tThighR = 0, tCalfR = 0;
+    let tArmL = 0, tForearmL = 0, tArmR = 0, tForearmR = 0;
+    let tTorsoX = -botData.vy * 0.05, tTorsoZ = -botData.vx * 0.05, tTorsoY = window.botLadoDer ? -Math.PI / 5 : Math.PI / 5;
+    let tHeadY = 0;
+
+    if (isNave) {
+       pelvis.visible = false;
        ufoGroup.visible = true;
        ufoBase.rotation.z += 0.2;
+       tArmL = Math.PI;
+       tArmR = Math.PI;
     } else {
-       legL.visible = true;
-       legR.visible = true;
+       pelvis.visible = true;
        ufoGroup.visible = false;
-       if (v > 0.1) {
-         legL.rotation.x = Math.sin(Date.now() / 120) * 0.6;
-         legR.rotation.x = -Math.sin(Date.now() / 120) * 0.6;
-         armL.rotation.x = -Math.sin(Date.now() / 120) * 0.6;
-         if (!capaElement.classList.contains('pulsando')) {
-             armR.rotation.x = Math.sin(Date.now() / 120) * 0.6;
-         }
-       } else {
-         legL.rotation.x = 0;
-         legR.rotation.x = 0;
-         armL.rotation.x = 0;
-         if (!capaElement.classList.contains('pulsando')) armR.rotation.x = 0;
+       if (isMoving) {
+          const speed = Math.min(v, 2) * 0.5;
+          tThighL = Math.sin(t) * 0.8 * speed;
+          tCalfL = Math.max(0, Math.sin(t - Math.PI/2)) * 0.8 * speed;
+          tThighR = Math.sin(t + Math.PI) * 0.8 * speed;
+          tCalfR = Math.max(0, Math.sin(t + Math.PI - Math.PI/2)) * 0.8 * speed;
+          tArmL = Math.sin(t + Math.PI) * 0.6 * speed;
+          tForearmL = -Math.max(0, Math.sin(t + Math.PI - Math.PI/2)) * 0.5 * speed;
+          tArmR = Math.sin(t) * 0.6 * speed;
+          tForearmR = -Math.max(0, Math.sin(t - Math.PI/2)) * 0.5 * speed;
        }
     }
 
-    if (capaElement.classList.contains('pulsando')) {
-       armR.rotation.x = -Math.PI / 1.5;
-       armR.scale.y = 1.8;
-    } else {
-       armR.scale.y = 1;
+    if (isPulsando) {
+       tArmR = -Math.PI / 1.5;
+       tForearmR = -0.2;
+       tTorsoX += 0.3;
+    }
+    if (isMirando) {
+       tHeadY = window.botLadoDer ? -Math.PI / 4 : Math.PI / 4;
     }
 
-    if (capaElement.classList.contains('mirando')) {
-       headMesh.rotation.y = window.botLadoDer ? -Math.PI / 4 : Math.PI / 4;
-    } else {
-       headMesh.rotation.y = 0;
-    }
+    const lerp = 0.15;
+    thighL.rotation.x += (tThighL - thighL.rotation.x) * lerp;
+    calfL.rotation.x += (tCalfL - calfL.rotation.x) * lerp;
+    thighR.rotation.x += (tThighR - thighR.rotation.x) * lerp;
+    calfR.rotation.x += (tCalfR - calfR.rotation.x) * lerp;
+    upperArmL.rotation.x += (tArmL - upperArmL.rotation.x) * lerp;
+    lowerArmL.rotation.x += (tForearmL - lowerArmL.rotation.x) * lerp;
+    upperArmR.rotation.x += (tArmR - upperArmR.rotation.x) * lerp;
+    lowerArmR.rotation.x += (tForearmR - lowerArmR.rotation.x) * lerp;
 
-    if (window.botLadoDer) {
-       robotGroup.rotation.y = -Math.PI / 5;
-    } else {
-       robotGroup.rotation.y = Math.PI / 5;
-    }
+    torso.rotation.x += (tTorsoX - torso.rotation.x) * lerp;
+    torso.rotation.z += (tTorsoZ - torso.rotation.z) * lerp;
+    robotGroup.rotation.y += (tTorsoY - robotGroup.rotation.y) * lerp;
+    head.rotation.y += (tHeadY - head.rotation.y) * lerp;
 
     botRenderer.render(botScene, botCamera);
   };
