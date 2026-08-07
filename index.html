@@ -4899,120 +4899,148 @@ document.getElementById('year').textContent = new Date().getFullYear();
   const robotGroup = new THREE.Group();
   botScene.add(robotGroup);
 
-  const torsoGeo = new THREE.CylinderGeometry(6.5, 4.5, 15, 32);
-  const torso = new THREE.Mesh(torsoGeo, redMat);
-  torso.position.y = 10;
-  robotGroup.add(torso);
+  // --- TORSO ---
+  const torsoGroup = new THREE.Group();
+  torsoGroup.position.y = 10;
+  robotGroup.add(torsoGroup);
+  
+  // Usamos el 'torso' original para mantener compatibilidad con la animacion
+  const torso = torsoGroup;
 
-  const coreGeo = new THREE.CircleGeometry(2.5, 32);
+  // Pecho superior (más ancho)
+  const chestGeo = new THREE.BoxGeometry(11, 7, 7);
+  const chest = new THREE.Mesh(chestGeo, redMat);
+  chest.position.y = 3;
+  torsoGroup.add(chest);
+
+  // Abdomen (más estrecho)
+  const abdomenGeo = new THREE.BoxGeometry(8, 6, 6);
+  const abdomen = new THREE.Mesh(abdomenGeo, goldMat);
+  abdomen.position.y = -3.5;
+  torsoGroup.add(abdomen);
+
+  // Arc Reactor
+  const coreGeo = new THREE.CircleGeometry(2.2, 32);
   const core = new THREE.Mesh(coreGeo, glowMat);
-  core.position.set(0, 2, 6.51); // slightly protruding from cylinder
-  torso.add(core);
+  core.position.set(0, 3, 3.51); 
+  torsoGroup.add(core);
 
-  const headGeo = new THREE.SphereGeometry(5.2, 32, 32);
-  const head = new THREE.Mesh(headGeo, redMat);
-  head.position.y = 13.5;
-  torso.add(head);
+  // --- HEAD ---
+  const headGroup = new THREE.Group();
+  headGroup.position.y = 9; 
+  torsoGroup.add(headGroup);
+  const head = headGroup; // compatibilidad
 
-  // Faceplate
-  const faceplateGeo = new THREE.CylinderGeometry(5.3, 5.3, 5, 32, 1, false, -Math.PI/2.5, Math.PI/1.25);
+  const helmetGeo = new THREE.BoxGeometry(6, 7, 7);
+  const helmet = new THREE.Mesh(helmetGeo, redMat);
+  headGroup.add(helmet);
+
+  const faceplateGeo = new THREE.BoxGeometry(5.2, 6, 1.5);
   const faceplate = new THREE.Mesh(faceplateGeo, goldMat);
-  faceplate.position.y = 0;
-  faceplate.position.z = 0;
-  head.add(faceplate);
+  faceplate.position.set(0, -0.2, 3.1);
+  headGroup.add(faceplate);
 
-  // Eyes
-  const eyeGeo = new THREE.CylinderGeometry(0.5, 0.5, 2, 8);
-  eyeGeo.rotateZ(Math.PI / 2);
+  const eyeGeo = new THREE.BoxGeometry(1.5, 0.5, 0.5);
   const eyeL = new THREE.Mesh(eyeGeo, glowMat);
-  eyeL.position.set(-2, 1, 5.1);
-  head.add(eyeL);
+  eyeL.position.set(-1.2, 1, 0.6);
+  faceplate.add(eyeL);
   
   const eyeR = new THREE.Mesh(eyeGeo, glowMat);
-  eyeR.position.set(2, 1, 5.1);
-  head.add(eyeR);
+  eyeR.position.set(1.2, 1, 0.6);
+  faceplate.add(eyeR);
 
-  const shoulderGeo = new THREE.SphereGeometry(3, 32, 32);
+  function createArmorPart(w, h, d, mat, yOffset) {
+    const geo = new THREE.BoxGeometry(w, h, d);
+    geo.translate(0, yOffset, 0);
+    return new THREE.Mesh(geo, mat);
+  }
+
+  // --- ARMS ---
+  const shoulderGeo = new THREE.SphereGeometry(3.2, 16, 16);
   const shoulderL = new THREE.Mesh(shoulderGeo, redMat);
-  shoulderL.position.set(-8.5, 5, 0);
-  torso.add(shoulderL);
+  shoulderL.position.set(-7.5, 5, 0);
+  torsoGroup.add(shoulderL);
   
-  const upperArmL = createLimb(2, 1.5, 9, redMat);
+  const upperArmL = createArmorPart(3, 7, 3, redMat, -3.5);
   shoulderL.add(upperArmL);
   
-  const elbowL = new THREE.Mesh(new THREE.SphereGeometry(1.8, 32, 32), jointMat);
-  elbowL.position.set(0, -9, 0);
+  const elbowL = new THREE.Mesh(new THREE.SphereGeometry(1.6, 16, 16), jointMat);
+  elbowL.position.set(0, -7, 0);
   upperArmL.add(elbowL);
   
-  const lowerArmL = createLimb(1.5, 1.2, 9, goldMat);
+  // Guantelete
+  const lowerArmL = createArmorPart(3.2, 8, 3.2, redMat, -4);
   elbowL.add(lowerArmL);
 
   const shoulderR = new THREE.Mesh(shoulderGeo, redMat);
-  shoulderR.position.set(8.5, 5, 0);
-  torso.add(shoulderR);
+  shoulderR.position.set(7.5, 5, 0);
+  torsoGroup.add(shoulderR);
 
-  const upperArmR = createLimb(2, 1.5, 9, redMat);
+  const upperArmR = createArmorPart(3, 7, 3, redMat, -3.5);
   shoulderR.add(upperArmR);
   
-  const elbowR = new THREE.Mesh(new THREE.SphereGeometry(1.8, 32, 32), jointMat);
-  elbowR.position.set(0, -9, 0);
+  const elbowR = new THREE.Mesh(new THREE.SphereGeometry(1.6, 16, 16), jointMat);
+  elbowR.position.set(0, -7, 0);
   upperArmR.add(elbowR);
   
-  const lowerArmR = createLimb(1.5, 1.2, 9, goldMat);
+  const lowerArmR = createArmorPart(3.2, 8, 3.2, redMat, -4);
   elbowR.add(lowerArmR);
 
-  const pelvisGeo = new THREE.CylinderGeometry(4.5, 4, 6, 32);
-  const pelvis = new THREE.Mesh(pelvisGeo, goldMat);
-  pelvis.position.y = -10;
-  torso.add(pelvis);
+  // --- LEGS ---
+  const pelvisGeo = new THREE.BoxGeometry(9, 4, 6);
+  const pelvis = new THREE.Mesh(pelvisGeo, redMat);
+  pelvis.position.y = -8;
+  torsoGroup.add(pelvis);
 
-  const hipGeo = new THREE.SphereGeometry(2.5, 32, 32);
+  const hipGeo = new THREE.SphereGeometry(2.2, 16, 16);
   
   const hipL = new THREE.Mesh(hipGeo, jointMat);
-  hipL.position.set(-3, -2, 0);
+  hipL.position.set(-2.8, -2, 0);
   pelvis.add(hipL);
   
-  const thighL = createLimb(2.5, 2, 10, redMat);
+  const thighL = createArmorPart(3.8, 8, 3.8, goldMat, -4);
   hipL.add(thighL);
   
-  const kneeL = new THREE.Mesh(new THREE.SphereGeometry(2.2, 32, 32), jointMat);
-  kneeL.position.set(0, -10, 0);
+  const kneeL = new THREE.Mesh(new THREE.SphereGeometry(2, 16, 16), jointMat);
+  kneeL.position.set(0, -8, 0);
   thighL.add(kneeL);
   
-  const calfL = createLimb(2, 1.5, 11, goldMat);
+  // Bota
+  const calfL = createArmorPart(4.2, 10, 4.2, redMat, -5);
   kneeL.add(calfL);
 
   const hipR = new THREE.Mesh(hipGeo, jointMat);
-  hipR.position.set(3.5, -2, 0);
+  hipR.position.set(2.8, -2, 0);
   pelvis.add(hipR);
 
-  const thighR = createLimb(2.5, 2, 10, redMat);
+  const thighR = createArmorPart(3.8, 8, 3.8, goldMat, -4);
   hipR.add(thighR);
   
-  const kneeR = new THREE.Mesh(new THREE.SphereGeometry(2.2, 16, 16), jointMat);
-  kneeR.position.set(0, -10, 0);
+  const kneeR = new THREE.Mesh(new THREE.SphereGeometry(2, 16, 16), jointMat);
+  kneeR.position.set(0, -8, 0);
   thighR.add(kneeR);
   
-  const calfR = createLimb(2, 1.5, 11, goldMat);
+  const calfR = createArmorPart(4.2, 10, 4.2, redMat, -5);
   kneeR.add(calfR);
 
-  const jetGeo = new THREE.ConeGeometry(1.5, 4, 12);
-  jetGeo.translate(0, -2, 0);
+  // --- REPULSORS ---
+  const jetGeo = new THREE.BoxGeometry(2, 3, 2);
+  jetGeo.translate(0, -1.5, 0);
 
   const jetArmL = new THREE.Mesh(jetGeo, glowMat);
-  jetArmL.position.set(0, -9, 0);
+  jetArmL.position.set(0, -8, 0);
   lowerArmL.add(jetArmL);
   
   const jetArmR = new THREE.Mesh(jetGeo, glowMat);
-  jetArmR.position.set(0, -9, 0);
+  jetArmR.position.set(0, -8, 0);
   lowerArmR.add(jetArmR);
   
   const jetLegL = new THREE.Mesh(jetGeo, glowMat);
-  jetLegL.position.set(0, -11, 0);
+  jetLegL.position.set(0, -10, 0);
   calfL.add(jetLegL);
   
   const jetLegR = new THREE.Mesh(jetGeo, glowMat);
-  jetLegR.position.set(0, -11, 0);
+  jetLegR.position.set(0, -10, 0);
   calfR.add(jetLegR);
 
   const botLight = new THREE.AmbientLight(0xffffff, 1.2);
