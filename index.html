@@ -322,12 +322,16 @@ nav.links a[aria-current="true"] { color: var(--accent); background: var(--accen
 
 /* Panel de telemetría del hero */
 .telemetry {
-  border: 1px solid var(--line); border-radius: 14px; background: var(--surface);
-  box-shadow: var(--shadow-lift); overflow: hidden;
+  border: 1px solid var(--line); border-radius: 14px; 
+  background: color-mix(in srgb, var(--surface) 60%, transparent);
+  backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px);
+  box-shadow: var(--shadow-lift), inset 0 1px 0 rgba(255,255,255,0.06); 
+  overflow: hidden;
 }
 .telemetry-head {
   display: flex; align-items: center; justify-content: space-between; gap: 10px;
-  padding: 11px 15px; border-bottom: 1px solid var(--line-soft); background: var(--surface-2);
+  padding: 11px 15px; border-bottom: 1px solid var(--line-soft); 
+  background: color-mix(in srgb, var(--surface-2) 50%, transparent);
 }
 .telemetry-head .t { font-family: var(--mono); font-size: 0.66rem; letter-spacing: 0.14em; text-transform: uppercase; color: var(--ink-faint); }
 .telemetry-body { padding: 15px; display: grid; gap: 13px; }
@@ -353,9 +357,14 @@ nav.links a[aria-current="true"] { color: var(--accent); background: var(--accen
 .stat-strip {
   display: grid; grid-template-columns: repeat(4, 1fr); gap: 1px;
   background: var(--line-soft); border: 1px solid var(--line-soft);
-  border-radius: 12px; overflow: hidden; margin-top: clamp(36px, 5vw, 56px);
+  border-radius: 14px; overflow: hidden; margin-top: clamp(36px, 5vw, 56px);
+  box-shadow: inset 0 1px 0 rgba(255,255,255,0.05);
 }
-.stat-strip .cell { background: var(--paper); padding: 20px 18px; }
+.stat-strip .cell { 
+  background: color-mix(in srgb, var(--paper) 75%, transparent); 
+  backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px);
+  padding: 20px 18px; 
+}
 .stat-strip .n { font-family: var(--display); font-size: clamp(1.8rem, 3vw, 2.5rem); line-height: 1; display: block; }
 .stat-strip .n span { color: var(--accent); }
 .stat-strip .d { font-size: 0.78rem; color: var(--ink-faint); display: block; margin-top: 7px; line-height: 1.4; }
@@ -395,19 +404,26 @@ nav.links a[aria-current="true"] { color: var(--accent); background: var(--accen
 
 .card {
   position: relative; display: flex; flex-direction: column; gap: 14px;
-  padding: 22px; border: 1px solid var(--line); border-radius: 14px;
-  background: var(--surface); text-align: left; cursor: pointer; color: inherit;
+  padding: 22px; border: 1px solid var(--line); border-radius: 16px;
+  background: color-mix(in srgb, var(--surface) 65%, transparent);
+  backdrop-filter: blur(14px); -webkit-backdrop-filter: blur(14px);
+  box-shadow: 0 4px 24px rgba(0, 0, 0, 0.04), inset 0 1px 0 rgba(255, 255, 255, 0.05);
+  text-align: left; cursor: pointer; color: inherit;
   font: inherit; overflow: hidden;
   opacity: 0; transform: translateY(18px);
-  transition: opacity .6s var(--ease), transform .6s var(--ease), border-color .25s var(--ease), background .25s var(--ease);
+  transition: opacity .6s var(--ease), transform .6s var(--ease), border-color .25s var(--ease), background .25s var(--ease), box-shadow .25s var(--ease);
 }
 .card.in { opacity: 1; transform: none; }
 .card::after {
-  content: ""; position: absolute; left: 0; top: 0; bottom: 0; width: 2px;
+  content: ""; position: absolute; left: 0; top: 0; bottom: 0; width: 3px;
   background: var(--accent); transform: scaleY(0); transform-origin: top;
   transition: transform .35s var(--ease);
 }
-.card:hover, .card:focus-visible { border-color: var(--accent-line); background: var(--surface-2); }
+.card:hover, .card:focus-visible { 
+  border-color: var(--accent-line); 
+  background: color-mix(in srgb, var(--surface-2) 85%, transparent); 
+  box-shadow: 0 12px 32px rgba(0, 0, 0, 0.08), inset 0 1px 0 rgba(255, 255, 255, 0.1);
+}
 .card:hover::after, .card:focus-visible::after { transform: scaleY(1); }
 .card.hidden { display: none; }
 
@@ -459,8 +475,10 @@ nav.links a[aria-current="true"] { color: var(--accent); background: var(--accen
 .sheet {
   position: fixed; z-index: 91; inset: auto 0 0 0; margin-inline: auto;
   width: min(920px, 100%); max-height: 92vh; display: none; flex-direction: column;
-  background: var(--paper); border: 1px solid var(--line);
-  border-radius: 18px 18px 0 0; box-shadow: 0 -30px 80px -40px rgba(0,0,0,.6);
+  background: color-mix(in srgb, var(--paper) 85%, transparent);
+  backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px);
+  border: 1px solid var(--line);
+  border-radius: 24px 24px 0 0; box-shadow: 0 -30px 80px -40px rgba(0,0,0,.6), inset 0 1px 0 rgba(255, 255, 255, 0.08);
   overflow: hidden;
 }
 .sheet.open { display: flex; animation: slide .38s var(--ease); }
@@ -472,7 +490,7 @@ nav.links a[aria-current="true"] { color: var(--accent); background: var(--accen
 .sheet-head {
   display: flex; align-items: flex-start; gap: 16px;
   padding: 20px clamp(20px, 4vw, 34px) 16px; border-bottom: 1px solid var(--line-soft);
-  background: var(--surface);
+  background: color-mix(in srgb, var(--surface) 50%, transparent);
 }
 .sheet-head .ref { font-family: var(--mono); font-size: 0.66rem; letter-spacing: 0.14em; color: var(--accent); display: block; margin-bottom: 6px; }
 .sheet-head h2 { margin: 0; font-size: clamp(1.5rem, 3.4vw, 2.1rem); line-height: 1.08; }
@@ -534,12 +552,14 @@ nav.links a[aria-current="true"] { color: var(--accent); background: var(--accen
    DEMOS — chrome de aplicación compartido
    ============================================================ */
 .demo {
-  border: 1px solid var(--line); border-radius: 12px; overflow: hidden;
-  background: var(--surface-2); box-shadow: var(--shadow-lift);
+  border: 1px solid var(--line); border-radius: 14px; overflow: hidden;
+  background: color-mix(in srgb, var(--surface-2) 75%, transparent);
+  backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px);
+  box-shadow: var(--shadow-lift), inset 0 1px 0 rgba(255,255,255,0.06);
 }
 .demo-bar {
   display: flex; align-items: center; gap: 7px; padding: 9px 13px;
-  background: var(--surface); border-bottom: 1px solid var(--line-soft);
+  background: color-mix(in srgb, var(--surface) 50%, transparent); border-bottom: 1px solid var(--line-soft);
 }
 .demo-bar .dot { width: 8px; height: 8px; border-radius: 50%; background: var(--line); flex: none; }
 .demo-bar .dot:first-child { background: color-mix(in srgb, var(--bad) 65%, transparent); }
@@ -939,21 +959,19 @@ input[type="range"]::-moz-range-thumb {
    ============================================================ */
 .bot-capa {
   position: fixed; top: 0; left: 0; z-index: 1;
-  width: 62px; height: 50px; pointer-events: none;
+  width: 80px; height: 80px; pointer-events: none;
   will-change: transform;
 }
 .bot-capa.encima { z-index: 90; }
 .bot-capa svg { width: 100%; height: 100%; overflow: visible; }
 
-.bot-todo { transform-box: view-box; transform-origin: 26px 38px; transition: transform .7s var(--ease); }
-.bot-capa.trepa .bot-todo { transform: rotate(-11deg); }
+.bot-todo { transform-box: view-box; transform-origin: 30px 45px; transition: transform .7s var(--ease); }
+.bot-capa.trepa .bot-todo { transform: rotate(-11deg) translateY(-5px); }
 
 .bot-chasis { fill: var(--surface-2); stroke: var(--accent); stroke-width: 1.5; }
 .bot-linea { stroke: var(--accent); stroke-width: 1.5; fill: none; stroke-linecap: round; stroke-linejoin: round; }
 .bot-tenue { stroke: var(--accent-line); stroke-width: 1.1; fill: none; stroke-linecap: round; }
-.bot-oruga { fill: none; stroke: var(--accent); stroke-width: 1.6; }
 .bot-rodillo { fill: var(--paper); stroke: var(--accent-line); stroke-width: 1; }
-.bot-radio { stroke: var(--accent); stroke-width: 1.1; }
 .bot-panel { fill: var(--accent-soft); stroke: var(--accent-line); stroke-width: .9; }
 .bot-lente { fill: var(--paper-deep); stroke: var(--accent); stroke-width: 1.2; }
 .bot-pupila { fill: var(--accent); transition: r .35s var(--ease); }
@@ -963,36 +981,43 @@ input[type="range"]::-moz-range-thumb {
 
 .bot-haz { fill: var(--accent); opacity: 0; transition: opacity .45s var(--ease); }
 .bot-capa.mirando .bot-haz { opacity: .15; }
-.bot-capa.mirando .bot-pupila { r: 1.7; }
+.bot-capa.mirando .bot-pupila { r: 2.2; }
 
-/* Mástil, brazo y antebrazo se mueven por separado: plegados en ronda,
-   extendidos y hacia arriba cuando se cuelga de un borde. */
-.bot-mastil { transform-box: view-box; transform-origin: 24px 18px; transition: transform .45s var(--ease); }
-.bot-capa.mirando .bot-mastil { transform: rotate(7deg); }
-.bot-capa.trepa .bot-mastil { transform: rotate(-6deg); }
+/* Spaceship and Legs */
+.bot-nave-cupula { fill: var(--accent-soft); stroke: var(--accent); stroke-width: 1.5; }
+.bot-fuego { stroke: var(--warn); stroke-width: 1.5; stroke-linecap: round; animation: bot-fire .1s infinite alternate; }
+@keyframes bot-fire { 0% { transform: translateY(0); } 100% { transform: translateY(2px); } }
+.bot-nave { transition: opacity .4s var(--ease), transform .4s var(--ease); transform: translateY(10px); }
+.bot-capa.nave .bot-nave { opacity: 1 !important; transform: translateY(0); }
+.bot-capa.nave .bot-pierna { opacity: 0; }
+.bot-pierna { transition: opacity .2s; }
 
-.bot-brazo { transform-box: view-box; transform-origin: 43px 22px; transform: rotate(26deg); transition: transform .6s var(--ease); }
-.bot-capa.trepa .bot-brazo { transform: rotate(-28deg); }
-.bot-capa.mirando .bot-brazo { transform: rotate(16deg); }
+/* Humanoid parts */
+.bot-mastil { transform-box: view-box; transform-origin: 30px 25px; transition: transform .45s var(--ease); }
+.bot-capa.mirando .bot-mastil { transform: rotate(10deg); }
+.bot-capa.trepa .bot-mastil { transform: rotate(-8deg); }
 
-.bot-antebrazo { transform-box: view-box; transform-origin: 52px 16px; transform: rotate(34deg); transition: transform .6s var(--ease); }
-.bot-capa.trepa .bot-antebrazo { transform: rotate(-22deg); }
+.bot-brazo { transform-box: view-box; transform-origin: 45px 32px; transform: rotate(10deg); transition: transform .6s var(--ease); }
+.bot-capa.trepa .bot-brazo { transform: rotate(-45deg); }
+.bot-capa.mirando .bot-brazo { transform: rotate(25deg); }
+
+.bot-antebrazo { transform-box: view-box; transform-origin: 50px 45px; transform: rotate(-10deg); transition: transform .6s var(--ease); }
+.bot-capa.trepa .bot-antebrazo { transform: rotate(20deg); }
 
 @media (prefers-reduced-motion: reduce) {
-  .bot-chispa { animation: none; }
+  .bot-chispa, .bot-fuego { animation: none; }
 }
 
-.bot-inclina { transform-box: view-box; transform-origin: 27px 38px; }
+.bot-inclina { transform-box: view-box; transform-origin: 30px 45px; }
 .bot-capa.frente { z-index: 42; }
 .bot-capa.sobrehoja { z-index: 92; }
 .bot-ui.sobrehoja { z-index: 93; }
 
 /* Al apretar un control el brazo se estira del todo y la pinza cierra. */
-.bot-capa.pulsando .bot-brazo { transform: rotate(-4deg); }
-.bot-capa.pulsando .bot-antebrazo { transform: rotate(-14deg); }
-.bot-capa.pulsando .bot-pupila { r: 1.8; }
+.bot-capa.pulsando .bot-brazo { transform: rotate(-35deg) scaleX(1.15); }
+.bot-capa.pulsando .bot-antebrazo { transform: rotate(-15deg) scaleX(1.15); }
+.bot-capa.pulsando .bot-pupila { r: 2.2; }
 .bot-capa.pulsando .bot-haz { opacity: .2; }
-
 .bot-ui { position: fixed; inset: 0; z-index: 41; pointer-events: none; }
 .bot-ui.encima { z-index: 92; }
 .bot-hit {
@@ -1404,45 +1429,49 @@ input[type="range"]::-moz-range-thumb {
 <!-- BOT-01: chasis con oruga, mástil sensor y brazo articulado.
      Cada grupo se anima por separado según el estado. -->
 <div class="bot-capa" id="botCapa" aria-hidden="true">
-  <svg viewBox="0 0 62 50">
+  <svg viewBox="0 0 80 80">
     <g class="bot-todo">
      <g class="bot-inclina">
-      <path class="bot-haz" d="M24 8 L47 -2 L47 18 Z"/>
+      <path class="bot-haz" d="M30 15 L65 -5 L65 35 Z"/>
 
       <g class="bot-tren">
-        <rect class="bot-oruga" x="6" y="31" width="42" height="13" rx="6.5"/>
-        <path class="bot-tenue" d="M10 31h34M10 44h34"/>
-        <circle class="bot-rodillo" cx="14" cy="37.5" r="4.4"/>
-        <path class="bot-radio bot-eje" data-cx="14" d="M14 33.1v8.8M9.6 37.5h8.8"/>
-        <circle class="bot-rodillo" cx="27" cy="37.5" r="3"/>
-        <path class="bot-radio bot-eje" data-cx="27" d="M27 34.5v6M24 37.5h6"/>
-        <circle class="bot-rodillo" cx="40" cy="37.5" r="4.4"/>
-        <path class="bot-radio bot-eje" data-cx="40" d="M40 33.1v8.8M35.6 37.5h8.8"/>
+        <path class="bot-linea bot-pierna bot-pierna-izq" d="M25 45 Q20 55 25 70"/>
+        <path class="bot-linea bot-pierna bot-pierna-der" d="M35 45 Q40 55 35 70"/>
+        
+        <g class="bot-nave" style="opacity:0">
+           <ellipse cx="30" cy="65" rx="22" ry="7" class="bot-chasis"/>
+           <path d="M14 65 Q30 48 46 65" class="bot-nave-cupula"/>
+           <circle cx="30" cy="65" r="2" class="bot-led"/>
+           <path d="M25 72 L23 78 M35 72 L37 78" class="bot-fuego"/>
+        </g>
       </g>
 
       <g class="bot-cuerpo">
-        <path class="bot-chasis" d="M11 18h32a5 5 0 0 1 5 5v8H6v-8a5 5 0 0 1 5-5z"/>
-        <rect class="bot-panel" x="12" y="22" width="13" height="6" rx="1.5"/>
-        <path class="bot-tenue" d="M30 23h11M30 26.5h11M30 30h7"/>
-        <circle class="bot-led" cx="45" cy="21.5" r="1.4"/>
+        <rect class="bot-chasis" x="18" y="25" width="24" height="20" rx="4"/>
+        <rect class="bot-panel" x="22" y="28" width="16" height="6" rx="2"/>
+        <path class="bot-tenue" d="M22 38h16"/>
+        <circle class="bot-led" cx="36" cy="31" r="1.5"/>
       </g>
 
       <g class="bot-mastil">
-        <path class="bot-linea" d="M24 18v-5"/>
-        <path class="bot-tenue" d="M21 15h6"/>
-        <rect class="bot-chasis" x="16" y="4" width="17" height="10" rx="4.5"/>
-        <circle class="bot-lente" cx="24" cy="9" r="2.9"/>
-        <circle class="bot-pupila" cx="24" cy="9" r="1.2"/>
-        <path class="bot-linea" d="M31 4V-1"/>
-        <circle class="bot-chispa" cx="31" cy="-2" r="1.3"/>
+        <path class="bot-linea" d="M30 25v-5"/>
+        <rect class="bot-chasis" x="20" y="5" width="20" height="15" rx="5"/>
+        <circle class="bot-lente" cx="30" cy="12" r="4.5"/>
+        <circle class="bot-pupila" cx="30" cy="12" r="1.5"/>
+        <circle class="bot-chispa" cx="38" cy="8" r="1.5"/>
+      </g>
+
+      <g class="bot-brazo-izq" style="opacity: 0.6">
+        <path class="bot-linea" d="M18 32 Q10 40 15 50"/>
+        <circle class="bot-rodillo" cx="15" cy="50" r="2.5"/>
       </g>
 
       <g class="bot-brazo">
-        <path class="bot-linea" d="M43 22l9-6"/>
-        <circle class="bot-rodillo" cx="43" cy="22" r="1.8"/>
+        <path class="bot-linea" d="M42 32 Q50 38 48 48"/>
+        <circle class="bot-rodillo" cx="48" cy="48" r="2.5"/>
         <g class="bot-antebrazo">
-          <path class="bot-linea" d="M52 16l8-5"/>
-          <path class="bot-linea" d="M60 11l2.5-2.5M60 11l.5 3.4"/>
+          <path class="bot-linea" d="M48 48 Q58 40 62 35"/>
+          <path class="bot-linea" d="M62 35 L68 31 M62 35 L68 34 M62 35 L66 38"/>
         </g>
       </g>
      </g>
@@ -4104,28 +4133,28 @@ initDemos(document);
   try { apagado = localStorage.getItem('bot') === 'off'; } catch (e) {}
 
   const SECCION = {
-    inicio: ['Unidad en línea. Empiezo la ronda.', 'Todo lo que se ve acá lo calcula el navegador. Yo incluido.'],
-    trabajo: ['Once fichas. Ábrelas: adentro opero las demos yo mismo.',
-              'Filtra por «Documentos» si te interesa lo de convertir papel en algo buscable.'],
-    laboratorio: ['Llegamos al laboratorio. Déjame mostrarte cómo funciona esto.',
-                  'Acá me pongo a jugar: muevo los controles y las demos calculan solas.'],
-    servicios: ['Regla simple: si algo se hace igual todos los meses, probablemente no debería hacerlo una persona.'],
-    presupuesto: ['Los precios de acá son aproximados. Sirven para el orden de magnitud, no para firmar.',
-                  'El botón del correo arma el resumen solo. Te ahorra explicar el proyecto dos veces.'],
-    perfil: ['Ingeniero en automatización. Yo soy más o menos la prueba de concepto.'],
-    metodo: ['Regla 01: nada se da por hecho sin haberlo corrido y visto el resultado.'],
-    contacto: ['Escríbele con el problema en dos líneas, aunque no sepas si tiene solución técnica.']
+    inicio: ['Iniciando protocolos. Te presento este sistema construido para automatizar el caos.', 'Todo lo que ves aquí es renderizado y calculado en tiempo real. Yo incluido.'],
+    trabajo: ['Tengo 11 sistemas en producción. Abre las tarjetas, yo mismo operaré las demos para que veas la ingeniería detrás.',
+              'Mi especialidad es tomar horas de trabajo manual y reducirlas a cero. Explora los casos.'],
+    laboratorio: ['Llegamos al laboratorio. Aquí los datos cobran vida.',
+                  'Observa con atención: yo opero los controles, y la interfaz responde en tiempo real sin recargar.'],
+    servicios: ['Regla de oro: si un proceso humano es repetitivo y estructurado, un sistema lo hará mejor, más rápido y sin descanso.'],
+    presupuesto: ['Los números que ves nos dan un orden de magnitud. No son finales, pero te dan claridad inicial.',
+                  'Usa el botón de contacto para generar un resumen técnico automático. Menos fricción, más acción.'],
+    perfil: ['Soy la materialización de la automatización. Mi creador es un ingeniero que transforma ideas complejas en sistemas robustos.'],
+    metodo: ['Regla 01: Nunca asumas nada sin antes ejecutar y medir el resultado en el mundo real.'],
+    contacto: ['Escribe tu desafío, por complejo que parezca. La mayoría de los problemas de negocio son problemas de datos escondidos.']
   };
-  const OCIO = ['Sigo en ronda. Sin novedad.', 'Calibrando.',
-    'Este logo no está dibujado: se calcula al cargar la página.',
-    'Reviso los márgenes. Alguien tiene que hacerlo.',
-    'Si te pierdo de vista es porque estoy detrás de una tarjeta.', 'Turno tranquilo.'];
-  const DETRAS = ['Estoy detrás de esta tarjeta. Sigue tú.', 'Acá atrás no hay nada. Solo yo.',
-    'Buen escondite.', 'Inspección de la cara oculta: conforme.'];
-  const ASOMADO = ['Me cuelgo del borde. Ya subo a mostrarte la demo.',
-    'Baja hasta «El proceso, paso a paso»: ahí está lo bueno.',
-    'Desde acá se ve todo. Sigue leyendo, yo aguanto.'];
-  const PASILLO = ['Bajando por el pasillo entre las tarjetas.', 'Ronda por el corredor central.'];
+  const OCIO = ['Procesando flujos de datos en segundo plano.', 'Calculando métricas de rendimiento.',
+    'Este entorno es un sistema vivo, no solo una página web estática.',
+    'Verificando la integridad estructural de la interfaz. Todo en orden.',
+    'Si desaparezco, es porque estoy inspeccionando los componentes por debajo.', 'Escaneando rutinas de automatización.'];
+  const DETRAS = ['Estoy analizando el código fuente detrás de esta tarjeta.', 'Trabajando en las sombras del DOM.',
+    'Desde aquí atrás se aprecia cómo se construyó la arquitectura de este componente.', 'Revisión técnica de la cara oculta: 100% operativa.'];
+  const ASOMADO = ['Me estiro un poco para mostrarte esta interfaz. ¡Mira cómo opera el sistema!',
+    'Observa bien los detalles, aquí está el verdadero trabajo de ingeniería en acción.',
+    'Tengo una vista privilegiada desde aquí. Sigue explorando.'];
+  const PASILLO = ['Navegando entre los nodos de información del proyecto.', 'Recorriendo la arquitectura de la página.'];
 
   const bot = {
     x: 60, y: 260, tx: 60, ty: 260, vx: 0, vy: 0,
@@ -4172,24 +4201,24 @@ initDemos(document);
 
   /* ---------- Trucos: qué puede operar el robot en lo que estás viendo ---------- */
   const GUION = {
-    'data-umbral': 'Subo el umbral y mira: filas que estaban cruzadas se van a revisión manual.',
-    'data-fuzzy-run': 'Corro el motor. Cada línea del registro es una comparación de verdad.',
-    'data-ruta-b': 'Cambio el destino y que vuelva a rutear.',
-    'data-ruta-go': 'A* de nuevo. Fíjate en los nodos que tuvo que evaluar.',
-    'data-ruta-nodos': 'Enciendo los nodos explorados: eso es todo lo que el algoritmo miró antes de decidir.',
-    'data-bot-add': 'Encolo una tarea más y que el planificador se arregle.',
-    'data-aud-fix': 'Reparo automáticamente y mira cómo cuadran las tres zonas.',
-    'data-ea-reset': 'Vuelvo a los datos originales, para que se vea la brecha.',
-    'data-sql': 'Cambio la versión del CASE. Mismos equipos, otras cifras.',
-    'data-mes': 'Filtro por un mes: todo lo demás se recalcula solo.',
-    'data-unidad': 'Filtro por unidad y el gráfico se acomoda.'
+    'data-umbral': 'Ajusto el umbral predictivo: las filas con menor confianza se desvían a revisión humana.',
+    'data-fuzzy-run': 'Iniciando motor de comparación difusa. Cada línea que ves es un cruce de datos real.',
+    'data-ruta-b': 'Cambiando variables de entorno. Recalculando ruta óptima en tiempo real.',
+    'data-ruta-go': 'Ejecutando algoritmo A*. Fíjate en la cantidad de nodos evaluados en microsegundos.',
+    'data-ruta-nodos': 'Revelando nodos explorados. Así es como el sistema toma decisiones eficientes.',
+    'data-bot-add': 'Agregando carga al planificador. Observa cómo redistribuye los recursos sin colapsar.',
+    'data-aud-fix': 'Ejecutando script de reparación automática. Las fuentes de datos se alinean al instante.',
+    'data-ea-reset': 'Restaurando dataset original para que compares la eficiencia y el delta del modelo.',
+    'data-sql': 'Modificando lógica de negocio SQL simulada. La interfaz se actualiza sin pestañear.',
+    'data-mes': 'Filtrando serie de tiempo. Todos los KPIs y gráficos se recalculan dinámicamente.',
+    'data-unidad': 'Segmentando por unidad de negocio. El pipeline analítico responde al instante.'
   };
   const GENERICO = {
-    range: 'Muevo el control y se rehace todo sin recargar nada.',
-    boton: 'Esto corre de verdad. Ningún número está escrito a mano.',
-    tab: 'Hay más de una vista acá adentro.',
-    select: 'Cambio la selección y que recalcule.',
-    check: 'Activo esta opción.'
+    range: 'Ajusto los parámetros y el modelo subyacente recalcula todo al vuelo.',
+    boton: 'Ejecutando proceso en vivo. Ningún dato aquí es simulado ni estático.',
+    tab: 'Cambio de contexto para mostrarte otra dimensión del procesamiento de datos.',
+    select: 'Modifico los filtros dinámicos. El sistema responde con precisión.',
+    check: 'Habilito reglas de negocio avanzadas. Mira cómo cambia el resultado.'
   };
   function guion(el, alt) {
     const attrs = el.getAttributeNames ? el.getAttributeNames() : [];
@@ -4300,19 +4329,33 @@ initDemos(document);
     if (bot.estado !== 'asomado') bot.rueda += v * 7;
     if (Math.abs(dx) > 0.4) bot.dir = dx > 0 ? 1 : -1;
 
+    if (v > 1.2 && bot.estado === 'carril') {
+        capa.classList.add('nave');
+    } else if (v < 0.5) {
+        capa.classList.remove('nave');
+    }
+
     /* Se inclina hacia donde acelera y da un pequeño rebote al andar. */
     const inc = Math.max(-13, Math.min(13, -bot.vx * bot.dir * 1.9));
     const bote = reduce ? 0 : Math.sin(Date.now() / 330) * (v > 0.6 ? 1.7 : 0.7);
-    if (inclina) inclina.setAttribute('transform', 'rotate(' + inc.toFixed(1) + ' 27 38) translate(0 ' + bote.toFixed(2) + ')');
+    if (inclina) inclina.setAttribute('transform', 'rotate(' + inc.toFixed(1) + ' 30 45) translate(0 ' + bote.toFixed(2) + ')');
 
     capa.style.transform = 'translate3d(' + bot.x.toFixed(1) + 'px,' + bot.y.toFixed(1) + 'px,0) scaleX(' + bot.dir + ')';
-    $n(capa, '.bot-eje').forEach(function (e) {
-      e.setAttribute('transform', 'rotate(' + bot.rueda.toFixed(1) + ' ' + e.getAttribute('data-cx') + ' 37.5)');
-    });
+    
+    // Animación de piernas al caminar
+    if (!capa.classList.contains('nave')) {
+        const pierna1 = Math.sin(Date.now() / 150) * v * 2;
+        const pierna2 = Math.cos(Date.now() / 150) * v * 2;
+        const pIzq = capa.querySelector('.bot-pierna-izq');
+        const pDer = capa.querySelector('.bot-pierna-der');
+        if (pIzq) pIzq.setAttribute('transform', 'translate(0 ' + pierna1.toFixed(1) + ')');
+        if (pDer) pDer.setAttribute('transform', 'translate(0 ' + pierna2.toFixed(1) + ')');
+    }
+
     hit.style.transform = 'translate3d(' + bot.x.toFixed(1) + 'px,' + bot.y.toFixed(1) + 'px,0)';
     globo.style.left = (bot.estado === 'asomado'
       ? Math.max(12, bot.x - 262)
-      : Math.min(window.innerWidth - 290, Math.max(12, bot.x + 70))) + 'px';
+      : Math.min(window.innerWidth - 290, Math.max(12, bot.x + 80))) + 'px';
     globo.style.top = Math.max(78, Math.min(window.innerHeight - 130, bot.y - 14)) + 'px';
 
     if (v < 0.4 && bot.estado === 'excursion' && !bot.espera) {
