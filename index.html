@@ -4812,7 +4812,7 @@ document.getElementById('year').textContent = new Date().getFullYear();
   head.add(faceplate);
 
   // Eyes
-  const eyeGeo = new THREE.CapsuleGeometry(0.5, 2, 8, 8);
+  const eyeGeo = new THREE.CylinderGeometry(0.5, 0.5, 2, 8);
   eyeGeo.rotateZ(Math.PI / 2);
   const eyeL = new THREE.Mesh(eyeGeo, glowMat);
   eyeL.position.set(-2, 1, 5.1);
