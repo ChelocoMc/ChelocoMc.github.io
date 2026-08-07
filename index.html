@@ -1078,7 +1078,7 @@ input[type="range"]::-moz-range-thumb {
   border-radius: 14px; pointer-events: auto; cursor: pointer;
 }
 .bot-globo {
-  position: absolute; max-width: 268px; pointer-events: auto;
+  position: absolute; width: 216px; pointer-events: auto;
   background: var(--surface-2); border: 1px solid var(--accent-line);
   border-radius: 12px; padding: 11px 13px;
   box-shadow: var(--shadow-lift);
@@ -4276,15 +4276,25 @@ initDemos(document);
       [12, cy - h / 2], [window.innerWidth - w - 12, cy - h / 2],
       [12, window.innerHeight - h - 16], [window.innerWidth - w - 12, window.innerHeight - h - 16]
     ];
-    let mejor = null, mejorP = Infinity, actualP = Infinity;
-    cands.forEach(function (c, i) {
-      const x = Math.max(12, Math.min(window.innerWidth - w - 12, c[0]));
-      const y = Math.max(78, Math.min(window.innerHeight - h - 12, c[1]));
-      /* La distancia al bot pesa poco: sirve para desempatar entre huecos. */
-      const p = areaTapada(x, y, w, h) + Math.hypot(x + w / 2 - cx, y + h / 2 - cy) * 12;
-      if (i === ladoGlobo) actualP = p;
-      if (p < mejorP) { mejorP = p; mejor = [x, y, i]; }
-    });
+    /* Primero se buscan las ocho posiciones pegadas al bot: la burbuja tiene
+       que leerse como algo que dice él. Solo si todas tapan más de un tercio
+       de su superficie se consideran los refugios de los bordes. */
+    const encaja = function (c) {
+      return [Math.max(12, Math.min(window.innerWidth - w - 12, c[0])),
+              Math.max(78, Math.min(window.innerHeight - h - 12, c[1]))];
+    };
+    let mejor = null, mejorP = Infinity, actualP = Infinity, mejorArea = Infinity;
+    const evaluar = function (desde, hasta, pesoDist) {
+      for (let i = desde; i < hasta; i++) {
+        const q = encaja(cands[i]);
+        const area = areaTapada(q[0], q[1], w, h);
+        const p = area + Math.hypot(q[0] + w / 2 - cx, q[1] + h / 2 - cy) * pesoDist;
+        if (i === ladoGlobo) actualP = p;
+        if (p < mejorP) { mejorP = p; mejorArea = area; mejor = [q[0], q[1], i]; }
+      }
+    };
+    evaluar(0, 8, 30);
+    if (mejorArea > w * h * 0.6) evaluar(8, cands.length, 6);
     if (!mejor) return;
     if (ladoGlobo !== null && mejorP > actualP * 0.75) {
       /* El lado de siempre sigue siendo razonable: solo lo reencuadra. */
@@ -4533,8 +4543,15 @@ initDemos(document);
       return;
     }
     if (bot.estado === 'asomado') {
+      /* Entero al costado de la hoja: la capa va en z-index 90 y la hoja en
+         91, así que todo lo que invada el borde se ve cortado por la mitad. */
       const hoja = document.getElementById('sheet').getBoundingClientRect();
-      bot.tx = hoja.left - 34;
+      const cw = capa.offsetWidth || 80;
+      const cabe = hoja.left > cw + 16;
+      /* Si no hay margen libre a la izquierda de la hoja, en vez de dejarlo
+         a medio tapar se pasa por encima de ella (92). */
+      capa.classList.toggle('sobrehoja', !cabe);
+      bot.tx = cabe ? hoja.left - cw - 10 : hoja.left + 12;
       bot.ty = hoja.top + 120 + Math.sin((Date.now() - bot.desde) / 1500) * 130;
       return;
     }
