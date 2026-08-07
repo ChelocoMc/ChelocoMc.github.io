@@ -4942,9 +4942,14 @@ document.getElementById('year').textContent = new Date().getFullYear();
   gltfLoader.load('iron_man__new.glb', function (gltf) {
     const model = gltf.scene;
     
-    // Escalar y centrar
-    model.scale.set(13, 13, 13); 
-    model.position.set(0, -13, 0); 
+    // Auto-escalado para que siempre se vea bien
+    const box = new THREE.Box3().setFromObject(model);
+    const size = box.getSize(new THREE.Vector3());
+    const maxDim = Math.max(size.x, size.y, size.z);
+    let desiredHeight = 25; 
+    let finalScale = maxDim > 0 ? (desiredHeight / maxDim) : 1;
+    model.scale.set(finalScale, finalScale, finalScale);
+    model.position.set(0, -desiredHeight/2 + 2, 0); 
     
     // Ajustar materiales e iluminación
     model.traverse(function(child) {
@@ -5148,24 +5153,24 @@ document.getElementById('year').textContent = new Date().getFullYear();
     const lerp = 0.08; // Ultra-fluid transitions
 
     if (window.botBones && window.botBones.torso) {
-      window.botBones.hipL.rotation.x += (tThighL - window.botBones.hipL.rotation.x) * lerp;
-      window.botBones.kneeL.rotation.x += (tCalfL - window.botBones.kneeL.rotation.x) * lerp;
-      window.botBones.hipR.rotation.x += (tThighR - window.botBones.hipR.rotation.x) * lerp;
-      window.botBones.kneeR.rotation.x += (tCalfR - window.botBones.kneeR.rotation.x) * lerp;
-      window.botBones.shoulderL.rotation.x += (tArmL - window.botBones.shoulderL.rotation.x) * lerp;
-      window.botBones.elbowL.rotation.x += (tForearmL - window.botBones.elbowL.rotation.x) * lerp;
-      window.botBones.shoulderR.rotation.x += (tArmR - window.botBones.shoulderR.rotation.x) * lerp;
-      window.botBones.elbowR.rotation.x += (tForearmR - window.botBones.elbowR.rotation.x) * lerp;
-      window.botBones.shoulderL.rotation.z += (tArmZL - window.botBones.shoulderL.rotation.z) * lerp;
-      window.botBones.shoulderR.rotation.z += (tArmZR - window.botBones.shoulderR.rotation.z) * lerp;
+            if (window.botBones.hipL) window.botBones.hipL.rotation.x += (tThighL - window.botBones.hipL.rotation.x) * lerp;
+            if (window.botBones.kneeL) window.botBones.kneeL.rotation.x += (tCalfL - window.botBones.kneeL.rotation.x) * lerp;
+            if (window.botBones.hipR) window.botBones.hipR.rotation.x += (tThighR - window.botBones.hipR.rotation.x) * lerp;
+            if (window.botBones.kneeR) window.botBones.kneeR.rotation.x += (tCalfR - window.botBones.kneeR.rotation.x) * lerp;
+            if (window.botBones.shoulderL) window.botBones.shoulderL.rotation.x += (tArmL - window.botBones.shoulderL.rotation.x) * lerp;
+            if (window.botBones.elbowL) window.botBones.elbowL.rotation.x += (tForearmL - window.botBones.elbowL.rotation.x) * lerp;
+            if (window.botBones.shoulderR) window.botBones.shoulderR.rotation.x += (tArmR - window.botBones.shoulderR.rotation.x) * lerp;
+            if (window.botBones.elbowR) window.botBones.elbowR.rotation.x += (tForearmR - window.botBones.elbowR.rotation.x) * lerp;
+            if (window.botBones.shoulderL) window.botBones.shoulderL.rotation.z += (tArmZL - window.botBones.shoulderL.rotation.z) * lerp;
+            if (window.botBones.shoulderR) window.botBones.shoulderR.rotation.z += (tArmZR - window.botBones.shoulderR.rotation.z) * lerp;
 
-      window.botBones.torso.rotation.x += (tTorsoX - window.botBones.torso.rotation.x) * lerp;
-      window.botBones.torso.rotation.z += (tTorsoZ - window.botBones.torso.rotation.z) * lerp;
+            if (window.botBones.torso) window.botBones.torso.rotation.x += (tTorsoX - window.botBones.torso.rotation.x) * lerp;
+            if (window.botBones.torso) window.botBones.torso.rotation.z += (tTorsoZ - window.botBones.torso.rotation.z) * lerp;
       // Posición global
       robotGroup.position.y += ((tTorsoPosY - 10) * 1.5 - robotGroup.position.y) * lerp;
       robotGroup.rotation.y += (tTorsoY - robotGroup.rotation.y) * lerp;
-      window.botBones.head.rotation.y += (tHeadY - window.botBones.head.rotation.y) * lerp;
-      window.botBones.head.rotation.x += (tHeadX - window.botBones.head.rotation.x) * lerp;
+            if (window.botBones.head) window.botBones.head.rotation.y += (tHeadY - window.botBones.head.rotation.y) * lerp;
+            if (window.botBones.head) window.botBones.head.rotation.x += (tHeadX - window.botBones.head.rotation.x) * lerp;
     } else {
       // Fallback para animación antigua
       if (typeof thighL !== 'undefined') {
