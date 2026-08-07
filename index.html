@@ -4711,6 +4711,7 @@ document.getElementById('year').textContent = new Date().getFullYear();
 
 <!-- Three.js 3D Background & 3D Tilt UI Script -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/loaders/GLTFLoader.js"></script>
 <script>
 (function() {
   // 1. 3D Tilt Effect para las tarjetas y demos
@@ -4899,149 +4900,70 @@ document.getElementById('year').textContent = new Date().getFullYear();
   const robotGroup = new THREE.Group();
   botScene.add(robotGroup);
 
-  // --- TORSO ---
+  // --- REFERENCIAS VACÍAS PARA LA ANIMACIÓN ---
+  // Mantenemos los objetos como Groups vacíos para que la animación matemática no falle
   const torsoGroup = new THREE.Group();
   torsoGroup.position.y = 10;
   robotGroup.add(torsoGroup);
-  
-  // Usamos el 'torso' original para mantener compatibilidad con la animacion
   const torso = torsoGroup;
 
-  // Pecho superior (más ancho)
-  const chestGeo = new THREE.BoxGeometry(11, 7, 7);
-  const chest = new THREE.Mesh(chestGeo, redMat);
-  chest.position.y = 3;
-  torsoGroup.add(chest);
-
-  // Abdomen (más estrecho)
-  const abdomenGeo = new THREE.BoxGeometry(8, 6, 6);
-  const abdomen = new THREE.Mesh(abdomenGeo, goldMat);
-  abdomen.position.y = -3.5;
-  torsoGroup.add(abdomen);
-
-  // Arc Reactor
-  const coreGeo = new THREE.CircleGeometry(2.2, 32);
-  const core = new THREE.Mesh(coreGeo, glowMat);
-  core.position.set(0, 3, 3.51); 
-  torsoGroup.add(core);
-
-  // --- HEAD ---
-  const headGroup = new THREE.Group();
-  headGroup.position.y = 9; 
-  torsoGroup.add(headGroup);
-  const head = headGroup; // compatibilidad
-
-  const helmetGeo = new THREE.BoxGeometry(6, 7, 7);
-  const helmet = new THREE.Mesh(helmetGeo, redMat);
-  headGroup.add(helmet);
-
-  const faceplateGeo = new THREE.BoxGeometry(5.2, 6, 1.5);
-  const faceplate = new THREE.Mesh(faceplateGeo, goldMat);
-  faceplate.position.set(0, -0.2, 3.1);
-  headGroup.add(faceplate);
-
-  const eyeGeo = new THREE.BoxGeometry(1.5, 0.5, 0.5);
-  const eyeL = new THREE.Mesh(eyeGeo, glowMat);
-  eyeL.position.set(-1.2, 1, 0.6);
-  faceplate.add(eyeL);
+  const head = new THREE.Group(); torso.add(head);
+  const shoulderL = new THREE.Group(); torso.add(shoulderL);
+  const upperArmL = new THREE.Group(); shoulderL.add(upperArmL);
+  const elbowL = new THREE.Group(); upperArmL.add(elbowL);
+  const lowerArmL = new THREE.Group(); elbowL.add(lowerArmL);
+  const shoulderR = new THREE.Group(); torso.add(shoulderR);
+  const upperArmR = new THREE.Group(); shoulderR.add(upperArmR);
+  const elbowR = new THREE.Group(); upperArmR.add(elbowR);
+  const lowerArmR = new THREE.Group(); elbowR.add(lowerArmR);
+  const pelvis = new THREE.Group(); torso.add(pelvis);
+  const hipL = new THREE.Group(); pelvis.add(hipL);
+  const thighL = new THREE.Group(); hipL.add(thighL);
+  const kneeL = new THREE.Group(); thighL.add(kneeL);
+  const calfL = new THREE.Group(); kneeL.add(calfL);
+  const hipR = new THREE.Group(); pelvis.add(hipR);
+  const thighR = new THREE.Group(); hipR.add(thighR);
+  const kneeR = new THREE.Group(); thighR.add(kneeR);
+  const calfR = new THREE.Group(); kneeR.add(calfR);
   
-  const eyeR = new THREE.Mesh(eyeGeo, glowMat);
-  eyeR.position.set(1.2, 1, 0.6);
-  faceplate.add(eyeR);
+  // Repulsores (añadimos pequeñas luces para que sigan brillando aunque el modelo no las tenga)
+  const jetGeo = new THREE.BoxGeometry(2, 2, 2);
+  const jetArmL = new THREE.Mesh(jetGeo, glowMat); lowerArmL.add(jetArmL);
+  const jetArmR = new THREE.Mesh(jetGeo, glowMat); lowerArmR.add(jetArmR);
+  const jetLegL = new THREE.Mesh(jetGeo, glowMat); calfL.add(jetLegL);
+  const jetLegR = new THREE.Mesh(jetGeo, glowMat); calfR.add(jetLegR);
 
-  function createArmorPart(w, h, d, mat, yOffset) {
-    const geo = new THREE.BoxGeometry(w, h, d);
-    geo.translate(0, yOffset, 0);
-    return new THREE.Mesh(geo, mat);
-  }
+  // Ocultamos los repulsores por defecto para que no estorben si no cuadran
+  jetArmL.visible = false;
+  jetArmR.visible = false;
+  jetLegL.visible = false;
+  jetLegR.visible = false;
 
-  // --- ARMS ---
-  const shoulderGeo = new THREE.SphereGeometry(3.2, 16, 16);
-  const shoulderL = new THREE.Mesh(shoulderGeo, redMat);
-  shoulderL.position.set(-7.5, 5, 0);
-  torsoGroup.add(shoulderL);
-  
-  const upperArmL = createArmorPart(3, 7, 3, redMat, -3.5);
-  shoulderL.add(upperArmL);
-  
-  const elbowL = new THREE.Mesh(new THREE.SphereGeometry(1.6, 16, 16), jointMat);
-  elbowL.position.set(0, -7, 0);
-  upperArmL.add(elbowL);
-  
-  // Guantelete
-  const lowerArmL = createArmorPart(3.2, 8, 3.2, redMat, -4);
-  elbowL.add(lowerArmL);
+  // --- CARGAR MODELO GLTF/GLB ---
+  const gltfLoader = new THREE.GLTFLoader();
+  gltfLoader.load('ironman.glb', function (gltf) {
+    const model = gltf.scene;
+    
+    // Ajustar escala y posición inicial para que coincida con el antiguo tamaño
+    // IMPORTANTE: Estos valores pueden requerir ajuste dependiendo de cómo fue exportado el modelo
+    model.scale.set(6, 6, 6); 
+    model.position.set(0, -12, 0); 
+    
+    // Asegurarnos de que los materiales brillen bien
+    model.traverse(function(child) {
+      if (child.isMesh) {
+        if (child.material) {
+          // Si el material original es muy oscuro, forzamos un poco de brillo
+          child.material.metalness = Math.max(child.material.metalness || 0, 0.6);
+          child.material.roughness = Math.min(child.material.roughness || 1, 0.4);
+        }
+      }
+    });
 
-  const shoulderR = new THREE.Mesh(shoulderGeo, redMat);
-  shoulderR.position.set(7.5, 5, 0);
-  torsoGroup.add(shoulderR);
-
-  const upperArmR = createArmorPart(3, 7, 3, redMat, -3.5);
-  shoulderR.add(upperArmR);
-  
-  const elbowR = new THREE.Mesh(new THREE.SphereGeometry(1.6, 16, 16), jointMat);
-  elbowR.position.set(0, -7, 0);
-  upperArmR.add(elbowR);
-  
-  const lowerArmR = createArmorPart(3.2, 8, 3.2, redMat, -4);
-  elbowR.add(lowerArmR);
-
-  // --- LEGS ---
-  const pelvisGeo = new THREE.BoxGeometry(9, 4, 6);
-  const pelvis = new THREE.Mesh(pelvisGeo, redMat);
-  pelvis.position.y = -8;
-  torsoGroup.add(pelvis);
-
-  const hipGeo = new THREE.SphereGeometry(2.2, 16, 16);
-  
-  const hipL = new THREE.Mesh(hipGeo, jointMat);
-  hipL.position.set(-2.8, -2, 0);
-  pelvis.add(hipL);
-  
-  const thighL = createArmorPart(3.8, 8, 3.8, goldMat, -4);
-  hipL.add(thighL);
-  
-  const kneeL = new THREE.Mesh(new THREE.SphereGeometry(2, 16, 16), jointMat);
-  kneeL.position.set(0, -8, 0);
-  thighL.add(kneeL);
-  
-  // Bota
-  const calfL = createArmorPart(4.2, 10, 4.2, redMat, -5);
-  kneeL.add(calfL);
-
-  const hipR = new THREE.Mesh(hipGeo, jointMat);
-  hipR.position.set(2.8, -2, 0);
-  pelvis.add(hipR);
-
-  const thighR = createArmorPart(3.8, 8, 3.8, goldMat, -4);
-  hipR.add(thighR);
-  
-  const kneeR = new THREE.Mesh(new THREE.SphereGeometry(2, 16, 16), jointMat);
-  kneeR.position.set(0, -8, 0);
-  thighR.add(kneeR);
-  
-  const calfR = createArmorPart(4.2, 10, 4.2, redMat, -5);
-  kneeR.add(calfR);
-
-  // --- REPULSORS ---
-  const jetGeo = new THREE.BoxGeometry(2, 3, 2);
-  jetGeo.translate(0, -1.5, 0);
-
-  const jetArmL = new THREE.Mesh(jetGeo, glowMat);
-  jetArmL.position.set(0, -8, 0);
-  lowerArmL.add(jetArmL);
-  
-  const jetArmR = new THREE.Mesh(jetGeo, glowMat);
-  jetArmR.position.set(0, -8, 0);
-  lowerArmR.add(jetArmR);
-  
-  const jetLegL = new THREE.Mesh(jetGeo, glowMat);
-  jetLegL.position.set(0, -10, 0);
-  calfL.add(jetLegL);
-  
-  const jetLegR = new THREE.Mesh(jetGeo, glowMat);
-  jetLegR.position.set(0, -10, 0);
-  calfR.add(jetLegR);
+    torso.add(model);
+  }, undefined, function (error) {
+    console.error('Error cargando ironman.glb:', error);
+  });
 
   const botLight = new THREE.AmbientLight(0xffffff, 1.2);
   botScene.add(botLight);
