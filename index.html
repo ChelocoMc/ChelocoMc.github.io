@@ -4260,6 +4260,10 @@ initDemos(document);
       const iy = Math.min(y + h, r.bottom) - Math.max(y, r.top);
       if (ix > 0 && iy > 0) area += ix * iy;
     }
+    const cw = capa.offsetWidth || 120, ch = capa.offsetHeight || 120;
+    const bx = Math.min(x + w, bot.x + cw) - Math.max(x, bot.x);
+    const by = Math.min(y + h, bot.y + ch) - Math.max(y, bot.y);
+    if (bx > 0 && by > 0) area += bx * by * 50;
     return area;
   }
   function ubicarGlobo() {
