@@ -4787,19 +4787,24 @@ document.getElementById('year').textContent = new Date().getFullYear();
   const calfR = createLimb(2, 1.5, 11, plateMat);
   kneeR.add(calfR);
 
-  const ufoGroup = new THREE.Group();
-  const ufoBaseGeo = new THREE.TorusGeometry(14, 4, 16, 50);
-  const ufoBase = new THREE.Mesh(ufoBaseGeo, plateMat);
-  ufoBase.rotation.x = Math.PI / 2;
-  const ufoDomeGeo = new THREE.SphereGeometry(10, 16, 16, 0, Math.PI * 2, 0, Math.PI / 2);
-  const ufoDome = new THREE.Mesh(ufoDomeGeo, glowMat);
-  ufoDome.material.transparent = true;
-  ufoDome.material.opacity = 0.8;
-  ufoGroup.add(ufoBase);
-  ufoGroup.add(ufoDome);
-  ufoGroup.position.y = -5;
-  ufoGroup.visible = false;
-  torso.add(ufoGroup);
+  const jetGeo = new THREE.ConeGeometry(1.5, 4, 12);
+  jetGeo.translate(0, -2, 0);
+
+  const jetArmL = new THREE.Mesh(jetGeo, glowMat);
+  jetArmL.position.set(0, -9, 0);
+  lowerArmL.add(jetArmL);
+  
+  const jetArmR = new THREE.Mesh(jetGeo, glowMat);
+  jetArmR.position.set(0, -9, 0);
+  lowerArmR.add(jetArmR);
+  
+  const jetLegL = new THREE.Mesh(jetGeo, glowMat);
+  jetLegL.position.set(0, -11, 0);
+  calfL.add(jetLegL);
+  
+  const jetLegR = new THREE.Mesh(jetGeo, glowMat);
+  jetLegR.position.set(0, -11, 0);
+  calfR.add(jetLegR);
 
   const botLight = new THREE.AmbientLight(0xffffff, 0.9);
   botScene.add(botLight);
@@ -4820,14 +4825,30 @@ document.getElementById('year').textContent = new Date().getFullYear();
     let tHeadY = 0;
 
     if (isNave) {
-       pelvis.visible = false;
-       ufoGroup.visible = true;
-       ufoBase.rotation.z += 0.2;
-       tArmL = Math.PI;
-       tArmR = Math.PI;
+       tTorsoX = Math.PI / 2.2;
+       tThighL = -0.1;
+       tCalfL = 0;
+       tThighR = -0.1;
+       tCalfR = 0;
+       tArmL = -Math.PI / 3.5;
+       tArmR = -Math.PI / 3.5;
+       tHeadY = -Math.PI / 4;
+       
+       jetArmL.visible = true;
+       jetArmR.visible = true;
+       jetLegL.visible = true;
+       jetLegR.visible = true;
+       
+       const flicker = 1 + Math.random() * 0.5;
+       jetArmL.scale.set(flicker, flicker, flicker);
+       jetArmR.scale.set(flicker, flicker, flicker);
+       jetLegL.scale.set(flicker, flicker, flicker);
+       jetLegR.scale.set(flicker, flicker, flicker);
     } else {
-       pelvis.visible = true;
-       ufoGroup.visible = false;
+       jetArmL.visible = false;
+       jetArmR.visible = false;
+       jetLegL.visible = false;
+       jetLegR.visible = false;
        if (isMoving) {
           const speed = Math.min(v, 2) * 0.5;
           tThighL = Math.sin(t) * 0.8 * speed;
