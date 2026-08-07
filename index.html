@@ -4690,9 +4690,13 @@ document.getElementById('year').textContent = new Date().getFullYear();
   const botCamera = new THREE.PerspectiveCamera(50, 1, 0.1, 1000);
   botCamera.position.set(0, 5, 80);
 
-  const plateMat = new THREE.MeshPhysicalMaterial({ color: 0xffffff, metalness: 0.1, roughness: 0.1, clearcoat: 1.0 });
-  const jointMat = new THREE.MeshStandardMaterial({ color: 0x111111, metalness: 0.8, roughness: 0.4 });
-  const glowMat = new THREE.MeshStandardMaterial({ color: 0x00f0ff, emissive: 0x00f0ff, emissiveIntensity: 1.5 });
+  const accentColor = 0xE4894A;
+  const plateColor = 0xEDEAE4;
+  const jointColor = 0x141A18;
+
+  const plateMat = new THREE.MeshPhysicalMaterial({ color: plateColor, metalness: 0.2, roughness: 0.2, clearcoat: 1.0 });
+  const jointMat = new THREE.MeshStandardMaterial({ color: jointColor, metalness: 0.8, roughness: 0.4 });
+  const glowMat = new THREE.MeshStandardMaterial({ color: accentColor, emissive: accentColor, emissiveIntensity: 2.0 });
 
   function createLimb(r1, r2, len, mat) {
     const geo = new THREE.CylinderGeometry(r1, r2, len, 16);
