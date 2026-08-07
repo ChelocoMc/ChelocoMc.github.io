@@ -1450,54 +1450,7 @@ input[type="range"]::-moz-range-thumb {
 <!-- BOT-01: chasis con oruga, mástil sensor y brazo articulado.
      Cada grupo se anima por separado según el estado. -->
 <div class="bot-capa" id="botCapa" aria-hidden="true">
-  <svg viewBox="0 0 80 80">
-    <g class="bot-todo">
-     <g class="bot-inclina">
-      <path class="bot-haz" d="M30 15 L65 -5 L65 35 Z"/>
-
-      <g class="bot-tren">
-        <path class="bot-linea bot-pierna bot-pierna-izq" d="M25 45 Q20 55 25 70"/>
-        <path class="bot-linea bot-pierna bot-pierna-der" d="M35 45 Q40 55 35 70"/>
-        
-        <g class="bot-nave" style="opacity:0">
-           <ellipse cx="30" cy="65" rx="22" ry="7" class="bot-chasis"/>
-           <path d="M14 65 Q30 48 46 65" class="bot-nave-cupula"/>
-           <circle cx="30" cy="65" r="2" class="bot-led"/>
-           <path d="M25 72 L23 78 M35 72 L37 78" class="bot-fuego"/>
-        </g>
-      </g>
-
-      <g class="bot-cuerpo">
-        <rect class="bot-chasis" x="18" y="25" width="24" height="20" rx="4"/>
-        <rect class="bot-panel" x="22" y="28" width="16" height="6" rx="2"/>
-        <path class="bot-tenue" d="M22 38h16"/>
-        <circle class="bot-led" cx="36" cy="31" r="1.5"/>
-      </g>
-
-      <g class="bot-mastil">
-        <path class="bot-linea" d="M30 25v-5"/>
-        <rect class="bot-chasis" x="20" y="5" width="20" height="15" rx="5"/>
-        <circle class="bot-lente" cx="30" cy="12" r="4.5"/>
-        <circle class="bot-pupila" cx="30" cy="12" r="1.5"/>
-        <circle class="bot-chispa" cx="38" cy="8" r="1.5"/>
-      </g>
-
-      <g class="bot-brazo-izq" style="opacity: 0.6">
-        <path class="bot-linea" d="M18 32 Q10 40 15 50"/>
-        <circle class="bot-rodillo" cx="15" cy="50" r="2.5"/>
-      </g>
-
-      <g class="bot-brazo">
-        <path class="bot-linea" d="M42 32 Q50 38 48 48"/>
-        <circle class="bot-rodillo" cx="48" cy="48" r="2.5"/>
-        <g class="bot-antebrazo">
-          <path class="bot-linea" d="M48 48 Q58 40 62 35"/>
-          <path class="bot-linea" d="M62 35 L68 31 M62 35 L68 34 M62 35 L66 38"/>
-        </g>
-      </g>
-     </g>
-    </g>
-  </svg>
+  <div id="bot3DContainer" style="width: 120px; height: 120px; position: absolute; top: -20px; left: -20px; pointer-events: none;"></div>
 </div>
 <div class="bot-ui" id="botUI">
   <div class="bot-hit" id="botHit"></div>
@@ -4183,9 +4136,11 @@ initDemos(document);
   };
   let ultimoMsg = 0, seccionVista = '', temporizador = 0, ultimoUsuario = 0, ultimoTruco = null;
 
+  window.botLadoDer = false;
   function carrilX() {
     const ancho = Math.min(1180, window.innerWidth - Math.min(88, Math.max(28, window.innerWidth * 0.06)));
-    return Math.max(14, (window.innerWidth - ancho) / 2 / 2 - 14);
+    const margen = Math.max(14, (window.innerWidth - ancho) / 2 / 2 - 14);
+    return window.botLadoDer ? window.innerWidth - margen - 60 : margen;
   }
   function decir(t, ms) {
     if (apagado) return;
@@ -4347,6 +4302,7 @@ initDemos(document);
     bot.vx = dx * k; bot.vy = dy * k;
     bot.x += bot.vx; bot.y += bot.vy;
     const v = Math.sqrt(bot.vx * bot.vx + bot.vy * bot.vy);
+    if (window.updateBot3D) window.updateBot3D(v, bot, capa);
     if (bot.estado !== 'asomado') bot.rueda += v * 7;
     if (Math.abs(dx) > 0.4) bot.dir = dx > 0 ? 1 : -1;
 
@@ -4470,6 +4426,7 @@ initDemos(document);
     if (bot.estado !== 'carril' || Math.random() > 0.4) return;
     capa.classList.add('mirando');
     setTimeout(function () { capa.classList.remove('mirando'); }, 900);
+    if (Math.random() < 0.3) window.botLadoDer = !window.botLadoDer;
   }
   function ocio() {
     if (apagado || bot.estado === 'asomado' || bot.estado === 'demo') return;
@@ -4714,6 +4671,133 @@ document.getElementById('year').textContent = new Date().getFullYear();
     camera.updateProjectionMatrix();
     renderer.setSize(window.innerWidth, window.innerHeight);
   });
+})();
+</script>
+
+<script>
+// ==========================================
+// THREE.JS ROBOT (bot3D)
+// ==========================================
+(function() {
+  const botContainer = document.getElementById('bot3DContainer');
+  if (!botContainer || typeof THREE === 'undefined') return;
+
+  const botCanvas = document.createElement('canvas');
+  botContainer.appendChild(botCanvas);
+
+  const botRenderer = new THREE.WebGLRenderer({ canvas: botCanvas, alpha: true, antialias: true });
+  botRenderer.setSize(120, 120);
+  botRenderer.setPixelRatio(window.devicePixelRatio);
+
+  const botScene = new THREE.Scene();
+  const botCamera = new THREE.PerspectiveCamera(50, 1, 0.1, 1000);
+  botCamera.position.set(0, 5, 80);
+
+  const botMaterial = new THREE.MeshStandardMaterial({ color: 0xdddddd, roughness: 0.3, metalness: 0.5 });
+  const accentMaterial = new THREE.MeshStandardMaterial({ color: 0x4dabf7, emissive: 0x228be6, roughness: 0.2, metalness: 0.8 });
+
+  const robotGroup = new THREE.Group();
+  botScene.add(robotGroup);
+
+  const bodyGeo = new THREE.BoxGeometry(16, 20, 12);
+  const bodyMesh = new THREE.Mesh(bodyGeo, botMaterial);
+  robotGroup.add(bodyMesh);
+
+  const headGeo = new THREE.BoxGeometry(20, 16, 14);
+  const headMesh = new THREE.Mesh(headGeo, botMaterial);
+  headMesh.position.y = 20;
+  bodyMesh.add(headMesh);
+
+  const eyeGeo = new THREE.BoxGeometry(14, 5, 2);
+  const eyeMesh = new THREE.Mesh(eyeGeo, accentMaterial);
+  eyeMesh.position.set(0, 2, 7.5);
+  headMesh.add(eyeMesh);
+
+  const armGeo = new THREE.CylinderGeometry(2.5, 2, 18);
+  armGeo.translate(0, -9, 0);
+  const armL = new THREE.Mesh(armGeo, botMaterial);
+  armL.position.set(-10, 10, 0);
+  const armR = new THREE.Mesh(armGeo, botMaterial);
+  armR.position.set(10, 10, 0);
+  bodyMesh.add(armL);
+  bodyMesh.add(armR);
+
+  const legGeo = new THREE.CylinderGeometry(2.5, 1.5, 20);
+  legGeo.translate(0, -10, 0);
+  const legL = new THREE.Mesh(legGeo, botMaterial);
+  legL.position.set(-5, -10, 0);
+  const legR = new THREE.Mesh(legGeo, botMaterial);
+  legR.position.set(5, -10, 0);
+  bodyMesh.add(legL);
+  bodyMesh.add(legR);
+
+  const ufoGroup = new THREE.Group();
+  const ufoBaseGeo = new THREE.TorusGeometry(15, 4, 16, 50);
+  const ufoBase = new THREE.Mesh(ufoBaseGeo, botMaterial);
+  ufoBase.rotation.x = Math.PI / 2;
+  const ufoDomeGeo = new THREE.SphereGeometry(12, 16, 16, 0, Math.PI * 2, 0, Math.PI / 2);
+  const ufoDome = new THREE.Mesh(ufoDomeGeo, accentMaterial);
+  ufoGroup.add(ufoBase);
+  ufoGroup.add(ufoDome);
+  ufoGroup.position.y = -15;
+  ufoGroup.visible = false;
+  bodyMesh.add(ufoGroup);
+
+  const botLight = new THREE.AmbientLight(0xffffff, 0.7);
+  botScene.add(botLight);
+  const botDirLight = new THREE.DirectionalLight(0xffffff, 1.5);
+  botDirLight.position.set(20, 40, 50);
+  botScene.add(botDirLight);
+
+  window.updateBot3D = function(v, botData, capaElement) {
+    robotGroup.rotation.z = -botData.vx * 0.05;
+    robotGroup.rotation.x = -botData.vy * 0.05;
+
+    if (capaElement.classList.contains('nave')) {
+       legL.visible = false;
+       legR.visible = false;
+       ufoGroup.visible = true;
+       ufoBase.rotation.z += 0.2;
+    } else {
+       legL.visible = true;
+       legR.visible = true;
+       ufoGroup.visible = false;
+       if (v > 0.1) {
+         legL.rotation.x = Math.sin(Date.now() / 120) * 0.6;
+         legR.rotation.x = -Math.sin(Date.now() / 120) * 0.6;
+         armL.rotation.x = -Math.sin(Date.now() / 120) * 0.6;
+         if (!capaElement.classList.contains('pulsando')) {
+             armR.rotation.x = Math.sin(Date.now() / 120) * 0.6;
+         }
+       } else {
+         legL.rotation.x = 0;
+         legR.rotation.x = 0;
+         armL.rotation.x = 0;
+         if (!capaElement.classList.contains('pulsando')) armR.rotation.x = 0;
+       }
+    }
+
+    if (capaElement.classList.contains('pulsando')) {
+       armR.rotation.x = -Math.PI / 1.5;
+       armR.scale.y = 1.8;
+    } else {
+       armR.scale.y = 1;
+    }
+
+    if (capaElement.classList.contains('mirando')) {
+       headMesh.rotation.y = window.botLadoDer ? -Math.PI / 4 : Math.PI / 4;
+    } else {
+       headMesh.rotation.y = 0;
+    }
+
+    if (window.botLadoDer) {
+       robotGroup.rotation.y = -Math.PI / 5;
+    } else {
+       robotGroup.rotation.y = Math.PI / 5;
+    }
+
+    botRenderer.render(botScene, botCamera);
+  };
 })();
 </script>
 
