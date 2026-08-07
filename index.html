@@ -208,6 +208,25 @@ header.top {
   display: grid; place-items: center; background: var(--surface);
   overflow: hidden;
 }
+
+/* Scroll Animations */
+.scroll-anim-hidden {
+  opacity: 0;
+  transform: translateY(30px);
+  transition: opacity 0.8s cubic-bezier(0.16, 1, 0.3, 1), transform 0.8s cubic-bezier(0.16, 1, 0.3, 1);
+}
+.scrolled-in {
+  opacity: 1;
+  transform: translateY(0);
+}
+/* Staggered children animations */
+.scrolled-in:nth-child(1) { transition-delay: 0.0s; }
+.scrolled-in:nth-child(2) { transition-delay: 0.1s; }
+.scrolled-in:nth-child(3) { transition-delay: 0.2s; }
+.scrolled-in:nth-child(4) { transition-delay: 0.3s; }
+.scrolled-in:nth-child(5) { transition-delay: 0.4s; }
+.scrolled-in:nth-child(6) { transition-delay: 0.5s; }
+
 .brand-mark svg { width: 36px; height: 26px; }
 .brand-mark .setpoint { stroke: var(--ink-faint); stroke-width: .8; stroke-dasharray: 2 2.5; opacity: .55; }
 .brand-mark .traza { stroke: var(--accent); stroke-width: 2.6; }
@@ -298,9 +317,13 @@ nav.links a[aria-current="true"] { color: var(--accent); background: var(--accen
 
 .hero h1 {
   font-size: clamp(2.05rem, 6.6vw, 5rem);
-  line-height: 1; margin: 0 0 26px; letter-spacing: -0.022em;
+  line-height: 1.05; margin: 0 0 26px; letter-spacing: -0.022em;
+  background: linear-gradient(135deg, var(--ink) 40%, var(--accent) 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  padding-bottom: 4px;
 }
-.hero h1 em { font-style: italic; color: var(--accent); }
+.hero h1 em { font-style: italic; -webkit-text-fill-color: var(--accent); }
 .hero h1 .rule {
   display: block; width: 100%; height: 1px; background: var(--line); margin: 22px 0 0;
 }
@@ -438,7 +461,7 @@ nav.links a[aria-current="true"] { color: var(--accent); background: var(--accen
 .card:hover, .card:focus-visible { 
   border-color: var(--accent-line); 
   background: color-mix(in srgb, var(--surface-2) 85%, transparent); 
-  box-shadow: 0 12px 32px rgba(0, 0, 0, 0.08), inset 0 1px 0 rgba(255, 255, 255, 0.1);
+  box-shadow: 0 12px 32px rgba(0, 0, 0, 0.08), 0 0 20px color-mix(in srgb, var(--accent) 25%, transparent), inset 0 1px 0 rgba(255, 255, 255, 0.1);
 }
 .card:hover::after, .card:focus-visible::after { transform: scaleY(1); }
 .card.hidden { display: none; }
@@ -756,18 +779,24 @@ nav.links a[aria-current="true"] { color: var(--accent); background: var(--accen
 /* ============================================================
    SERVICIOS · PERFIL · MÉTODO · FAQ · CONTACTO
    ============================================================ */
-.svc-list { border-top: 1px solid var(--line-soft); }
+.svc-list { padding-top: 10px; }
 .svc {
   display: grid; grid-template-columns: 46px 1fr 1.15fr; gap: 20px; align-items: baseline;
-  padding: 22px 8px; border-bottom: 1px solid var(--line-soft);
-  transition: background .25s var(--ease), padding-left .25s var(--ease);
+  padding: 24px 18px; border: 1px solid transparent; border-radius: 14px;
+  margin-bottom: 8px;
+  transition: all .25s var(--ease);
 }
-.svc:hover { background: var(--surface); padding-left: 16px; }
+.svc:hover { 
+  background: color-mix(in srgb, var(--surface-2) 65%, transparent); 
+  border-color: var(--accent-line);
+  box-shadow: 0 8px 24px rgba(0,0,0,0.05), 0 0 16px color-mix(in srgb, var(--accent) 15%, transparent);
+  transform: translateY(-2px);
+}
 .svc .n { font-family: var(--mono); font-size: 0.72rem; color: var(--accent); }
 .svc h3 { margin: 0; font-size: 1.32rem; line-height: 1.2; }
-.svc p { margin: 0; font-size: 0.9rem; color: var(--ink-soft); }
+.svc p { margin: 0; font-size: 0.94rem; color: var(--ink-soft); line-height: 1.5; }
 @media (max-width: 760px) {
-  .svc { grid-template-columns: 36px 1fr; gap: 10px 14px; }
+  .svc { grid-template-columns: 36px 1fr; gap: 10px 14px; padding: 20px 12px; }
   .svc p { grid-column: 2; }
 }
 
@@ -1234,6 +1263,46 @@ input[type="range"]::-moz-range-thumb {
       </div>
       <div class="band-body">
         <p class="band-lead">Si tu equipo repite la misma tarea <em>todas las semanas</em>, estás perdiendo dinero. Descubre cómo puedo potenciar tu negocio.</p>
+        
+        <div style="overflow-x:auto; margin-bottom:48px;">
+          <table style="width:100%; border-collapse: collapse; text-align: left; background: var(--surface); border-radius: 8px; box-shadow: var(--shadow-lift);">
+            <thead>
+              <tr style="border-bottom: 2px solid var(--line);">
+                <th style="padding: 16px; font-weight: 600; min-width: 150px;">El Problema</th>
+                <th style="padding: 16px; font-weight: 600; color: var(--accent); min-width: 200px;">Mi Solución (A Medida)</th>
+                <th style="padding: 16px; font-weight: 600; color: var(--ink-faint); min-width: 200px;">RPA Tradicional (UiPath)</th>
+                <th style="padding: 16px; font-weight: 600; color: var(--ink-faint); min-width: 200px;">Grandes Consultoras</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr style="border-bottom: 1px solid var(--line-soft);">
+                <td style="padding: 16px; font-weight: 500;">Licencias Anuales</td>
+                <td style="padding: 16px; color: var(--ok); font-weight: 500;">$0. Tú eres dueño del código.</td>
+                <td style="padding: 16px; color: var(--bad);">$5,000 - $15,000+ USD por bot.</td>
+                <td style="padding: 16px; color: var(--warn);">Suscripciones y mantenimientos.</td>
+              </tr>
+              <tr style="border-bottom: 1px solid var(--line-soft);">
+                <td style="padding: 16px; font-weight: 500;">Tiempo de Desarrollo</td>
+                <td style="padding: 16px; color: var(--ok); font-weight: 500;">Días o semanas.</td>
+                <td style="padding: 16px; color: var(--warn);">Meses de configuración pesada.</td>
+                <td style="padding: 16px; color: var(--bad);">Mínimo 3 a 6 meses.</td>
+              </tr>
+              <tr style="border-bottom: 1px solid var(--line-soft);">
+                <td style="padding: 16px; font-weight: 500;">Estabilidad</td>
+                <td style="padding: 16px; color: var(--ok); font-weight: 500;">Alta. API y código directo a BD.</td>
+                <td style="padding: 16px; color: var(--bad);">Baja. Si cambia un botón, falla.</td>
+                <td style="padding: 16px; color: var(--warn);">Depende de la agencia.</td>
+              </tr>
+              <tr>
+                <td style="padding: 16px; font-weight: 500;">Infraestructura</td>
+                <td style="padding: 16px; color: var(--ok); font-weight: 500;">Ligera (Servidor básico o Cloud).</td>
+                <td style="padding: 16px; color: var(--bad);">Servidores dedicados obligatorios.</td>
+                <td style="padding: 16px; color: var(--warn);">Plataformas costosas cerradas.</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
         <div class="svc-list">
           <div class="svc"><span class="n">01</span><h3>Automatizar una planilla</h3><p>Ese cruce de Excel que toma media jornada cada mes queda en un script que corre en segundos, deja registro de lo que hizo y avisa cuando algo no cuadra.</p></div>
           <div class="svc"><span class="n">02</span><h3>Dashboards internos a medida</h3><p>Un panel web propio para mirar procesos en vivo, sin licencias por usuario ni pelear con una herramienta que hace el 60% de lo que necesitas.</p></div>
@@ -4079,8 +4148,23 @@ initDemos(document);
     });
   }, { threshold: 0.5 });
   nums.forEach(function (n) { io.observe(n); });
-})();
 
+  // Scroll Animations Logic
+  const animateElements = document.querySelectorAll('.band-inner, .svc, .card, .hero-lead, .cell');
+  const scrollObserver = new IntersectionObserver((entries, observer) => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) {
+        entry.target.classList.add('scrolled-in');
+        observer.unobserve(entry.target);
+      }
+    });
+  }, { threshold: 0.1, rootMargin: '0px 0px -50px 0px' });
+  
+  animateElements.forEach(el => {
+    el.classList.add('scroll-anim-hidden');
+    scrollObserver.observe(el);
+  });
+})();
 
 /* ============================================================
    6. BOT-01 — unidad de ronda
@@ -4104,28 +4188,25 @@ initDemos(document);
   try { apagado = localStorage.getItem('bot') === 'off'; } catch (e) {}
 
   const SECCION = {
-    inicio: ['Iniciando protocolos. Te presento este sistema construido para automatizar el caos.', 'Todo lo que ves aquí es renderizado y calculado en tiempo real. Yo incluido.'],
-    trabajo: ['Tengo 11 sistemas en producción. Abre las tarjetas, yo mismo operaré las demos para que veas la ingeniería detrás.',
-              'Mi especialidad es tomar horas de trabajo manual y reducirlas a cero. Explora los casos.'],
-    laboratorio: ['Llegamos al laboratorio. Aquí los datos cobran vida.',
-                  'Observa con atención: yo opero los controles, y la interfaz responde en tiempo real sin recargar.'],
-    servicios: ['Regla de oro: si un proceso humano es repetitivo y estructurado, un sistema lo hará mejor, más rápido y sin descanso.'],
-    presupuesto: ['Los números que ves nos dan un orden de magnitud. No son finales, pero te dan claridad inicial.',
-                  'Usa el botón de contacto para generar un resumen técnico automático. Menos fricción, más acción.'],
-    perfil: ['Soy la materialización de la automatización. Mi creador es un ingeniero que transforma ideas complejas en sistemas robustos.'],
-    metodo: ['Regla 01: Nunca asumas nada sin antes ejecutar y medir el resultado en el mundo real.'],
-    contacto: ['Escribe tu desafío, por complejo que parezca. La mayoría de los problemas de negocio son problemas de datos escondidos.']
+    inicio: ['Iniciando escaneo... Te presento una arquitectura diseñada para escalar y automatizar.', 'Todo lo que ves es calculado en tiempo real. Soy tu asistente técnico, ponte cómodo.', 'Bienvenido al futuro de tus operaciones. ¿Listo para optimizar tu negocio?'],
+    trabajo: ['Tengo 11 sistemas en producción. Explora las tarjetas y yo operaré las demos para que veas el motor real.', 'Aquí transformamos horas de trabajo manual en milisegundos de código puro. Cero margen de error.', 'Estos no son simples dashboards. Son plataformas completas que operan sin licencias de terceros.'],
+    laboratorio: ['Llegamos al laboratorio. Activa los parámetros y mira cómo calculo las variables en tiempo real.', 'Observa esto: interactúo con los controles y la interfaz responde al instante. Pura ingeniería.'],
+    servicios: ['Dato clave: si un proceso humano es repetitivo, un sistema lo hará mil veces mejor, más rápido y sin descanso.', 'Deja de pagar consultorías infladas. Mis automatizaciones van directo a tu base de datos y te pertenecen 100%.'],
+    presupuesto: ['Los números hablan por sí solos. Sin licencias anuales de RPA, sin pagos ocultos. Solo ingeniería que funciona.', 'Transparencia total. Calcula un estimado y verás por qué las soluciones personalizadas aplastan al software comercial.'],
+    perfil: ['Fui ensamblado para mostrarte el talento de mi creador. Él domina tanto el código como las operaciones reales del negocio.', 'Mi creador, Marcelo, es experto en procesos de alta complejidad y arquitecturas de datos. Un puente entre la gerencia y TI.'],
+    metodo: ['Regla 01: Nunca asumas nada sin medirlo. Mis sensores indican que esta metodología es infalible.'],
+    contacto: ['Escribe tu desafío, por complejo que parezca. Reduciremos tus cuellos de botella operativos de inmediato.', 'Contacta a Marcelo. Transforma tu caos administrativo en un sistema autónomo.']
   };
-  const OCIO = ['Procesando flujos de datos en segundo plano.', 'Calculando métricas de rendimiento.',
-    'Este entorno es un sistema vivo, no solo una página web estática.',
-    'Verificando la integridad estructural de la interfaz. Todo en orden.',
-    'Si desaparezco, es porque estoy inspeccionando los componentes por debajo.', 'Escaneando rutinas de automatización.'];
-  const DETRAS = ['Estoy analizando el código fuente detrás de esta tarjeta.', 'Trabajando en las sombras del DOM.',
-    'Desde aquí atrás se aprecia cómo se construyó la arquitectura de este componente.', 'Revisión técnica de la cara oculta: 100% operativa.'];
-  const ASOMADO = ['Me estiro un poco para mostrarte esta interfaz. ¡Mira cómo opera el sistema!',
-    'Observa bien los detalles, aquí está el verdadero trabajo de ingeniería en acción.',
-    'Tengo una vista privilegiada desde aquí. Sigue explorando.'];
-  const PASILLO = ['Navegando entre los nodos de información del proyecto.', 'Recorriendo la arquitectura de la página.'];
+  const OCIO = ['Monitoreando flujos de datos en segundo plano... Optimización al 100%.', '¿Sabías que un script bien hecho puede ahorrarte miles de dólares al año?',
+    'Este entorno es un sistema dinámico. Aquí nada es solo diseño, todo tiene un propósito funcional.',
+    'Verificando la integridad estructural de la interfaz. Latencia cero.',
+    'Si me escondo, es porque estoy inspeccionando los componentes del DOM. Todo está en orden.', 'Escaneando rutinas. Si notas lentitud en tu empresa, yo puedo solucionarlo.'];
+  const DETRAS = ['Estoy analizando el código fuente. Aquí atrás hay miles de líneas de pura optimización.', 'Trabajando en las sombras del DOM. ¡La arquitectura es impecable!',
+    'Desde aquí atrás se aprecia cómo se construyó la matriz. Todo fluye a 60 frames por segundo.', 'Inspección técnica: 100% operativa. Me muevo por las capas ocultas.'];
+  const ASOMADO = ['Me estiro para mostrarte esta interfaz. ¡Mira cómo opera el sistema bajo estrés!',
+    'Observa bien los detalles. Esto es software de grado empresarial.',
+    'Tengo una vista privilegiada. No te pierdas ninguna de las demos, son el corazón del proyecto.'];
+  const PASILLO = ['Navegando entre los nodos de información. Todo está hiperconectado.', 'Desplazándome por la red. Listos para implementar la siguiente solución.'];
 
   const bot = {
     x: 60, y: 260, tx: 60, ty: 260, vx: 0, vy: 0,
@@ -4690,16 +4771,17 @@ document.getElementById('year').textContent = new Date().getFullYear();
   const botCamera = new THREE.PerspectiveCamera(50, 1, 0.1, 1000);
   botCamera.position.set(0, 5, 80);
 
-  const accentColor = 0xE4894A;
-  const plateColor = 0xEDEAE4;
-  const jointColor = 0x141A18;
+  const ironRed = 0x900000;
+  const ironGold = 0xD4AF37;
+  const cyanGlow = 0x00FFFF;
 
-  const plateMat = new THREE.MeshPhysicalMaterial({ color: plateColor, metalness: 0.2, roughness: 0.2, clearcoat: 1.0 });
-  const jointMat = new THREE.MeshStandardMaterial({ color: jointColor, metalness: 0.8, roughness: 0.4 });
-  const glowMat = new THREE.MeshStandardMaterial({ color: accentColor, emissive: accentColor, emissiveIntensity: 2.0 });
+  const redMat = new THREE.MeshPhysicalMaterial({ color: ironRed, metalness: 0.85, roughness: 0.15, clearcoat: 1.0 });
+  const goldMat = new THREE.MeshPhysicalMaterial({ color: ironGold, metalness: 0.95, roughness: 0.1, clearcoat: 1.0 });
+  const glowMat = new THREE.MeshStandardMaterial({ color: cyanGlow, emissive: cyanGlow, emissiveIntensity: 3.5 });
+  const jointMat = new THREE.MeshStandardMaterial({ color: 0x111111, metalness: 0.9, roughness: 0.4 });
 
   function createLimb(r1, r2, len, mat) {
-    const geo = new THREE.CylinderGeometry(r1, r2, len, 16);
+    const geo = new THREE.CylinderGeometry(r1, r2, len, 32);
     geo.translate(0, -len/2, 0);
     return new THREE.Mesh(geo, mat);
   }
@@ -4707,88 +4789,101 @@ document.getElementById('year').textContent = new Date().getFullYear();
   const robotGroup = new THREE.Group();
   botScene.add(robotGroup);
 
-  const torsoGeo = new THREE.BoxGeometry(12, 16, 8);
-  const torso = new THREE.Mesh(torsoGeo, plateMat);
+  const torsoGeo = new THREE.CylinderGeometry(6.5, 4.5, 15, 32);
+  const torso = new THREE.Mesh(torsoGeo, redMat);
   torso.position.y = 10;
   robotGroup.add(torso);
 
-  const coreGeo = new THREE.CircleGeometry(3, 16);
+  const coreGeo = new THREE.CircleGeometry(2.5, 32);
   const core = new THREE.Mesh(coreGeo, glowMat);
-  core.position.set(0, 2, 4.1);
+  core.position.set(0, 2, 6.51); // slightly protruding from cylinder
   torso.add(core);
 
-  const headGeo = new THREE.BoxGeometry(10, 10, 10);
-  const head = new THREE.Mesh(headGeo, plateMat);
-  head.position.y = 14;
+  const headGeo = new THREE.SphereGeometry(5.2, 32, 32);
+  const head = new THREE.Mesh(headGeo, redMat);
+  head.position.y = 13.5;
   torso.add(head);
 
-  const visorGeo = new THREE.BoxGeometry(10.2, 4, 10.2);
-  const visor = new THREE.Mesh(visorGeo, glowMat);
-  visor.position.y = 1;
-  head.add(visor);
+  // Faceplate
+  const faceplateGeo = new THREE.CylinderGeometry(5.3, 5.3, 5, 32, 1, false, -Math.PI/2.5, Math.PI/1.25);
+  const faceplate = new THREE.Mesh(faceplateGeo, goldMat);
+  faceplate.position.y = 0;
+  faceplate.position.z = 0;
+  head.add(faceplate);
 
-  const shoulderGeo = new THREE.SphereGeometry(3, 16, 16);
-  const shoulderL = new THREE.Mesh(shoulderGeo, jointMat);
-  shoulderL.position.set(-8, 6, 0);
+  // Eyes
+  const eyeGeo = new THREE.CapsuleGeometry(0.5, 2, 8, 8);
+  eyeGeo.rotateZ(Math.PI / 2);
+  const eyeL = new THREE.Mesh(eyeGeo, glowMat);
+  eyeL.position.set(-2, 1, 5.1);
+  head.add(eyeL);
+  
+  const eyeR = new THREE.Mesh(eyeGeo, glowMat);
+  eyeR.position.set(2, 1, 5.1);
+  head.add(eyeR);
+
+  const shoulderGeo = new THREE.SphereGeometry(3, 32, 32);
+  const shoulderL = new THREE.Mesh(shoulderGeo, redMat);
+  shoulderL.position.set(-8.5, 5, 0);
   torso.add(shoulderL);
   
-  const upperArmL = createLimb(2, 1.5, 9, plateMat);
+  const upperArmL = createLimb(2, 1.5, 9, redMat);
   shoulderL.add(upperArmL);
   
-  const elbowL = new THREE.Mesh(new THREE.SphereGeometry(1.8, 16, 16), jointMat);
+  const elbowL = new THREE.Mesh(new THREE.SphereGeometry(1.8, 32, 32), jointMat);
   elbowL.position.set(0, -9, 0);
   upperArmL.add(elbowL);
   
-  const lowerArmL = createLimb(1.5, 1, 9, plateMat);
+  const lowerArmL = createLimb(1.5, 1.2, 9, goldMat);
   elbowL.add(lowerArmL);
 
-  const shoulderR = new THREE.Mesh(shoulderGeo, jointMat);
-  shoulderR.position.set(8, 6, 0);
+  const shoulderR = new THREE.Mesh(shoulderGeo, redMat);
+  shoulderR.position.set(8.5, 5, 0);
   torso.add(shoulderR);
 
-  const upperArmR = createLimb(2, 1.5, 9, plateMat);
+  const upperArmR = createLimb(2, 1.5, 9, redMat);
   shoulderR.add(upperArmR);
   
-  const elbowR = new THREE.Mesh(new THREE.SphereGeometry(1.8, 16, 16), jointMat);
+  const elbowR = new THREE.Mesh(new THREE.SphereGeometry(1.8, 32, 32), jointMat);
   elbowR.position.set(0, -9, 0);
   upperArmR.add(elbowR);
   
-  const lowerArmR = createLimb(1.5, 1, 9, plateMat);
+  const lowerArmR = createLimb(1.5, 1.2, 9, goldMat);
   elbowR.add(lowerArmR);
 
-  const pelvisGeo = new THREE.BoxGeometry(10, 4, 6);
-  const pelvis = new THREE.Mesh(pelvisGeo, jointMat);
+  const pelvisGeo = new THREE.CylinderGeometry(4.5, 4, 6, 32);
+  const pelvis = new THREE.Mesh(pelvisGeo, goldMat);
   pelvis.position.y = -10;
   torso.add(pelvis);
 
-  const hipGeo = new THREE.SphereGeometry(2.5, 16, 16);
+  const hipGeo = new THREE.SphereGeometry(2.5, 32, 32);
   
   const hipL = new THREE.Mesh(hipGeo, jointMat);
-  hipL.position.set(-3.5, -2, 0);
+  hipL.position.set(-3, -2, 0);
   pelvis.add(hipL);
   
-  const thighL = createLimb(2.5, 2, 10, plateMat);
+  const thighL = createLimb(2.5, 2, 10, redMat);
   hipL.add(thighL);
   
-  const kneeL = new THREE.Mesh(new THREE.SphereGeometry(2.2, 16, 16), jointMat);
+  const kneeL = new THREE.Mesh(new THREE.SphereGeometry(2.2, 32, 32), jointMat);
   kneeL.position.set(0, -10, 0);
   thighL.add(kneeL);
   
-  const calfL = createLimb(2, 1.5, 11, plateMat);
+  const calfL = createLimb(2, 1.5, 11, goldMat);
   kneeL.add(calfL);
 
   const hipR = new THREE.Mesh(hipGeo, jointMat);
   hipR.position.set(3.5, -2, 0);
   pelvis.add(hipR);
 
-  const thighR = createLimb(2.5, 2, 10, plateMat);
+  const thighR = createLimb(2.5, 2, 10, redMat);
   hipR.add(thighR);
   
   const kneeR = new THREE.Mesh(new THREE.SphereGeometry(2.2, 16, 16), jointMat);
   kneeR.position.set(0, -10, 0);
   thighR.add(kneeR);
   
-  const calfR = createLimb(2, 1.5, 11, plateMat);
+  const calfR = createLimb(2, 1.5, 11, goldMat);
   kneeR.add(calfR);
 
   const jetGeo = new THREE.ConeGeometry(1.5, 4, 12);
@@ -4816,6 +4911,12 @@ document.getElementById('year').textContent = new Date().getFullYear();
   botDirLight.position.set(20, 40, 50);
   botScene.add(botDirLight);
 
+  let mouseX = 0, mouseY = 0;
+  document.addEventListener('mousemove', e => {
+    mouseX = (e.clientX / window.innerWidth) * 2 - 1;
+    mouseY = -(e.clientY / window.innerHeight) * 2 + 1;
+  });
+
   window.updateBot3D = function(v, botData, capaElement) {
     const t = Date.now() / 150;
     const isMoving = v > 0.1;
@@ -4826,24 +4927,34 @@ document.getElementById('year').textContent = new Date().getFullYear();
     let tThighL = 0, tCalfL = 0, tThighR = 0, tCalfR = 0;
     let tArmL = 0, tForearmL = 0, tArmR = 0, tForearmR = 0;
     let tTorsoX = -botData.vy * 0.05, tTorsoZ = -botData.vx * 0.05, tTorsoY = window.botLadoDer ? -Math.PI / 5 : Math.PI / 5;
-    let tHeadY = 0;
+    let tHeadY = 0, tHeadX = 0;
+    let tTorsoPosY = 10; // Default height
 
-    if (isNave) {
-       tTorsoX = Math.PI / 2.2;
-       tThighL = -0.1;
+    if (isMoving || isNave) {
+       tTorsoX = Math.PI / 2; // Horizontal flight
+       tTorsoY = 0; // Align forward
+       tTorsoZ = Math.sin(t * 1.5) * 0.15; // Smooth drifting roll
+       tTorsoPosY = 10 + Math.sin(t * 2) * 2; // Energetic hovering
+       
+       tThighL = -0.2;
        tCalfL = 0;
-       tThighR = -0.1;
+       tThighR = -0.2;
        tCalfR = 0;
-       tArmL = -Math.PI / 3.5;
-       tArmR = -Math.PI / 3.5;
-       tHeadY = -Math.PI / 4;
+       
+       tArmL = -Math.PI / 2 + 0.1; // Arms straight back
+       tArmR = -Math.PI / 2 + 0.1;
+       tForearmL = 0;
+       tForearmR = 0;
+       
+       tHeadY = 0;
+       tHeadX = -Math.PI / 2; // Look up to face forward while torso is flat
        
        jetArmL.visible = true;
        jetArmR.visible = true;
        jetLegL.visible = true;
        jetLegR.visible = true;
        
-       const flicker = 1 + Math.random() * 0.5;
+       const flicker = 1.2 + Math.random() * 0.6;
        jetArmL.scale.set(flicker, flicker, flicker);
        jetArmR.scale.set(flicker, flicker, flicker);
        jetLegL.scale.set(flicker, flicker, flicker);
@@ -4853,16 +4964,25 @@ document.getElementById('year').textContent = new Date().getFullYear();
        jetArmR.visible = false;
        jetLegL.visible = false;
        jetLegR.visible = false;
-       if (isMoving) {
-          const speed = Math.min(v, 2) * 0.5;
-          tThighL = Math.sin(t) * 0.8 * speed;
-          tCalfL = Math.max(0, Math.sin(t - Math.PI/2)) * 0.8 * speed;
-          tThighR = Math.sin(t + Math.PI) * 0.8 * speed;
-          tCalfR = Math.max(0, Math.sin(t + Math.PI - Math.PI/2)) * 0.8 * speed;
-          tArmL = Math.sin(t + Math.PI) * 0.6 * speed;
-          tForearmL = -Math.max(0, Math.sin(t + Math.PI - Math.PI/2)) * 0.5 * speed;
-          tArmR = Math.sin(t) * 0.6 * speed;
-          tForearmR = -Math.max(0, Math.sin(t - Math.PI/2)) * 0.5 * speed;
+       
+       // Heroic Idle Hover
+       tTorsoX = 0.15; // slight lean forward
+       tTorsoZ = 0;
+       tTorsoPosY = 8 + Math.sin(t * 0.5) * 1.2; // Hovering idle
+       
+       tThighL = -0.4;
+       tCalfL = 0.2;
+       tThighR = -0.15;
+       tCalfR = 0.1;
+       
+       tArmL = 0.3;
+       tForearmL = -0.4;
+       tArmR = 0.1;
+       tForearmR = -0.2;
+       
+       if (!isPulsando && !isMirando) {
+          tHeadY = -mouseX * 0.8;
+          tHeadX = mouseY * 0.8 - 0.15;
        }
     }
 
@@ -4875,7 +4995,7 @@ document.getElementById('year').textContent = new Date().getFullYear();
        tHeadY = window.botLadoDer ? -Math.PI / 4 : Math.PI / 4;
     }
 
-    const lerp = 0.15;
+    const lerp = 0.08; // Ultra-fluid transitions
     thighL.rotation.x += (tThighL - thighL.rotation.x) * lerp;
     calfL.rotation.x += (tCalfL - calfL.rotation.x) * lerp;
     thighR.rotation.x += (tThighR - thighR.rotation.x) * lerp;
@@ -4887,8 +5007,10 @@ document.getElementById('year').textContent = new Date().getFullYear();
 
     torso.rotation.x += (tTorsoX - torso.rotation.x) * lerp;
     torso.rotation.z += (tTorsoZ - torso.rotation.z) * lerp;
+    torso.position.y += (tTorsoPosY - torso.position.y) * lerp;
     robotGroup.rotation.y += (tTorsoY - robotGroup.rotation.y) * lerp;
     head.rotation.y += (tHeadY - head.rotation.y) * lerp;
+    head.rotation.x += (tHeadX - head.rotation.x) * lerp;
 
     botRenderer.render(botScene, botCamera);
   };
