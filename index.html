@@ -4940,20 +4940,19 @@ document.getElementById('year').textContent = new Date().getFullYear();
   jetLegR.visible = false;
 
   // --- CARGAR MODELO GLTF/GLB ---
+  window.botMixer = null;
   const gltfLoader = new THREE.GLTFLoader();
   gltfLoader.load('ironman.glb', function (gltf) {
     const model = gltf.scene;
     
-    // Ajustar escala y posición inicial para que coincida con el antiguo tamaño
-    // IMPORTANTE: Estos valores pueden requerir ajuste dependiendo de cómo fue exportado el modelo
-    model.scale.set(6, 6, 6); 
-    model.position.set(0, -12, 0); 
+    // Escala más grande y posición compensada (AJUSTA ESTO SI SIGUE PEQUEÑO O ALTO)
+    model.scale.set(16, 16, 16); 
+    model.position.set(0, -17, 0); 
     
     // Asegurarnos de que los materiales brillen bien
     model.traverse(function(child) {
       if (child.isMesh) {
         if (child.material) {
-          // Si el material original es muy oscuro, forzamos un poco de brillo
           child.material.metalness = Math.max(child.material.metalness || 0, 0.6);
           child.material.roughness = Math.min(child.material.roughness || 1, 0.4);
         }
@@ -4961,6 +4960,14 @@ document.getElementById('year').textContent = new Date().getFullYear();
     });
 
     torso.add(model);
+
+    // Activar animaciones si el modelo las incluye (Mixamo, etc.)
+    if (gltf.animations && gltf.animations.length > 0) {
+        window.botMixer = new THREE.AnimationMixer(model);
+        // Reproducimos la primera animación por defecto (suele ser caminar o flotar)
+        const action = window.botMixer.clipAction(gltf.animations[0]);
+        action.play();
+    }
   }, undefined, function (error) {
     console.error('Error cargando ironman.glb:', error);
   });
@@ -4977,7 +4984,18 @@ document.getElementById('year').textContent = new Date().getFullYear();
     mouseY = -(e.clientY / window.innerHeight) * 2 + 1;
   });
 
+  let lastBotTime = Date.now();
   window.updateBot3D = function(v, botData, capaElement) {
+    // Actualizar animaciones nativas del GLTF si existen
+    if (window.botMixer) {
+        const now = Date.now();
+        const dt = (now - lastBotTime) / 1000;
+        lastBotTime = now;
+        window.botMixer.update(dt);
+    } else {
+        lastBotTime = Date.now();
+    }
+
     const t = Date.now() / 150;
     const isMoving = v > 0.1;
     const isPulsando = capaElement.classList.contains('pulsando');
