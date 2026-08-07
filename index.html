@@ -4906,6 +4906,12 @@ document.getElementById('year').textContent = new Date().getFullYear();
   const robotGroup = new THREE.Group();
   botScene.add(robotGroup);
 
+  const botLight = new THREE.AmbientLight(0xffffff, 1.2);
+  botScene.add(botLight);
+  const botDirLight = new THREE.DirectionalLight(0xffffff, 2.2);
+  botDirLight.position.set(20, 40, 50);
+  botScene.add(botDirLight);
+
   // --- CONSTRUCCIÓN PROCEDURAL MEGA-DETALLADA (IRON MAN) ---
   const torsoGroup = new THREE.Group();
   torsoGroup.position.y = 10;
