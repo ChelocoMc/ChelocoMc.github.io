@@ -4896,9 +4896,6 @@ document.getElementById('year').textContent = new Date().getFullYear();
     return new THREE.Mesh(geo, mat);
   }
 
-  const robotGroup = new THREE.Group();
-  botScene.add(robotGroup);
-
   // --- CARGA DE MODELO GLTF CON ANIMACION PROCEDURAL SKELETAL ---
   const robotGroup = new THREE.Group();
   botScene.add(robotGroup);
@@ -4915,8 +4912,31 @@ document.getElementById('year').textContent = new Date().getFullYear();
     hipL: null,
     kneeL: null,
     hipR: null,
-    kneeR: null
+    kneeR: null,
+    handL: null,
+    handR: null,
+    footL: null,
+    footR: null
   };
+
+  window.botThrusters = {
+    handL: null,
+    handR: null,
+    footL: null,
+    footR: null
+  };
+  
+  function createThruster() {
+    const group = new THREE.Group();
+    const glowMat = new THREE.MeshStandardMaterial({ color: 0x00F0FF, emissive: 0x00F0FF, emissiveIntensity: 5.0 });
+    const cone = new THREE.Mesh(new THREE.ConeGeometry(0.5, 2, 16), glowMat);
+    cone.rotation.x = Math.PI;
+    cone.position.y = -1;
+    group.add(cone);
+    const light = new THREE.PointLight(0x00F0FF, 3, 10);
+    group.add(light);
+    return group;
+  }
 
   const gltfLoader = new THREE.GLTFLoader();
   gltfLoader.load('iron_man__new.glb', function (gltf) {
@@ -4950,9 +4970,35 @@ document.getElementById('year').textContent = new Date().getFullYear();
         if (child.name === 'mixamorig:LeftLeg_057') window.botBones.kneeL = child;
         if (child.name === 'mixamorig:RightUpLeg_00') window.botBones.hipR = child;
         if (child.name === 'mixamorig:RightLeg_061') window.botBones.kneeR = child;
+        if (child.name === 'mixamorig:LeftHand_011') window.botBones.handL = child;
+        if (child.name === 'mixamorig:RightHand_035') window.botBones.handR = child;
+        if (child.name === 'mixamorig:LeftFoot_058') window.botBones.footL = child;
+        if (child.name === 'mixamorig:RightFoot_062') window.botBones.footR = child;
       }
     });
 
+    if (window.botBones.handL) {
+      window.botThrusters.handL = createThruster();
+      window.botThrusters.handL.position.set(0, 1, 0); // Ajustar según el hueso de Mixamo
+      window.botBones.handL.add(window.botThrusters.handL);
+    }
+    if (window.botBones.handR) {
+      window.botThrusters.handR = createThruster();
+      window.botThrusters.handR.position.set(0, 1, 0);
+      window.botBones.handR.add(window.botThrusters.handR);
+    }
+    if (window.botBones.footL) {
+      window.botThrusters.footL = createThruster();
+      window.botThrusters.footL.position.set(0, 0, 1);
+      window.botThrusters.footL.rotation.x = -Math.PI/2;
+      window.botBones.footL.add(window.botThrusters.footL);
+    }
+    if (window.botBones.footR) {
+      window.botThrusters.footR = createThruster();
+      window.botThrusters.footR.position.set(0, 0, 1);
+      window.botThrusters.footR.rotation.x = -Math.PI/2;
+      window.botBones.footR.add(window.botThrusters.footR);
+    }
     robotGroup.add(model);
     
   }, undefined, function (error) {
@@ -4973,6 +5019,24 @@ document.getElementById('year').textContent = new Date().getFullYear();
   });
 
   window.updateBot3D = function(v, botData, capaElement) {
+    // Humor: Batería baja ocasional
+    if (!window.batteryState) {
+       window.batteryState = {
+          failing: false,
+          nextFail: Date.now() + Math.random() * 10000 + 10000,
+          recoverAt: 0
+       };
+    }
+    
+    if (!window.batteryState.failing && Date.now() > window.batteryState.nextFail) {
+       window.batteryState.failing = true;
+       window.batteryState.recoverAt = Date.now() + 1500; // Falla por 1.5 seg
+    }
+    
+    if (window.batteryState.failing && Date.now() > window.batteryState.recoverAt) {
+       window.batteryState.failing = false;
+       window.batteryState.nextFail = Date.now() + Math.random() * 20000 + 15000;
+    }
     const t = Date.now() / 150;
     const isMoving = v > 0.1;
     const isPulsando = capaElement.classList.contains('pulsando');
@@ -4985,6 +5049,14 @@ document.getElementById('year').textContent = new Date().getFullYear();
     let tTorsoX = -botData.vy * 0.05, tTorsoZ = -botData.vx * 0.05, tTorsoY = window.botLadoDer ? -Math.PI / 5 : Math.PI / 5;
     let tHeadY = 0, tHeadX = 0;
     let tTorsoPosY = 10; // Default height
+
+    const flicker = 0.8 + Math.random() * 0.4;
+    if (window.botThrusters) {
+      if (window.botThrusters.handL) window.botThrusters.handL.scale.set(flicker, flicker, flicker);
+      if (window.botThrusters.handR) window.botThrusters.handR.scale.set(flicker, flicker, flicker);
+      if (window.botThrusters.footL) window.botThrusters.footL.scale.set(flicker, flicker, flicker);
+      if (window.botThrusters.footR) window.botThrusters.footR.scale.set(flicker, flicker, flicker);
+    }
 
     if (isMoving || isNave) {
        // Hover vertical de frente: el cuerpo se mantiene erguido y solo
@@ -5042,6 +5114,20 @@ document.getElementById('year').textContent = new Date().getFullYear();
        tForearmL = -0.4;
        tArmR = 0.1;
        tForearmR = -0.2;
+       
+       if (window.batteryState.failing) {
+          tTorsoZ = Math.PI / 3; 
+          tTorsoPosY = -2;
+          tArmR = Math.PI / 1.5;
+          tArmL = Math.PI / 6;
+          tThighR = 0.2;
+          tCalfR = 0;
+          if (window.botThrusters && window.botThrusters.footR) window.botThrusters.footR.visible = false;
+          if (window.botThrusters && window.botThrusters.handR) window.botThrusters.handR.visible = false;
+       } else {
+          if (window.botThrusters && window.botThrusters.footR) window.botThrusters.footR.visible = true;
+          if (window.botThrusters && window.botThrusters.handR) window.botThrusters.handR.visible = true;
+       }
        
        if (!isPulsando && !isMirando) {
           tHeadY = -mouseX * 0.8;
