@@ -1002,13 +1002,16 @@ input[type="range"]::-moz-range-thumb {
 
 /* ============================================================
    BOT-01 — unidad de ronda articulada
-   Vive en z-index 1, o sea por debajo de <main>: por eso se pierde
-   detrás de las tarjetas, que son lo único opaco de la página, y se
-   ve en los márgenes. Cuando hay una ficha abierta sube a 90, entre
+   Va por delante del contenido (42) pero por debajo de la barra
+   superior (50) y de la ficha (90-91). Antes vivía en z-index 1,
+   debajo de <main>, para esconderse detrás de las tarjetas: con el
+   robot 3D esa gracia lo dejaba tapado casi todo el rato. No recibe
+   clics —eso lo hace su hitbox en .bot-ui— así que estar encima no
+   estorba el uso de la página. Con una ficha abierta sube a 90, entre
    el velo (90) y la hoja (91), para asomarse por el borde.
    ============================================================ */
 .bot-capa {
-  position: fixed; top: 0; left: 0; z-index: 1;
+  position: fixed; top: 0; left: 0; z-index: 42;
   width: 80px; height: 80px; pointer-events: none;
   will-change: transform;
 }
@@ -1068,7 +1071,7 @@ input[type="range"]::-moz-range-thumb {
 .bot-capa.pulsando .bot-antebrazo { transform: rotate(-15deg) scaleX(1.15); }
 .bot-capa.pulsando .bot-pupila { r: 2.2; }
 .bot-capa.pulsando .bot-haz { opacity: .2; }
-.bot-ui { position: fixed; inset: 0; z-index: 41; pointer-events: none; }
+.bot-ui { position: fixed; inset: 0; z-index: 43; pointer-events: none; }
 .bot-ui.encima { z-index: 92; }
 .bot-hit {
   position: absolute; width: 74px; height: 62px; margin: -6px;
@@ -4201,8 +4204,8 @@ initDemos(document);
     'Este entorno es un sistema dinámico. Aquí nada es solo diseño, todo tiene un propósito funcional.',
     'Verificando la integridad estructural de la interfaz. Latencia cero.',
     'Si me escondo, es porque estoy inspeccionando los componentes del DOM. Todo está en orden.', 'Escaneando rutinas. Si notas lentitud en tu empresa, yo puedo solucionarlo.'];
-  const DETRAS = ['Estoy analizando el código fuente. Aquí atrás hay miles de líneas de pura optimización.', 'Trabajando en las sombras del DOM. ¡La arquitectura es impecable!',
-    'Desde aquí atrás se aprecia cómo se construyó la matriz. Todo fluye a 60 frames por segundo.', 'Inspección técnica: 100% operativa. Me muevo por las capas ocultas.'];
+  const DETRAS = ['Sobrevolando esta tarjeta. Miles de líneas de pura optimización debajo.', 'Inspección en vuelo sobre el DOM. ¡La arquitectura es impecable!',
+    'Desde acá arriba se aprecia cómo se construyó la matriz. Todo fluye a 60 frames por segundo.', 'Inspección técnica: 100% operativa. Reviso capa por capa.'];
   const ASOMADO = ['Me estiro para mostrarte esta interfaz. ¡Mira cómo opera el sistema bajo estrés!',
     'Observa bien los detalles. Esto es software de grado empresarial.',
     'Tengo una vista privilegiada. No te pierdas ninguna de las demos, son el corazón del proyecto.'];
@@ -4229,6 +4232,71 @@ initDemos(document);
     ultimoMsg = Date.now();
   }
   function frase(l) { return l[Math.floor(Math.random() * l.length)]; }
+
+  /* ---------- Dónde poner la burbuja sin tapar lo que estás leyendo ----------
+     Mide el texto que hay a la vista y prueba ocho posiciones alrededor del
+     bot: se queda con la que cubre menos superficie de texto, desempatando
+     por cercanía. Solo se cambia de lugar si la alternativa es bastante
+     mejor, para que no ande saltando de un lado a otro mientras lees. */
+  let cacheTextos = [], cacheAl = 0, ladoGlobo = null;
+  function textosVisibles() {
+    if (Date.now() - cacheAl < 600) return cacheTextos;
+    cacheAl = Date.now();
+    cacheTextos = [];
+    $n(document, 'h1, h2, h3, h4, p, li, blockquote, .card, .cell, .d-table').forEach(function (el) {
+      if (el.closest('.bot-globo') || !el.textContent.trim()) return;
+      const r = el.getBoundingClientRect();
+      if (r.width < 40 || r.height < 12 || r.bottom < 0 || r.top > window.innerHeight) return;
+      cacheTextos.push(r);
+    });
+    return cacheTextos;
+  }
+  function areaTapada(x, y, w, h) {
+    let area = 0;
+    const lista = textosVisibles();
+    for (let i = 0; i < lista.length; i++) {
+      const r = lista[i];
+      const ix = Math.min(x + w, r.right) - Math.max(x, r.left);
+      const iy = Math.min(y + h, r.bottom) - Math.max(y, r.top);
+      if (ix > 0 && iy > 0) area += ix * iy;
+    }
+    return area;
+  }
+  function ubicarGlobo() {
+    const w = globo.offsetWidth || 268, h = globo.offsetHeight || 96;
+    const cw = capa.offsetWidth || 120, ch = capa.offsetHeight || 120;
+    const cx = bot.x + cw / 2, cy = bot.y + ch / 2;
+    const g = 14;
+    const cands = [
+      [bot.x + cw + g, cy - h / 2], [bot.x - w - g, cy - h / 2],
+      [cx - w / 2, bot.y - h - g], [cx - w / 2, bot.y + ch + g],
+      [bot.x + cw + g, bot.y - h - g], [bot.x - w - g, bot.y - h - g],
+      [bot.x + cw + g, bot.y + ch + g], [bot.x - w - g, bot.y + ch + g],
+      /* Refugios: si alrededor del bot está todo escrito, se va a un borde. */
+      [12, cy - h / 2], [window.innerWidth - w - 12, cy - h / 2],
+      [12, window.innerHeight - h - 16], [window.innerWidth - w - 12, window.innerHeight - h - 16]
+    ];
+    let mejor = null, mejorP = Infinity, actualP = Infinity;
+    cands.forEach(function (c, i) {
+      const x = Math.max(12, Math.min(window.innerWidth - w - 12, c[0]));
+      const y = Math.max(78, Math.min(window.innerHeight - h - 12, c[1]));
+      /* La distancia al bot pesa poco: sirve para desempatar entre huecos. */
+      const p = areaTapada(x, y, w, h) + Math.hypot(x + w / 2 - cx, y + h / 2 - cy) * 12;
+      if (i === ladoGlobo) actualP = p;
+      if (p < mejorP) { mejorP = p; mejor = [x, y, i]; }
+    });
+    if (!mejor) return;
+    if (ladoGlobo !== null && mejorP > actualP * 0.75) {
+      /* El lado de siempre sigue siendo razonable: solo lo reencuadra. */
+      const c = cands[ladoGlobo];
+      mejor = [Math.max(12, Math.min(window.innerWidth - w - 12, c[0])),
+               Math.max(78, Math.min(window.innerHeight - h - 12, c[1])), ladoGlobo];
+    }
+    ladoGlobo = mejor[2];
+    globo.style.left = mejor[0].toFixed(0) + 'px';
+    globo.style.top = mejor[1].toFixed(0) + 'px';
+  }
+
   function hojaAbierta() {
     const s = document.getElementById('sheet');
     return s && s.classList.contains('open');
@@ -4372,13 +4440,32 @@ initDemos(document);
     if (enFicha) ui.classList.add('sobrehoja');
   }
 
-  /* ---------- Movimiento ---------- */
-  function paso() {
+  /* ---------- Movimiento ----------
+     El rumbo se recalcula en cada cuadro y la posición lo persigue con un
+     resorte amortiguado. Antes el objetivo se refrescaba dos veces por
+     segundo y la velocidad era proporcional a la distancia: en cada
+     refresco el bot pegaba un tirón y frenaba, y eso se veía a saltos.
+     El paso se normaliza por el tiempo real del cuadro, así el andar es
+     el mismo a 60 o a 144 Hz. */
+  let ultimoCuadro = 0;
+  function paso(ahora) {
     if (apagado) return;
-    const k = reduce ? 1 : (bot.estado === 'demo' ? 0.1 : (bot.estado === 'asomado' ? 0.09 : 0.07));
+    const t = ahora || performance.now();
+    const dt = ultimoCuadro ? Math.max(0.2, Math.min(3, (t - ultimoCuadro) / 16.67)) : 1;
+    ultimoCuadro = t;
+
+    rumboObjetivo();
     const dx = bot.tx - bot.x, dy = bot.ty - bot.y;
-    bot.vx = dx * k; bot.vy = dy * k;
-    bot.x += bot.vx; bot.y += bot.vy;
+    if (reduce) {
+      bot.vx = dx; bot.vy = dy;
+      bot.x = bot.tx; bot.y = bot.ty;
+    } else {
+      const rigidez = (bot.estado === 'demo' ? 0.016 : 0.012) * dt;
+      const freno = Math.pow(0.88, dt);
+      bot.vx = (bot.vx + dx * rigidez) * freno;
+      bot.vy = (bot.vy + dy * rigidez) * freno;
+      bot.x += bot.vx * dt; bot.y += bot.vy * dt;
+    }
     const v = Math.sqrt(bot.vx * bot.vx + bot.vy * bot.vy);
     if (window.updateBot3D) window.updateBot3D(v, bot, capa);
     if (bot.estado !== 'asomado') bot.rueda += v * 7;
@@ -4408,10 +4495,7 @@ initDemos(document);
     }
 
     hit.style.transform = 'translate3d(' + bot.x.toFixed(1) + 'px,' + bot.y.toFixed(1) + 'px,0)';
-    globo.style.left = (bot.estado === 'asomado'
-      ? Math.max(12, bot.x - 262)
-      : Math.min(window.innerWidth - 290, Math.max(12, bot.x + 80))) + 'px';
-    globo.style.top = Math.max(78, Math.min(window.innerHeight - 130, bot.y - 14)) + 'px';
+    ubicarGlobo();
 
     if (v < 0.4 && bot.estado === 'excursion' && !bot.espera) {
       bot.espera = Date.now();
@@ -4439,9 +4523,9 @@ initDemos(document);
     requestAnimationFrame(paso);
   }
 
-  function rumbo() {
-    if (apagado) return;
-
+  /* Adónde quiere ir en este cuadro. Es barato a propósito: corre 60 veces
+     por segundo, así que acá no va nada que recorra el documento. */
+  function rumboObjetivo() {
     if (bot.estado === 'demo' && bot.truco) {
       const r = bot.truco.el.getBoundingClientRect();
       bot.tx = Math.max(6, r.left - 52);
@@ -4454,14 +4538,6 @@ initDemos(document);
       bot.ty = hoja.top + 120 + Math.sin((Date.now() - bot.desde) / 1500) * 130;
       return;
     }
-
-    const sec = seccionActiva();
-    if (sec !== seccionVista) {
-      seccionVista = sec;
-      if (Date.now() - ultimoMsg > 2500) decir(frase(SECCION[sec]));
-      capa.classList.add('mirando');
-      setTimeout(function () { capa.classList.remove('mirando'); }, 1800);
-    }
     if (bot.estado === 'carril') {
       /* Ronda con más vaivén: se mueve en los dos ejes, no solo sube y baja. */
       const t = Date.now();
@@ -4471,6 +4547,18 @@ initDemos(document);
       const t = (Date.now() - bot.desde) / 5200;
       bot.ty = 110 + t * (window.innerHeight - 200);
       if (t >= 1) bot.estado = 'carril';
+    }
+  }
+
+  /* Lo caro —mirar en qué sección vas— sigue yendo cada medio segundo. */
+  function rumbo() {
+    if (apagado || bot.estado === 'demo' || bot.estado === 'asomado') return;
+    const sec = seccionActiva();
+    if (sec !== seccionVista) {
+      seccionVista = sec;
+      if (Date.now() - ultimoMsg > 2500) decir(frase(SECCION[sec]));
+      capa.classList.add('mirando');
+      setTimeout(function () { capa.classList.remove('mirando'); }, 1800);
     }
   }
 
@@ -4926,29 +5014,37 @@ document.getElementById('year').textContent = new Date().getFullYear();
 
     let tThighL = 0, tCalfL = 0, tThighR = 0, tCalfR = 0;
     let tArmL = 0, tForearmL = 0, tArmR = 0, tForearmR = 0;
+    let tArmZL = -0.08, tArmZR = 0.08; // apertura lateral de los brazos
     let tTorsoX = -botData.vy * 0.05, tTorsoZ = -botData.vx * 0.05, tTorsoY = window.botLadoDer ? -Math.PI / 5 : Math.PI / 5;
     let tHeadY = 0, tHeadX = 0;
     let tTorsoPosY = 10; // Default height
 
     if (isMoving || isNave) {
-       tTorsoX = Math.PI / 2; // Horizontal flight
-       tTorsoY = 0; // Align forward
-       tTorsoZ = Math.sin(t * 1.5) * 0.15; // Smooth drifting roll
-       tTorsoPosY = 10 + Math.sin(t * 2) * 2; // Energetic hovering
-       
-       tThighL = -0.2;
-       tCalfL = 0;
-       tThighR = -0.2;
-       tCalfR = 0;
-       
-       tArmL = -Math.PI / 2 + 0.1; // Arms straight back
-       tArmR = -Math.PI / 2 + 0.1;
-       tForearmL = 0;
-       tForearmR = 0;
-       
-       tHeadY = 0;
-       tHeadX = -Math.PI / 2; // Look up to face forward while torso is flat
-       
+       // Hover vertical de frente: el cuerpo se mantiene erguido y solo
+       // se inclina lo que pide la aceleración. Nada de vuelo horizontal:
+       // acostado se le veía media espalda y se perdía la silueta.
+       tTorsoX = 0.1 - botData.vy * 0.03;
+       tTorsoY = 0; // de frente
+       tTorsoZ = -botData.vx * 0.03 + Math.sin(t * 0.4) * 0.05;
+       tTorsoPosY = 10 + Math.sin(t * 0.55) * 1.6; // flota, no tirita
+
+       tThighL = 0.12;
+       tCalfL = -0.06;
+       tThighR = 0.22;
+       tCalfR = -0.16;
+
+       // Brazos abiertos hacia abajo, algo atrás: los repulsores de las
+       // manos empujan y quedan a la vista, como en la referencia.
+       tArmL = 0.3;
+       tArmR = 0.3;
+       tArmZL = -0.5;
+       tArmZR = 0.5;
+       tForearmL = 0.12;
+       tForearmR = 0.12;
+
+       tHeadY = -mouseX * 0.3;
+       tHeadX = 0;
+
        jetArmL.visible = true;
        jetArmR.visible = true;
        jetLegL.visible = true;
@@ -4989,6 +5085,7 @@ document.getElementById('year').textContent = new Date().getFullYear();
     if (isPulsando) {
        tArmR = -Math.PI / 1.5;
        tForearmR = -0.2;
+       tArmZR = 0.05; // el brazo que opera el control va recto, no abierto
        tTorsoX += 0.3;
     }
     if (isMirando) {
@@ -5004,6 +5101,8 @@ document.getElementById('year').textContent = new Date().getFullYear();
     lowerArmL.rotation.x += (tForearmL - lowerArmL.rotation.x) * lerp;
     upperArmR.rotation.x += (tArmR - upperArmR.rotation.x) * lerp;
     lowerArmR.rotation.x += (tForearmR - lowerArmR.rotation.x) * lerp;
+    upperArmL.rotation.z += (tArmZL - upperArmL.rotation.z) * lerp;
+    upperArmR.rotation.z += (tArmZR - upperArmR.rotation.z) * lerp;
 
     torso.rotation.x += (tTorsoX - torso.rotation.x) * lerp;
     torso.rotation.z += (tTorsoZ - torso.rotation.z) * lerp;
