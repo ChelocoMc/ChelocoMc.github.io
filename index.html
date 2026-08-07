@@ -4710,7 +4710,7 @@ document.getElementById('year').textContent = new Date().getFullYear();
 </script>
 
 <!-- Three.js 3D Background & 3D Tilt UI Script -->
-<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>`n<script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/loaders/GLTFLoader.js"></script>
 <script>
 (function() {
   // 1. 3D Tilt Effect para las tarjetas y demos
@@ -4899,218 +4899,66 @@ document.getElementById('year').textContent = new Date().getFullYear();
   const robotGroup = new THREE.Group();
   botScene.add(robotGroup);
 
-  // --- CONSTRUCCIÓN PROCEDURAL DETALLADA (IRON MAN) ---
-  const torsoGroup = new THREE.Group();
-  torsoGroup.position.y = 10;
-  robotGroup.add(torsoGroup);
-  const torso = torsoGroup; // compatibilidad
+  // --- CARGA DE MODELO GLTF CON ANIMACION PROCEDURAL SKELETAL ---
+  const robotGroup = new THREE.Group();
+  botScene.add(robotGroup);
 
-  // Chest (Upper Torso)
-  const chestGeo = new THREE.BoxGeometry(10, 7, 6);
-  const chest = new THREE.Mesh(chestGeo, redMat);
-  chest.position.y = 2.5;
-  torsoGroup.add(chest);
+  // Variables para los huesos que animaremos
+  window.botBones = {
+    torso: null,
+    head: null,
+    shoulderL: null,
+    elbowL: null,
+    shoulderR: null,
+    elbowR: null,
+    pelvis: null,
+    hipL: null,
+    kneeL: null,
+    hipR: null,
+    kneeR: null
+  };
 
-  // Chest gold plates (sides)
-  const chestSideGeo = new THREE.BoxGeometry(10.5, 4, 5);
-  const chestSide = new THREE.Mesh(chestSideGeo, goldMat);
-  chestSide.position.y = 3;
-  torsoGroup.add(chestSide);
+  const gltfLoader = new THREE.GLTFLoader();
+  gltfLoader.load('iron_man__new.glb', function (gltf) {
+    const model = gltf.scene;
+    
+    // Escalar y centrar
+    model.scale.set(13, 13, 13); 
+    model.position.set(0, -13, 0); 
+    
+    // Ajustar materiales e iluminación
+    model.traverse(function(child) {
+      if (child.isMesh) {
+        child.castShadow = true;
+        child.receiveShadow = true;
+        if (child.material) {
+          // Mejorar el metal para que luzca bien
+          child.material.metalness = Math.max(child.material.metalness, 0.8);
+          child.material.roughness = Math.min(child.material.roughness, 0.2);
+        }
+      }
+      // Mapear los huesos de Mixamo
+      if (child.isBone) {
+        if (child.name === 'mixamorig:Spine1_03') window.botBones.torso = child;
+        if (child.name === 'mixamorig:Head_06') window.botBones.head = child;
+        if (child.name === 'mixamorig:LeftArm_09') window.botBones.shoulderL = child;
+        if (child.name === 'mixamorig:LeftForeArm_010') window.botBones.elbowL = child;
+        if (child.name === 'mixamorig:RightArm_033') window.botBones.shoulderR = child;
+        if (child.name === 'mixamorig:RightForeArm_034') window.botBones.elbowR = child;
+        if (child.name === 'mixamorig:Hips_01') window.botBones.pelvis = child;
+        if (child.name === 'mixamorig:LeftUpLeg_056') window.botBones.hipL = child;
+        if (child.name === 'mixamorig:LeftLeg_057') window.botBones.kneeL = child;
+        if (child.name === 'mixamorig:RightUpLeg_00') window.botBones.hipR = child;
+        if (child.name === 'mixamorig:RightLeg_061') window.botBones.kneeR = child;
+      }
+    });
 
-  // Abdomen (Lower Torso)
-  const abdomenGeo = new THREE.CylinderGeometry(4, 4.5, 6, 16);
-  const abdomen = new THREE.Mesh(abdomenGeo, redMat);
-  abdomen.position.y = -3;
-  torsoGroup.add(abdomen);
+    robotGroup.add(model);
+    
+  }, undefined, function (error) {
+    console.error('Error cargando iron_man__new.glb:', error);
+  });
 
-  // Abdomen gold detail
-  const absGoldGeo = new THREE.BoxGeometry(5, 5, 4.2);
-  const absGold = new THREE.Mesh(absGoldGeo, goldMat);
-  absGold.position.y = -3;
-  absGold.position.z = 0.5;
-  torsoGroup.add(absGold);
-
-  // Arc Reactor
-  const coreGeo = new THREE.CylinderGeometry(1.8, 1.8, 1, 32);
-  coreGeo.rotateX(Math.PI / 2);
-  const core = new THREE.Mesh(coreGeo, glowMat);
-  core.position.set(0, 3.5, 3.2);
-  torsoGroup.add(core);
-
-  // Arc Reactor outer ring (silver)
-  const coreRingGeo = new THREE.CylinderGeometry(2.2, 2.2, 0.8, 32);
-  coreRingGeo.rotateX(Math.PI / 2);
-  const coreRing = new THREE.Mesh(coreRingGeo, jointMat);
-  coreRing.position.set(0, 3.5, 3.1);
-  torsoGroup.add(coreRing);
-
-  // --- HEAD ---
-  const headGroup = new THREE.Group();
-  headGroup.position.y = 8;
-  torsoGroup.add(headGroup);
-  const head = headGroup;
-
-  // Neck
-  const neckGeo = new THREE.CylinderGeometry(1.5, 2, 2, 16);
-  const neck = new THREE.Mesh(neckGeo, jointMat);
-  neck.position.y = -0.5;
-  headGroup.add(neck);
-
-  // Helmet (Red)
-  const helmetGeo = new THREE.BoxGeometry(5.5, 6.5, 6.5);
-  const helmet = new THREE.Mesh(helmetGeo, redMat);
-  helmet.position.y = 2.5;
-  headGroup.add(helmet);
-
-  // Faceplate (Gold)
-  const faceplateGeo = new THREE.BoxGeometry(4.8, 5.5, 1);
-  const faceplate = new THREE.Mesh(faceplateGeo, goldMat);
-  faceplate.position.set(0, 2.5, 3.3);
-  // Curve faceplate slightly
-  faceplate.rotation.x = -0.1;
-  headGroup.add(faceplate);
-
-  // Eyes
-  const eyeGeo = new THREE.BoxGeometry(1.2, 0.4, 0.5);
-  const eyeL = new THREE.Mesh(eyeGeo, glowMat);
-  eyeL.position.set(-1.2, 1.2, 0.4);
-  // Slant eyes
-  eyeL.rotation.z = -0.15;
-  faceplate.add(eyeL);
-  
-  const eyeR = new THREE.Mesh(eyeGeo, glowMat);
-  eyeR.position.set(1.2, 1.2, 0.4);
-  eyeR.rotation.z = 0.15;
-  faceplate.add(eyeR);
-
-  // --- ARMS ---
-  const shoulderGeo = new THREE.SphereGeometry(2.8, 16, 16);
-  
-  const shoulderL = new THREE.Mesh(shoulderGeo, redMat);
-  shoulderL.position.set(-6.5, 4.5, 0);
-  torsoGroup.add(shoulderL);
-  
-  // Shoulder pad
-  const padGeo = new THREE.BoxGeometry(4, 2, 4);
-  const padL = new THREE.Mesh(padGeo, goldMat);
-  padL.position.y = 2;
-  shoulderL.add(padL);
-
-  const upperArmL = createLimb(2.2, 1.8, 6, redMat);
-  shoulderL.add(upperArmL);
-  
-  const elbowL = new THREE.Mesh(new THREE.SphereGeometry(1.5, 16, 16), jointMat);
-  elbowL.position.set(0, -6, 0);
-  upperArmL.add(elbowL);
-  
-  const lowerArmL = createLimb(1.9, 1.5, 6.5, goldMat);
-  elbowL.add(lowerArmL);
-
-  // Gauntlet (red over gold)
-  const gauntletGeo = new THREE.CylinderGeometry(2.1, 1.7, 4, 16);
-  gauntletGeo.translate(0, -4.5, 0);
-  const gauntletL = new THREE.Mesh(gauntletGeo, redMat);
-  elbowL.add(gauntletL);
-
-  const shoulderR = new THREE.Mesh(shoulderGeo, redMat);
-  shoulderR.position.set(6.5, 4.5, 0);
-  torsoGroup.add(shoulderR);
-
-  const padR = new THREE.Mesh(padGeo, goldMat);
-  padR.position.y = 2;
-  shoulderR.add(padR);
-
-  const upperArmR = createLimb(2.2, 1.8, 6, redMat);
-  shoulderR.add(upperArmR);
-  
-  const elbowR = new THREE.Mesh(new THREE.SphereGeometry(1.5, 16, 16), jointMat);
-  elbowR.position.set(0, -6, 0);
-  upperArmR.add(elbowR);
-  
-  const lowerArmR = createLimb(1.9, 1.5, 6.5, goldMat);
-  elbowR.add(lowerArmR);
-
-  const gauntletR = new THREE.Mesh(gauntletGeo, redMat);
-  elbowR.add(gauntletR);
-
-  // --- LEGS ---
-  const pelvisGeo = new THREE.BoxGeometry(8.5, 3.5, 5.5);
-  const pelvis = new THREE.Mesh(pelvisGeo, goldMat);
-  pelvis.position.y = -6.5;
-  torsoGroup.add(pelvis);
-
-  // Red belt area
-  const beltGeo = new THREE.BoxGeometry(9, 1.5, 6);
-  const belt = new THREE.Mesh(beltGeo, redMat);
-  belt.position.y = 1;
-  pelvis.add(belt);
-
-  const hipGeo = new THREE.SphereGeometry(2.2, 16, 16);
-  
-  const hipL = new THREE.Mesh(hipGeo, jointMat);
-  hipL.position.set(-2.4, -1.5, 0);
-  pelvis.add(hipL);
-  
-  const thighL = createLimb(2.5, 2.0, 7.5, redMat);
-  hipL.add(thighL);
-  
-  const kneeL = new THREE.Mesh(new THREE.SphereGeometry(1.8, 16, 16), jointMat);
-  kneeL.position.set(0, -7.5, 0);
-  thighL.add(kneeL);
-  
-  const calfL = createLimb(2.1, 1.6, 8.5, goldMat);
-  kneeL.add(calfL);
-
-  // Boot (red over gold)
-  const bootGeo = new THREE.CylinderGeometry(2.3, 2.0, 5, 16);
-  bootGeo.translate(0, -6, 0);
-  const bootL = new THREE.Mesh(bootGeo, redMat);
-  kneeL.add(bootL);
-
-  const hipR = new THREE.Mesh(hipGeo, jointMat);
-  hipR.position.set(2.4, -1.5, 0);
-  pelvis.add(hipR);
-
-  const thighR = createLimb(2.5, 2.0, 7.5, redMat);
-  hipR.add(thighR);
-  
-  const kneeR = new THREE.Mesh(new THREE.SphereGeometry(1.8, 16, 16), jointMat);
-  kneeR.position.set(0, -7.5, 0);
-  thighR.add(kneeR);
-  
-  const calfR = createLimb(2.1, 1.6, 8.5, goldMat);
-  kneeR.add(calfR);
-
-  const bootR = new THREE.Mesh(bootGeo, redMat);
-  kneeR.add(bootR);
-
-  // --- REPULSORS ---
-  const jetHandGeo = new THREE.CylinderGeometry(0.8, 0.8, 0.2, 16);
-  jetHandGeo.rotateX(Math.PI / 2);
-  
-  const jetArmL = new THREE.Mesh(jetHandGeo, glowMat);
-  jetArmL.position.set(0, -6.6, 0.5); // On palm
-  lowerArmL.add(jetArmL);
-  
-  const jetArmR = new THREE.Mesh(jetHandGeo, glowMat);
-  jetArmR.position.set(0, -6.6, 0.5);
-  lowerArmR.add(jetArmR);
-  
-  const jetFootGeo = new THREE.CylinderGeometry(1.2, 1.2, 0.2, 16);
-  
-  const jetLegL = new THREE.Mesh(jetFootGeo, glowMat);
-  jetLegL.position.set(0, -8.6, 0);
-  calfL.add(jetLegL);
-  
-  const jetLegR = new THREE.Mesh(jetFootGeo, glowMat);
-  jetLegR.position.set(0, -8.6, 0);
-  calfR.add(jetLegR);
-
-  // Make them visible!
-  jetArmL.visible = true;
-  jetArmR.visible = true;
-  jetLegL.visible = true;
-  jetLegR.visible = true;
 
   const botLight = new THREE.AmbientLight(0xffffff, 1.2);
   botScene.add(botLight);
@@ -5164,21 +5012,21 @@ document.getElementById('year').textContent = new Date().getFullYear();
        tHeadY = -mouseX * 0.3;
        tHeadX = 0;
 
-       jetArmL.visible = true;
-       jetArmR.visible = true;
-       jetLegL.visible = true;
-       jetLegR.visible = true;
+       // jetArmL.visible = true;
+       // jetArmR.visible = true;
+       // jetLegL.visible = true;
+       // jetLegR.visible = true;
        
        const flicker = 1.2 + Math.random() * 0.6;
-       jetArmL.scale.set(flicker, flicker, flicker);
-       jetArmR.scale.set(flicker, flicker, flicker);
-       jetLegL.scale.set(flicker, flicker, flicker);
-       jetLegR.scale.set(flicker, flicker, flicker);
+       // jetArmL.scale.set(flicker, flicker, flicker);
+       // jetArmR.scale.set(flicker, flicker, flicker);
+       // jetLegL.scale.set(flicker, flicker, flicker);
+       // jetLegR.scale.set(flicker, flicker, flicker);
     } else {
-       jetArmL.visible = false;
-       jetArmR.visible = false;
-       jetLegL.visible = false;
-       jetLegR.visible = false;
+       // jetArmL.visible = false;
+       // jetArmR.visible = false;
+       // jetLegL.visible = false;
+       // jetLegR.visible = false;
        
        // Heroic Idle Hover
        tTorsoX = 0.15; // slight lean forward
@@ -5212,23 +5060,48 @@ document.getElementById('year').textContent = new Date().getFullYear();
     }
 
     const lerp = 0.08; // Ultra-fluid transitions
-    thighL.rotation.x += (tThighL - thighL.rotation.x) * lerp;
-    calfL.rotation.x += (tCalfL - calfL.rotation.x) * lerp;
-    thighR.rotation.x += (tThighR - thighR.rotation.x) * lerp;
-    calfR.rotation.x += (tCalfR - calfR.rotation.x) * lerp;
-    upperArmL.rotation.x += (tArmL - upperArmL.rotation.x) * lerp;
-    lowerArmL.rotation.x += (tForearmL - lowerArmL.rotation.x) * lerp;
-    upperArmR.rotation.x += (tArmR - upperArmR.rotation.x) * lerp;
-    lowerArmR.rotation.x += (tForearmR - lowerArmR.rotation.x) * lerp;
-    upperArmL.rotation.z += (tArmZL - upperArmL.rotation.z) * lerp;
-    upperArmR.rotation.z += (tArmZR - upperArmR.rotation.z) * lerp;
 
-    torso.rotation.x += (tTorsoX - torso.rotation.x) * lerp;
-    torso.rotation.z += (tTorsoZ - torso.rotation.z) * lerp;
-    torso.position.y += (tTorsoPosY - torso.position.y) * lerp;
-    robotGroup.rotation.y += (tTorsoY - robotGroup.rotation.y) * lerp;
-    head.rotation.y += (tHeadY - head.rotation.y) * lerp;
-    head.rotation.x += (tHeadX - head.rotation.x) * lerp;
+    if (window.botBones && window.botBones.torso) {
+      window.botBones.hipL.rotation.x += (tThighL - window.botBones.hipL.rotation.x) * lerp;
+      window.botBones.kneeL.rotation.x += (tCalfL - window.botBones.kneeL.rotation.x) * lerp;
+      window.botBones.hipR.rotation.x += (tThighR - window.botBones.hipR.rotation.x) * lerp;
+      window.botBones.kneeR.rotation.x += (tCalfR - window.botBones.kneeR.rotation.x) * lerp;
+      window.botBones.shoulderL.rotation.x += (tArmL - window.botBones.shoulderL.rotation.x) * lerp;
+      window.botBones.elbowL.rotation.x += (tForearmL - window.botBones.elbowL.rotation.x) * lerp;
+      window.botBones.shoulderR.rotation.x += (tArmR - window.botBones.shoulderR.rotation.x) * lerp;
+      window.botBones.elbowR.rotation.x += (tForearmR - window.botBones.elbowR.rotation.x) * lerp;
+      window.botBones.shoulderL.rotation.z += (tArmZL - window.botBones.shoulderL.rotation.z) * lerp;
+      window.botBones.shoulderR.rotation.z += (tArmZR - window.botBones.shoulderR.rotation.z) * lerp;
+
+      window.botBones.torso.rotation.x += (tTorsoX - window.botBones.torso.rotation.x) * lerp;
+      window.botBones.torso.rotation.z += (tTorsoZ - window.botBones.torso.rotation.z) * lerp;
+      // Posición global
+      robotGroup.position.y += ((tTorsoPosY - 10) * 1.5 - robotGroup.position.y) * lerp;
+      robotGroup.rotation.y += (tTorsoY - robotGroup.rotation.y) * lerp;
+      window.botBones.head.rotation.y += (tHeadY - window.botBones.head.rotation.y) * lerp;
+      window.botBones.head.rotation.x += (tHeadX - window.botBones.head.rotation.x) * lerp;
+    } else {
+      // Fallback para animación antigua
+      if (typeof thighL !== 'undefined') {
+        thighL.rotation.x += (tThighL - thighL.rotation.x) * lerp;
+        calfL.rotation.x += (tCalfL - calfL.rotation.x) * lerp;
+        thighR.rotation.x += (tThighR - thighR.rotation.x) * lerp;
+        calfR.rotation.x += (tCalfR - calfR.rotation.x) * lerp;
+        upperArmL.rotation.x += (tArmL - upperArmL.rotation.x) * lerp;
+        lowerArmL.rotation.x += (tForearmL - lowerArmL.rotation.x) * lerp;
+        upperArmR.rotation.x += (tArmR - upperArmR.rotation.x) * lerp;
+        lowerArmR.rotation.x += (tForearmR - lowerArmR.rotation.x) * lerp;
+        upperArmL.rotation.z += (tArmZL - upperArmL.rotation.z) * lerp;
+        upperArmR.rotation.z += (tArmZR - upperArmR.rotation.z) * lerp;
+
+        torso.rotation.x += (tTorsoX - torso.rotation.x) * lerp;
+        torso.rotation.z += (tTorsoZ - torso.rotation.z) * lerp;
+        torso.position.y += (tTorsoPosY - torso.position.y) * lerp;
+        robotGroup.rotation.y += (tTorsoY - robotGroup.rotation.y) * lerp;
+        head.rotation.y += (tHeadY - head.rotation.y) * lerp;
+        head.rotation.x += (tHeadX - head.rotation.x) * lerp;
+      }
+    }
 
     botRenderer.render(botScene, botCamera);
   };
