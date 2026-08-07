@@ -4880,16 +4880,15 @@ document.getElementById('year').textContent = new Date().getFullYear();
   const botCamera = new THREE.PerspectiveCamera(50, 1, 0.1, 1000);
   botCamera.position.set(0, 5, 80);
 
-  const ironRed = 0xDD1111; // Rojo mucho más brillante
-  const ironGold = 0xFFD700; // Oro brillante clásico
-  const cyanGlow = 0x00FFFF; // Azul cian 
+  const ironRed = 0xC80505; // Rojo medio, no tan oscuro ni tan brillante
+  const ironGold = 0xFFC600; // Oro intermedio
+  const cyanGlow = 0x00F0FF; 
 
-  // Bajamos un poco el "metalness" (de 0.85 a 0.5) para que no absorba tanta luz
-  // y subimos la base del color para que resalte más.
-  const redMat = new THREE.MeshPhysicalMaterial({ color: ironRed, metalness: 0.5, roughness: 0.25, clearcoat: 1.0 });
-  const goldMat = new THREE.MeshPhysicalMaterial({ color: ironGold, metalness: 0.6, roughness: 0.2, clearcoat: 1.0 });
+  // Valores intermedios de metalness y roughness
+  const redMat = new THREE.MeshPhysicalMaterial({ color: ironRed, metalness: 0.65, roughness: 0.2, clearcoat: 1.0 });
+  const goldMat = new THREE.MeshPhysicalMaterial({ color: ironGold, metalness: 0.75, roughness: 0.15, clearcoat: 1.0 });
   const glowMat = new THREE.MeshStandardMaterial({ color: cyanGlow, emissive: cyanGlow, emissiveIntensity: 3.5 });
-  const jointMat = new THREE.MeshStandardMaterial({ color: 0x222222, metalness: 0.6, roughness: 0.5 });
+  const jointMat = new THREE.MeshStandardMaterial({ color: 0x1A1A1A, metalness: 0.75, roughness: 0.45 });
 
   function createLimb(r1, r2, len, mat) {
     const geo = new THREE.CylinderGeometry(r1, r2, len, 32);
@@ -5016,9 +5015,9 @@ document.getElementById('year').textContent = new Date().getFullYear();
   jetLegR.position.set(0, -11, 0);
   calfR.add(jetLegR);
 
-  const botLight = new THREE.AmbientLight(0xffffff, 1.5);
+  const botLight = new THREE.AmbientLight(0xffffff, 1.2);
   botScene.add(botLight);
-  const botDirLight = new THREE.DirectionalLight(0xffffff, 2.5);
+  const botDirLight = new THREE.DirectionalLight(0xffffff, 2.2);
   botDirLight.position.set(20, 40, 50);
   botScene.add(botDirLight);
 
