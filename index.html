@@ -3,8 +3,8 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Marcelo Poblete — Automatización de datos y sistemas de gestión</title>
-<meta name="description" content="Ingeniero en automatización. Convierto planillas y procesos manuales en sistemas que corren solos: dashboards en Flask, pipelines en Python, modelos de Power BI y jobs de SQL Server para operaciones reales.">
+<title>Automatización de procesos, Power BI y Python en Chile — Marcelo Poblete</title>
+<meta name="description" content="Automatizo planillas y procesos manuales en Santiago de Chile: scripts en Python, dashboards a medida, modelos de Power BI y mantención de SQL Server. Once sistemas en producción y diagnóstico gratuito en 48 horas.">
 <meta name="author" content="Marcelo Poblete">
 <link rel="canonical" href="https://chelocomc.github.io/">
 <meta name="theme-color" content="#EDEAE4" media="(prefers-color-scheme: light)">
@@ -18,6 +18,50 @@
 <meta name="twitter:card" content="summary_large_image">
 <meta name="twitter:title" content="Marcelo Poblete — Automatización de datos y sistemas de gestión">
 <meta name="twitter:description" content="Convierto procesos manuales en sistemas que corren solos. Portafolio con demos interactivas.">
+
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@graph": [
+    {
+      "@type": "Person",
+      "@id": "https://chelocomc.github.io/#persona",
+      "name": "Marcelo Poblete",
+      "jobTitle": "Analista de Procesos y Datos",
+      "description": "Ingeniero en Automatización y Control Industrial. Construye automatizaciones en Python, dashboards, modelos de Power BI y mantención de SQL Server para operaciones reales.",
+      "url": "https://chelocomc.github.io/",
+      "email": "mailto:marcelopoblete16@gmail.com",
+      "address": { "@type": "PostalAddress", "addressLocality": "Santiago", "addressCountry": "CL" },
+      "sameAs": ["https://github.com/chelocomc"],
+      "knowsAbout": ["Automatización de procesos", "Python", "Power BI", "SQL Server", "Flask", "OCR", "Business Intelligence"]
+    },
+    {
+      "@type": "ProfessionalService",
+      "@id": "https://chelocomc.github.io/#servicio",
+      "name": "Marcelo Poblete — Automatización de procesos y datos",
+      "provider": { "@id": "https://chelocomc.github.io/#persona" },
+      "areaServed": { "@type": "Country", "name": "Chile" },
+      "availableLanguage": "es",
+      "priceRange": "$$",
+      "url": "https://chelocomc.github.io/",
+      "hasOfferCatalog": {
+        "@type": "OfferCatalog",
+        "name": "Servicios",
+        "itemListElement": [
+          { "@type": "Offer", "itemOffered": { "@type": "Service", "name": "Automatización de planillas y procesos manuales" } },
+          { "@type": "Offer", "itemOffered": { "@type": "Service", "name": "Dashboards internos a medida" } },
+          { "@type": "Offer", "itemOffered": { "@type": "Service", "name": "Modelos e informes en Power BI" } },
+          { "@type": "Offer", "itemOffered": { "@type": "Service", "name": "Integración y mantención de SQL Server" } },
+          { "@type": "Offer", "itemOffered": { "@type": "Service", "name": "Asistentes de IA aplicados" } },
+          { "@type": "Offer", "itemOffered": { "@type": "Service", "name": "OCR y extracción de datos desde documentos" } },
+          { "@type": "Offer", "itemOffered": { "@type": "Service", "name": "Conciliación de facturación" } },
+          { "@type": "Offer", "itemOffered": { "@type": "Service", "name": "Páginas web a medida" } }
+        ]
+      }
+    }
+  ]
+}
+</script>
 
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -859,6 +903,57 @@ nav.links a[aria-current="true"] { color: var(--accent); background: var(--accen
 .contact p { max-width: 52ch; margin: 0 auto 30px; color: var(--ink-soft); }
 .contact .cta-row { justify-content: center; }
 
+/* Formulario de diagnóstico: el correo pierde a quien no quiere
+   abrir su cliente de correo, y ese es casi todo el mundo. */
+.ctc-form { max-width: 620px; margin: 0 auto; text-align: left; }
+.ctc-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+.ctc-campo { display: grid; gap: 6px; margin-bottom: 14px; }
+.ctc-campo > span {
+  font-family: var(--mono); font-size: 0.63rem; letter-spacing: 0.1em;
+  text-transform: uppercase; color: var(--ink-faint);
+}
+.ctc-campo input, .ctc-campo textarea {
+  font: inherit; font-size: 0.9rem; color: var(--ink);
+  background: var(--surface); border: 1px solid var(--line); border-radius: 8px;
+  padding: 11px 13px; width: 100%; resize: vertical;
+  transition: border-color .2s var(--ease), box-shadow .2s var(--ease);
+}
+.ctc-campo input:focus, .ctc-campo textarea:focus {
+  outline: none; border-color: var(--accent);
+  box-shadow: 0 0 0 3px var(--accent-soft);
+}
+.ctc-campo input::placeholder, .ctc-campo textarea::placeholder { color: var(--ink-faint); opacity: .7; }
+.ctc-campo.error input, .ctc-campo.error textarea { border-color: var(--bad); }
+.ctc-envio { display: flex; flex-wrap: wrap; align-items: center; gap: 14px; margin-top: 4px; }
+.ctc-aviso { font-family: var(--mono); font-size: 0.7rem; color: var(--ink-faint); }
+.ctc-aviso.ok { color: var(--ok); }
+.ctc-aviso.mal { color: var(--bad); }
+
+.ctc-canales {
+  display: flex; flex-wrap: wrap; justify-content: center; gap: 10px;
+  margin-top: 34px; padding-top: 28px; border-top: 1px solid var(--line-soft);
+}
+.ctc-canal {
+  display: inline-flex; align-items: center; gap: 10px; text-decoration: none;
+  padding: 10px 15px; border: 1px solid var(--line); border-radius: 10px;
+  background: var(--surface); color: var(--ink-faint);
+  transition: border-color .2s var(--ease), color .2s var(--ease), transform .2s var(--ease);
+}
+.ctc-canal[hidden] { display: none; }  /* inline-flex le gana a hidden si no se dice */
+.ctc-canal:hover { border-color: var(--accent-line); color: var(--accent); transform: translateY(-2px); }
+.ctc-canal svg { width: 19px; height: 19px; flex: none; }
+.ctc-canal span { display: grid; text-align: left; font-size: 0.78rem; color: var(--ink-faint); }
+.ctc-canal b {
+  font-family: var(--mono); font-size: 0.6rem; letter-spacing: 0.11em;
+  text-transform: uppercase; font-weight: 500; color: var(--ink);
+}
+.ctc-canal i { font-style: normal; }
+
+@media (max-width: 620px) {
+  .ctc-grid { grid-template-columns: 1fr; }
+  .ctc-canal { width: 100%; }
+}
+
 footer.foot {
   border-top: 1px solid var(--line-soft); padding: 26px 0 34px;
   display: flex; flex-wrap: wrap; gap: 12px; align-items: center; justify-content: space-between;
@@ -1000,114 +1095,6 @@ input[type="range"]::-moz-range-thumb {
 }
 .ctl input[type="checkbox"] { accent-color: var(--accent); width: 15px; height: 15px; }
 
-/* ============================================================
-   BOT-01 — unidad de ronda articulada
-   Va por delante del contenido (42) pero por debajo de la barra
-   superior (50) y de la ficha (90-91). Antes vivía en z-index 1,
-   debajo de <main>, para esconderse detrás de las tarjetas: con el
-   robot 3D esa gracia lo dejaba tapado casi todo el rato. No recibe
-   clics —eso lo hace su hitbox en .bot-ui— así que estar encima no
-   estorba el uso de la página. Con una ficha abierta sube a 90, entre
-   el velo (90) y la hoja (91), para asomarse por el borde.
-   ============================================================ */
-.bot-capa {
-  position: fixed; top: 0; left: 0; z-index: 42;
-  width: 80px; height: 80px; pointer-events: none;
-  will-change: transform;
-}
-.bot-capa.encima { z-index: 90; }
-.bot-capa svg { width: 100%; height: 100%; overflow: visible; }
-
-.bot-todo { transform-box: view-box; transform-origin: 30px 45px; transition: transform .7s var(--ease); }
-.bot-capa.trepa .bot-todo { transform: rotate(-11deg) translateY(-5px); }
-
-.bot-chasis { fill: var(--surface-2); stroke: var(--accent); stroke-width: 1.5; }
-.bot-linea { stroke: var(--accent); stroke-width: 1.5; fill: none; stroke-linecap: round; stroke-linejoin: round; }
-.bot-tenue { stroke: var(--accent-line); stroke-width: 1.1; fill: none; stroke-linecap: round; }
-.bot-rodillo { fill: var(--paper); stroke: var(--accent-line); stroke-width: 1; }
-.bot-panel { fill: var(--accent-soft); stroke: var(--accent-line); stroke-width: .9; }
-.bot-lente { fill: var(--paper-deep); stroke: var(--accent); stroke-width: 1.2; }
-.bot-pupila { fill: var(--accent); transition: r .35s var(--ease); }
-.bot-led { fill: var(--ok); }
-.bot-chispa { fill: var(--accent); animation: bot-late 2.4s var(--ease) infinite; }
-@keyframes bot-late { 0%, 100% { opacity: .35; } 50% { opacity: 1; } }
-
-.bot-haz { fill: var(--accent); opacity: 0; transition: opacity .45s var(--ease); }
-.bot-capa.mirando .bot-haz { opacity: .15; }
-.bot-capa.mirando .bot-pupila { r: 2.2; }
-
-/* Spaceship and Legs */
-.bot-nave-cupula { fill: var(--accent-soft); stroke: var(--accent); stroke-width: 1.5; }
-.bot-fuego { stroke: var(--warn); stroke-width: 1.5; stroke-linecap: round; animation: bot-fire .1s infinite alternate; }
-@keyframes bot-fire { 0% { transform: translateY(0); } 100% { transform: translateY(2px); } }
-.bot-nave { transition: opacity .4s var(--ease), transform .4s var(--ease); transform: translateY(10px); }
-.bot-capa.nave .bot-nave { opacity: 1 !important; transform: translateY(0); }
-.bot-capa.nave .bot-pierna { opacity: 0; }
-.bot-pierna { transition: opacity .2s; }
-
-/* Humanoid parts */
-.bot-mastil { transform-box: view-box; transform-origin: 30px 25px; transition: transform .45s var(--ease); }
-.bot-capa.mirando .bot-mastil { transform: rotate(10deg); }
-.bot-capa.trepa .bot-mastil { transform: rotate(-8deg); }
-
-.bot-brazo { transform-box: view-box; transform-origin: 45px 32px; transform: rotate(10deg); transition: transform .6s var(--ease); }
-.bot-capa.trepa .bot-brazo { transform: rotate(-45deg); }
-.bot-capa.mirando .bot-brazo { transform: rotate(25deg); }
-
-.bot-antebrazo { transform-box: view-box; transform-origin: 50px 45px; transform: rotate(-10deg); transition: transform .6s var(--ease); }
-.bot-capa.trepa .bot-antebrazo { transform: rotate(20deg); }
-
-@media (prefers-reduced-motion: reduce) {
-  .bot-chispa, .bot-fuego { animation: none; }
-}
-
-.bot-inclina { transform-box: view-box; transform-origin: 30px 45px; }
-.bot-capa.frente { z-index: 42; }
-.bot-capa.sobrehoja { z-index: 92; }
-.bot-ui.sobrehoja { z-index: 93; }
-
-/* Al apretar un control el brazo se estira del todo y la pinza cierra. */
-.bot-capa.pulsando .bot-brazo { transform: rotate(-35deg) scaleX(1.15); }
-.bot-capa.pulsando .bot-antebrazo { transform: rotate(-15deg) scaleX(1.15); }
-.bot-capa.pulsando .bot-pupila { r: 2.2; }
-.bot-capa.pulsando .bot-haz { opacity: .2; }
-.bot-ui { position: fixed; inset: 0; z-index: 43; pointer-events: none; }
-.bot-ui.encima { z-index: 92; }
-.bot-hit {
-  position: absolute; width: 74px; height: 62px; margin: -6px;
-  border-radius: 14px; pointer-events: auto; cursor: pointer;
-}
-.bot-globo {
-  position: absolute; width: 216px; pointer-events: auto;
-  background: var(--surface-2); border: 1px solid var(--accent-line);
-  border-radius: 12px; padding: 11px 13px;
-  box-shadow: var(--shadow-lift);
-  opacity: 0; transform: translateY(6px) scale(.97);
-  transition: opacity .3s var(--ease), transform .3s var(--ease);
-}
-.bot-globo.on { opacity: 1; transform: none; }
-.bot-globo .id {
-  font-family: var(--mono); font-size: 0.6rem; letter-spacing: 0.14em;
-  text-transform: uppercase; color: var(--accent); display: block; margin-bottom: 4px;
-}
-.bot-globo p { margin: 0; font-size: 0.82rem; line-height: 1.5; color: var(--ink); }
-.bot-globo .apagar {
-  display: block; margin-top: 8px; padding: 0; border: 0; background: none; cursor: pointer;
-  font-family: var(--mono); font-size: 0.62rem; letter-spacing: 0.08em;
-  text-transform: uppercase; color: var(--ink-faint);
-}
-.bot-globo .apagar:hover { color: var(--accent); }
-
-.bot-volver {
-  background: none; border: 0; padding: 0; cursor: pointer; color: inherit;
-  font: inherit; text-decoration: underline; text-underline-offset: 3px;
-}
-.bot-volver:hover { color: var(--accent); }
-
-@media (max-width: 1023px) {
-  .bot-capa, .bot-ui { display: none; }
-}
-
 @media (max-width: 620px) {
   .sensor { grid-template-columns: 1fr auto; }
   .sensor svg { display: none; }
@@ -1115,6 +1102,141 @@ input[type="range"]::-moz-range-thumb {
   /* Antes de amontonar cinco columnas en 390px, que la tabla scrollee. */
   .d-scroll { overflow: auto; }
   .d-scroll .d-table { min-width: 520px; }
+}
+
+.svc-cta {
+  margin-top: 34px; padding-top: 22px; border-top: 1px solid var(--line-soft);
+  font-size: 0.92rem; color: var(--ink-faint);
+}
+.svc-cta a {
+  color: var(--accent); text-decoration: none; white-space: nowrap;
+  border-bottom: 1px solid var(--accent-line);
+}
+.svc-cta a:hover { border-bottom-color: var(--accent); }
+
+/* ============================================================
+   TABLA COMPARATIVA — contra las alternativas reales, no contra
+   una plataforma de RPA que el cliente nunca evaluó.
+   ============================================================ */
+.vs-scroll { overflow-x: auto; margin-bottom: 48px; }
+.vs-tabla {
+  width: 100%; min-width: 780px; border-collapse: collapse; text-align: left;
+  background: var(--surface); box-shadow: var(--shadow-lift);
+  border: 1px solid var(--line); border-radius: 10px; overflow: hidden;
+  font-size: 0.84rem;
+}
+.vs-cap {
+  caption-side: top; text-align: left; padding: 13px 16px;
+  border-bottom: 1px solid var(--line); background: var(--surface-2);
+  font-family: var(--mono); font-size: 0.64rem; letter-spacing: 0.12em;
+  text-transform: uppercase; color: var(--ink-faint);
+}
+.vs-tabla th, .vs-tabla td { padding: 13px 16px; vertical-align: top; }
+.vs-tabla thead th {
+  font-family: var(--mono); font-size: 0.63rem; letter-spacing: 0.1em;
+  text-transform: uppercase; color: var(--ink-faint); font-weight: 500;
+  border-bottom: 2px solid var(--line); white-space: nowrap;
+}
+.vs-tabla thead th.mia { color: var(--accent); }
+.vs-tabla tbody tr + tr th, .vs-tabla tbody tr + tr td { border-top: 1px solid var(--line-soft); }
+.vs-tabla tbody th { font-weight: 500; color: var(--ink); min-width: 160px; }
+.vs-tabla td { color: var(--ink-faint); min-width: 190px; }
+/* La columna propia se lee sola: fondo tenue y una regla de acento al costado. */
+.vs-tabla td.mia {
+  color: var(--ink); background: var(--accent-soft);
+  box-shadow: inset 2px 0 0 var(--accent);
+}
+.vs-tabla td.mal { color: color-mix(in srgb, var(--bad) 78%, var(--ink-faint)); }
+.vs-tabla td.reg { color: var(--ink-faint); }
+
+/* ============================================================
+   BANCO DE ENSAYOS — los once motores en un solo chasis
+   Reemplaza al bot: en vez de un personaje paseando, un
+   instrumento con canales conmutables. La demo montada es el
+   mismo clon de plantilla que usa la ficha.
+   ============================================================ */
+.banco {
+  border: 1px solid var(--line); border-radius: 14px; background: var(--surface);
+  box-shadow: var(--shadow-lift); overflow: hidden;
+}
+.banco-head {
+  display: flex; align-items: center; justify-content: space-between; gap: 12px;
+  padding: 11px 14px; border-bottom: 1px solid var(--line);
+  background: var(--surface-2);
+}
+.banco-rotulo {
+  font-family: var(--mono); font-size: 0.64rem; letter-spacing: 0.16em;
+  text-transform: uppercase; color: var(--ink-faint);
+}
+.banco-play {
+  display: inline-flex; align-items: center; gap: 8px; cursor: pointer;
+  padding: 5px 11px; border: 1px solid var(--line); border-radius: 999px;
+  background: var(--surface); color: var(--ink-faint);
+  font-family: var(--mono); font-size: 0.63rem; letter-spacing: 0.09em;
+  text-transform: uppercase; transition: color .25s var(--ease), border-color .25s var(--ease);
+}
+.banco-play:hover { color: var(--accent); border-color: var(--accent-line); }
+.banco-play .ico {
+  width: 0; height: 0; flex: none;
+  border-left: 7px solid currentColor; border-top: 4.5px solid transparent; border-bottom: 4.5px solid transparent;
+}
+.banco-play[aria-pressed="true"] { color: var(--accent); border-color: var(--accent-line); }
+.banco-play[aria-pressed="true"] .ico {
+  width: 8px; height: 9px; border: 0;
+  border-left: 3px solid currentColor; border-right: 3px solid currentColor;
+}
+
+.banco-cuerpo { display: grid; grid-template-columns: 208px 1fr; }
+.banco-canales {
+  border-right: 1px solid var(--line); background: var(--paper-deep);
+  max-height: 620px; overflow-y: auto;
+}
+.banco-canal {
+  display: grid; gap: 2px; width: 100%; text-align: left; cursor: pointer;
+  padding: 10px 13px 10px 15px; border: 0; border-bottom: 1px solid var(--line-soft);
+  background: none; color: var(--ink-faint);
+  border-left: 2px solid transparent;
+  transition: background .2s var(--ease), color .2s var(--ease), border-color .2s var(--ease);
+}
+.banco-canal .r { font-family: var(--mono); font-size: 0.6rem; letter-spacing: 0.1em; }
+.banco-canal .t { font-size: 0.83rem; line-height: 1.3; color: var(--ink); }
+.banco-canal:hover { background: var(--surface); }
+.banco-canal[aria-selected="true"] {
+  background: var(--surface); border-left-color: var(--accent); color: var(--accent);
+}
+.banco-canal[aria-selected="true"] .t { color: var(--ink); font-weight: 500; }
+
+.banco-panel { padding: 18px 20px 22px; min-width: 0; }
+.banco-panel-head { margin-bottom: 15px; }
+.banco-ref { font-family: var(--mono); font-size: 0.63rem; letter-spacing: 0.14em; color: var(--accent); }
+.banco-panel-head h3 { font-family: var(--display); font-size: 1.32rem; line-height: 1.2; margin: 3px 0 5px; }
+.banco-panel-head p { font-size: 0.85rem; color: var(--ink-faint); margin: 0; max-width: 60ch; }
+
+/* La demo montada no lleva su propio marco: el chasis ya es el banco. */
+.banco-monta .demo {
+  border: 0; border-radius: 0; box-shadow: none; background: none;
+  backdrop-filter: none; -webkit-backdrop-filter: none; transform: none !important;
+}
+.banco-monta .demo .demo-bar, .banco-monta .demo .demo-body { transform: none; }
+.banco-monta .demo-bar { border-radius: 8px 8px 0 0; border: 1px solid var(--line-soft); }
+.banco-monta .demo-body { border: 1px solid var(--line-soft); border-top: 0; border-radius: 0 0 8px 8px; padding: 14px; }
+.banco-monta.cambiando { opacity: 0; transform: translateY(6px); }
+.banco-monta { transition: opacity .28s var(--ease), transform .28s var(--ease); }
+
+@media (max-width: 900px) {
+  .banco-cuerpo { grid-template-columns: 1fr; }
+  .banco-canales {
+    display: flex; overflow-x: auto; max-height: none;
+    border-right: 0; border-bottom: 1px solid var(--line);
+    scroll-snap-type: x mandatory;
+  }
+  .banco-canal {
+    flex: 0 0 auto; min-width: 148px; scroll-snap-align: start;
+    border-bottom: 0; border-right: 1px solid var(--line-soft);
+    border-left: 0; border-top: 2px solid transparent;
+  }
+  .banco-canal[aria-selected="true"] { border-left-color: transparent; border-top-color: var(--accent); }
+  .banco-panel { padding: 16px 14px 20px; }
 }
 </style>
 </head>
@@ -1244,13 +1366,29 @@ input[type="range"]::-moz-range-thumb {
       <div class="rail">
         <span class="idx">§ 02</span>
         <h2 class="rail-title">Laboratorio</h2>
-        <p class="rail-note">Dos de los motores corriendo acá mismo, con la misma lógica del sistema real: el emparejador difuso y el ruteo A* sobre planta. Los otros nueve están dentro de sus fichas.</p>
+        <p class="rail-note">Los once motores en un mismo banco. Elige un canal y el motor se monta acá: es el mismo código que corre dentro de la ficha del proyecto, sobre datos ficticios.</p>
       </div>
       <div class="band-body">
         <p class="band-lead">Estas demos <em>calculan de verdad</em>: mueve un parámetro y los números se rehacen.</p>
-        <div style="display:grid; gap:26px;">
-          <div data-mount="DATA-02"></div>
-          <div data-mount="WEB-07"></div>
+
+        <div class="banco" id="banco">
+          <div class="banco-head">
+            <span class="banco-rotulo">Banco de ensayos</span>
+            <button class="banco-play" type="button" id="bancoPlay" aria-pressed="false">
+              <span class="ico" aria-hidden="true"></span><span class="txt">recorrer los 11</span>
+            </button>
+          </div>
+          <div class="banco-cuerpo">
+            <div class="banco-canales" id="bancoCanales" role="tablist" aria-label="Motores disponibles"></div>
+            <div class="banco-panel">
+              <div class="banco-panel-head">
+                <span class="banco-ref" id="bancoRef"></span>
+                <h3 id="bancoTitulo"></h3>
+                <p id="bancoKicker"></p>
+              </div>
+              <div class="banco-monta" id="bancoMonta"></div>
+            </div>
+          </div>
         </div>
       </div>
     </div>
@@ -1267,40 +1405,53 @@ input[type="range"]::-moz-range-thumb {
       <div class="band-body">
         <p class="band-lead">Si tu equipo repite la misma tarea <em>todas las semanas</em>, estás perdiendo dinero. Descubre cómo puedo potenciar tu negocio.</p>
         
-        <div style="overflow-x:auto; margin-bottom:48px;">
-          <table style="width:100%; border-collapse: collapse; text-align: left; background: var(--surface); border-radius: 8px; box-shadow: var(--shadow-lift);">
+        <div class="vs-scroll">
+          <table class="vs-tabla">
+            <caption class="vs-cap">Las cuatro salidas que tienes cuando un proceso manual ya duele</caption>
             <thead>
-              <tr style="border-bottom: 2px solid var(--line);">
-                <th style="padding: 16px; font-weight: 600; min-width: 150px;">El Problema</th>
-                <th style="padding: 16px; font-weight: 600; color: var(--accent); min-width: 200px;">Mi Solución (A Medida)</th>
-                <th style="padding: 16px; font-weight: 600; color: var(--ink-faint); min-width: 200px;">RPA Tradicional (UiPath)</th>
-                <th style="padding: 16px; font-weight: 600; color: var(--ink-faint); min-width: 200px;">Grandes Consultoras</th>
+              <tr>
+                <th scope="col"></th>
+                <th scope="col" class="mia">Conmigo</th>
+                <th scope="col">Seguir haciéndolo a mano</th>
+                <th scope="col">El freelance más barato</th>
+                <th scope="col">Agencia o consultora</th>
               </tr>
             </thead>
             <tbody>
-              <tr style="border-bottom: 1px solid var(--line-soft);">
-                <td style="padding: 16px; font-weight: 500;">Licencias Anuales</td>
-                <td style="padding: 16px; color: var(--ok); font-weight: 500;">$0. Tú eres dueño del código.</td>
-                <td style="padding: 16px; color: var(--bad);">$5,000 - $15,000+ USD por bot.</td>
-                <td style="padding: 16px; color: var(--warn);">Suscripciones y mantenimientos.</td>
-              </tr>
-              <tr style="border-bottom: 1px solid var(--line-soft);">
-                <td style="padding: 16px; font-weight: 500;">Tiempo de Desarrollo</td>
-                <td style="padding: 16px; color: var(--ok); font-weight: 500;">Días o semanas.</td>
-                <td style="padding: 16px; color: var(--warn);">Meses de configuración pesada.</td>
-                <td style="padding: 16px; color: var(--bad);">Mínimo 3 a 6 meses.</td>
-              </tr>
-              <tr style="border-bottom: 1px solid var(--line-soft);">
-                <td style="padding: 16px; font-weight: 500;">Estabilidad</td>
-                <td style="padding: 16px; color: var(--ok); font-weight: 500;">Alta. API y código directo a BD.</td>
-                <td style="padding: 16px; color: var(--bad);">Baja. Si cambia un botón, falla.</td>
-                <td style="padding: 16px; color: var(--warn);">Depende de la agencia.</td>
+              <tr>
+                <th scope="row">Lo que cuesta al año</th>
+                <td class="mia">Se paga una vez. Sin licencias por usuario.</td>
+                <td class="mal">Media jornada al mes por proceso, todos los meses, para siempre.</td>
+                <td class="reg">Barato hasta que hay que rehacerlo.</td>
+                <td class="mal">Desarrollo, plataforma y horas de soporte.</td>
               </tr>
               <tr>
-                <td style="padding: 16px; font-weight: 500;">Infraestructura</td>
-                <td style="padding: 16px; color: var(--ok); font-weight: 500;">Ligera (Servidor básico o Cloud).</td>
-                <td style="padding: 16px; color: var(--bad);">Servidores dedicados obligatorios.</td>
-                <td style="padding: 16px; color: var(--warn);">Plataformas costosas cerradas.</td>
+                <th scope="row">En cuánto lo tienes andando</th>
+                <td class="mia">Días o semanas, con algo usable en la primera.</td>
+                <td class="reg">Nunca: el proceso es el trabajo.</td>
+                <td class="reg">Rápido, pero sin entender tu operación.</td>
+                <td class="mal">De tres a seis meses, partiendo por el levantamiento.</td>
+              </tr>
+              <tr>
+                <th scope="row">Cuando falla a los seis meses</th>
+                <td class="mia">El código es tuyo, está comentado y sé por qué lo escribí así.</td>
+                <td class="reg">Falla igual, solo que le echan la culpa a una persona.</td>
+                <td class="mal">Ya no responde, y nadie entiende el script.</td>
+                <td class="reg">Hay soporte, pero se cotiza aparte.</td>
+              </tr>
+              <tr>
+                <th scope="row">Quién entiende tu proceso</th>
+                <td class="mia">Yo trabajo en operaciones: el problema lo he vivido, no me lo contaron.</td>
+                <td class="reg">Tu equipo, y por eso está saturado.</td>
+                <td class="mal">Nadie: entrega lo que dice el brief, literal.</td>
+                <td class="reg">Un analista que rota entre cuentas.</td>
+              </tr>
+              <tr>
+                <th scope="row">Con quién hablas</th>
+                <td class="mia">Conmigo, que es quien escribe el código.</td>
+                <td class="reg">—</td>
+                <td class="reg">Con un chat que responde cuando puede.</td>
+                <td class="mal">Con un ejecutivo que le pregunta al equipo técnico.</td>
               </tr>
             </tbody>
           </table>
@@ -1313,12 +1464,17 @@ input[type="range"]::-moz-range-thumb {
           <div class="svc"><span class="n">04</span><h3>Integración y mantención SQL Server</h3><p>Reviso jobs, consultas T-SQL y lógica de negocio que entrega cifras equivocadas sin que el sistema marque error en ninguna parte.</p></div>
           <div class="svc"><span class="n">05</span><h3>Asistentes de IA aplicados</h3><p>Agentes con acceso real a tus archivos y herramientas, con opción de correr en local cuando los datos no pueden salir de la red.</p></div>
           <div class="svc"><span class="n">06</span><h3>Diagnóstico de un sistema existente</h3><p>Algo ya construido falla y el que lo hizo no está. Reviso el código o el modelo, encuentro la causa raíz y te la dejo documentada, con o sin arreglo.</p></div>
-        </div>
           <div class="svc"><span class="n">07</span><h3>Páginas web a medida</h3><p>Sitios institucionales, landings, catálogos y currículums navegables. Rápidos, responsivos y sin suscripción mensual: publicados gratis y editables sin una cadena de herramientas detrás.</p></div>
           <div class="svc"><span class="n">08</span><h3>Archivos de papel que se pueden buscar</h3><p>Miles de PDF escaneados convertidos en una base consultable con OCR, indexados y cruzados contra tus registros para saber qué documento respalda cada cosa.</p></div>
           <div class="svc"><span class="n">09</span><h3>Extracción de datos desde documentos</h3><p>Sacar de facturas, informes y cartas los números que después alguien teclea a mano en una planilla: cantidades, tarifas, folios y fechas, con las reglas del negocio incorporadas.</p></div>
           <div class="svc"><span class="n">10</span><h3>Conciliación de facturación</h3><p>Cruzar lo que te facturan contra lo que respalda cada cobro, mes a mes, y dejar por escrito dónde no cuadra y cuánto vale esa diferencia.</p></div>
-              </div>
+        </div>
+
+        <p class="svc-cta">
+          ¿Tu caso no calza con ninguno? Es lo normal: casi todo lo que he construido empezó así.
+          <a href="#contacto">Pídeme el diagnóstico gratuito de 48 horas <span aria-hidden="true">→</span></a>
+        </p>
+      </div>
     </div>
   </section>
 
@@ -1480,14 +1636,47 @@ input[type="range"]::-moz-range-thumb {
   <section id="contacto">
     <div class="wrap contact">
       <span class="tag-label">§ 07 — Contacto</span>
-      <h2>¿Listo para dejar<br>de trabajar <em>como robot</em>?</h2>
-      <p>Cuéntame cuál es ese proceso que está frenando a tu equipo. Analizaremos juntos tu caso y diseñaremos un plan de automatización a tu medida. El primer paso hacia la eficiencia empieza con un mensaje.</p>
-      <div class="cta-row">
-        <a class="btn primary" href="mailto:marcelopoblete16@gmail.com">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="4" width="20" height="16" rx="2"/><path d="m2 7 10 6 10-6"/></svg>
-          Hablemos de tu proyecto
+      <h2>Diagnóstico gratis:<br>tu proceso en <em>48 horas</em>.</h2>
+      <p>Cuéntame el proceso que le está comiendo las horas a tu equipo. Dentro de 48 horas te respondo tres cosas por escrito y sin costo: si conviene automatizarlo, qué parte automatizaría primero y en qué rango de precio y plazo se mueve. Si la respuesta es que no vale la pena, también te la digo.</p>
+
+      <form class="ctc-form" id="ctcForm" novalidate>
+        <div class="ctc-grid">
+          <label class="ctc-campo">
+            <span>Tu nombre</span>
+            <input type="text" name="nombre" required autocomplete="name" placeholder="Nombre y apellido">
+          </label>
+          <label class="ctc-campo">
+            <span>Correo o teléfono</span>
+            <input type="text" name="contacto" required autocomplete="email" placeholder="Por dónde te respondo">
+          </label>
+        </div>
+        <label class="ctc-campo">
+          <span>El proceso que quieres sacarte de encima</span>
+          <textarea name="mensaje" rows="4" required placeholder="Ej.: todos los meses cruzamos dos planillas de 4.000 filas a mano y siempre se cuela un error."></textarea>
+        </label>
+        <div class="ctc-envio">
+          <button class="btn primary" type="submit">Pedir el diagnóstico</button>
+          <span class="ctc-aviso" id="ctcAviso" role="status" aria-live="polite"></span>
+        </div>
+      </form>
+
+      <div class="ctc-canales" id="ctcCanales">
+        <a class="ctc-canal" href="mailto:marcelopoblete16@gmail.com" data-canal="mail">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="2" y="4" width="20" height="16" rx="2"/><path d="m2 7 10 6 10-6"/></svg>
+          <span><b>Correo</b>marcelopoblete16@gmail.com</span>
         </a>
-        <a class="btn" href="https://github.com/chelocomc" target="_blank" rel="noopener">GitHub</a>
+        <a class="ctc-canal" href="#" data-canal="wsp" target="_blank" rel="noopener" hidden>
+          <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12.04 2C6.58 2 2.13 6.45 2.13 11.91c0 1.75.46 3.45 1.32 4.95L2 22l5.25-1.38a9.9 9.9 0 0 0 4.79 1.22h.01c5.46 0 9.91-4.45 9.91-9.91 0-2.65-1.03-5.14-2.9-7.01A9.82 9.82 0 0 0 12.04 2Zm5.8 14.06c-.24.68-1.42 1.31-1.95 1.36-.5.05-.98.23-3.3-.69-2.77-1.09-4.53-3.92-4.67-4.1-.13-.18-1.11-1.48-1.11-2.83 0-1.35.71-2.01.96-2.29.25-.27.55-.34.73-.34l.52.01c.17.01.4-.06.62.48.24.57.8 1.98.87 2.12.07.14.12.31.02.49-.09.18-.14.29-.28.45-.14.16-.29.35-.41.47-.14.13-.28.28-.12.55.16.27.72 1.19 1.55 1.93 1.07.95 1.97 1.25 2.25 1.39.27.14.43.12.59-.07.16-.18.68-.79.86-1.07.18-.27.36-.22.61-.13.25.09 1.58.75 1.85.88.27.14.45.2.52.32.07.11.07.66-.17 1.34Z"/></svg>
+          <span><b>WhatsApp</b><i data-canal-txt></i></span>
+        </a>
+        <a class="ctc-canal" href="#" data-canal="linkedin" target="_blank" rel="noopener" hidden>
+          <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M4.98 3.5a2.5 2.5 0 1 1 0 5 2.5 2.5 0 0 1 0-5ZM3 9h4v12H3V9Zm7 0h3.8v1.65h.05c.53-.95 1.83-1.95 3.77-1.95C21.6 8.7 23 10.9 23 14.1V21h-4v-6.1c0-1.45-.03-3.32-2.05-3.32-2.05 0-2.36 1.58-2.36 3.21V21h-4V9Z"/></svg>
+          <span><b>LinkedIn</b><i data-canal-txt></i></span>
+        </a>
+        <a class="ctc-canal" href="https://github.com/chelocomc" target="_blank" rel="noopener" data-canal="github">
+          <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 2a10 10 0 0 0-3.16 19.49c.5.09.68-.22.68-.48l-.01-1.7c-2.78.6-3.37-1.34-3.37-1.34-.45-1.16-1.11-1.47-1.11-1.47-.91-.62.07-.61.07-.61 1 .07 1.53 1.03 1.53 1.03.89 1.53 2.34 1.09 2.91.83.09-.65.35-1.09.63-1.34-2.22-.25-4.56-1.11-4.56-4.94 0-1.09.39-1.98 1.03-2.68-.1-.25-.45-1.27.1-2.65 0 0 .84-.27 2.75 1.02a9.5 9.5 0 0 1 5 0c1.91-1.29 2.75-1.02 2.75-1.02.55 1.38.2 2.4.1 2.65.64.7 1.03 1.59 1.03 2.68 0 3.84-2.34 4.69-4.57 4.94.36.31.68.92.68 1.85l-.01 2.75c0 .27.18.58.69.48A10 10 0 0 0 12 2Z"/></svg>
+          <span><b>GitHub</b>github.com/chelocomc</span>
+        </a>
       </div>
     </div>
   </section>
@@ -1496,7 +1685,6 @@ input[type="range"]::-moz-range-thumb {
 
 <footer class="wrap foot">
   <span>© <span id="year">2026</span> Marcelo Poblete — Automatización de datos</span>
-  <span id="botPie" hidden>BOT-01 apagado · <button class="bot-volver" type="button" id="botVolver">volver a activarlo</button></span>
   <span>Hecho a mano, sin frameworks · <a href="https://github.com/chelocomc" target="_blank" rel="noopener">github.com/chelocomc</a></span>
 </footer>
 
@@ -1516,19 +1704,6 @@ input[type="range"]::-moz-range-thumb {
 </div>
 
 
-<!-- BOT-01: chasis con oruga, mástil sensor y brazo articulado.
-     Cada grupo se anima por separado según el estado. -->
-<div class="bot-capa" id="botCapa" aria-hidden="true">
-  <div id="bot3DContainer" style="width: 120px; height: 120px; position: absolute; top: -20px; left: -20px; pointer-events: none;"></div>
-</div>
-<div class="bot-ui" id="botUI">
-  <div class="bot-hit" id="botHit"></div>
-  <div class="bot-globo" id="botGlobo">
-    <span class="id">BOT-01 · ronda</span>
-    <p id="botTexto"></p>
-    <button class="apagar" type="button" id="botApagar">✕ terminar la ronda</button>
-  </div>
-</div>
 
 <!-- ══════════════ PLANTILLAS DE DEMO ══════════════
      Cada plantilla es solo el chasis: los motores de la sección 4 del
@@ -2289,10 +2464,11 @@ function abrirFicha(p, origen) {
 const MOTORES = {};
 const LIMPIEZAS = [];
 
-/* Los motores que dejan temporizadores corriendo dentro de la ficha
-   registran acá cómo apagarse al cerrarla. */
+/* Los motores que dejan temporizadores corriendo dentro de la ficha o del
+   banco de ensayos registran acá cómo apagarse cuando se los desmonta.
+   Sin esto, cambiar de canal deja intervalos latiendo sobre nodos muertos. */
 function alCerrar(root, fn) {
-  if (root.closest('#sheetBody')) LIMPIEZAS.push(fn);
+  if (root.closest('#sheetBody') || root.closest('#bancoMonta')) LIMPIEZAS.push(fn);
 }
 function limpiarDemos() {
   LIMPIEZAS.splice(0).forEach(function (f) { try { f(); } catch (e) {} });
@@ -3768,9 +3944,12 @@ MOTORES.auto = function (root) {
    recalcula el sitio entero. Las horas son estimaciones propias,
    no un estándar de mercado.
    ------------------------------------------------------------ */
-const TARIFA = 18000;        // pesos por hora
+const TARIFA = 32000;        // pesos por hora
 const HORAS_SEMANA = 12;     // horas vendibles por semana (trabajo con pega full-time)
 const PISO = 0.9, TECHO = 1.3;
+/* El plan mensual no es un porcentaje inventado: son las horas que se van
+   en revisar corridas, ajustar reglas y atender un cambio de origen. */
+const SOPORTE_FRAC = 0.08, SOPORTE_MIN_H = 1.5;
 
 const TIPOS = {
   web: {
@@ -3878,7 +4057,8 @@ MOTORES.presupuesto = function (root) {
       lineas: lineas, factor: factor, horas: horas,
       hMin: hMin, hMax: hMax,
       pMin: redondear(hMin), pMax: redondear(hMax),
-      semanas: Math.max(1, Math.round(hMax / HORAS_SEMANA))
+      semanas: Math.max(1, Math.round(hMax / HORAS_SEMANA)),
+      mensual: Math.round(Math.max(SOPORTE_MIN_H, horas * SOPORTE_FRAC) * TARIFA / 5000) * 5000
     };
   }
 
@@ -3895,6 +4075,7 @@ MOTORES.presupuesto = function (root) {
       '\n\nEstimado: ' + r.hMin + ' a ' + r.hMax + ' horas · $' +
       nfm.format(r.pMin) + ' a $' + nfm.format(r.pMax) +
       ' · alrededor de ' + r.semanas + (r.semanas === 1 ? ' semana' : ' semanas') +
+      '\nSoporte mensual opcional: $' + nfm.format(r.mensual) + ' al mes' +
       '\n(aproximado, sujeto a revisión)\n\nCuéntame acá qué necesitas:\n';
   }
 
@@ -3931,7 +4112,8 @@ MOTORES.presupuesto = function (root) {
       '<div class="mini"><div class="t">Horas estimadas</div><div class="v">' + r.hMin + '–' + r.hMax + '</div></div>' +
       '<div class="mini"><div class="t">Rango de precio</div><div class="v ok">$' + nfm.format(r.pMin) + ' – $' + nfm.format(r.pMax) + '</div></div>' +
       '<div class="mini"><div class="t">Plazo aproximado</div><div class="v">' + r.semanas + (r.semanas === 1 ? ' semana' : ' semanas') + '</div></div>' +
-      '<div class="mini"><div class="t">Para partir</div><div class="v">$' + nfm.format(Math.round(r.pMin / 2 / 10000) * 10000) + '</div></div>';
+      '<div class="mini"><div class="t">Para partir</div><div class="v">$' + nfm.format(Math.round(r.pMin / 2 / 10000) * 10000) + '</div></div>' +
+      '<div class="mini"><div class="t">Soporte mensual (opcional)</div><div class="v">$' + nfm.format(r.mensual) + '<span class="mono" style="font-size:.62rem; color:var(--ink-faint)"> /mes</span></div></div>';
 
     desglose.innerHTML = r.lineas.map(function (l) {
       return '<div class="row"><span>' + l.n + '</span><span class="mono">' + (Math.round(l.h * 10) / 10).toString().replace('.', ',') + ' h</span></div>';
@@ -3990,8 +4172,6 @@ function initDemos(scope) {
   });
 }
 
-/* El laboratorio muestra dos motores completos reusando las mismas
-   plantillas de las fichas, sin duplicar una línea de HTML. */
 $n(document, '[data-mount-directo]').forEach(function (slot) {
   const t = document.getElementById('tpl-' + slot.dataset.mountDirecto);
   if (t) slot.appendChild(t.content.cloneNode(true));
@@ -4002,6 +4182,176 @@ $n(document, '[data-mount]').forEach(function (slot) {
 });
 
 initDemos(document);
+
+/* ============================================================
+   CONTACTO — canales y formulario de diagnóstico
+   Los tres datos de abajo son lo único que hay que rellenar: un
+   canal con el valor vacío se esconde solo, así que la página
+   nunca publica un enlace roto. Sin FORMSPREE el formulario
+   sigue sirviendo: cae en un correo con todo escrito.
+   ============================================================ */
+const CONTACTO = {
+  correo: 'marcelopoblete16@gmail.com',
+  whatsapp: '',        // solo dígitos con código país, ej. '56912345678'
+  linkedin: '',        // URL completa del perfil
+  formspree: ''        // ej. 'https://formspree.io/f/xxxxxxxx'
+};
+
+(function () {
+  const canales = document.getElementById('ctcCanales');
+  if (canales) {
+    const wsp = canales.querySelector('[data-canal="wsp"]');
+    if (CONTACTO.whatsapp) {
+      const n = CONTACTO.whatsapp.replace(/\D/g, '');
+      wsp.href = 'https://wa.me/' + n + '?text=' +
+        encodeURIComponent('Hola Marcelo, vi tu sitio y quiero automatizar un proceso.');
+      wsp.querySelector('[data-canal-txt]').textContent =
+        '+' + n.replace(/^(\d{2})(\d)(\d{4})(\d{4})$/, '$1 $2 $3 $4');
+      wsp.hidden = false;
+    }
+    const li = canales.querySelector('[data-canal="linkedin"]');
+    if (CONTACTO.linkedin) {
+      li.href = CONTACTO.linkedin;
+      li.querySelector('[data-canal-txt]').textContent =
+        CONTACTO.linkedin.replace(/^https?:\/\/(www\.)?linkedin\.com\//, '').replace(/\/$/, '');
+      li.hidden = false;
+    }
+  }
+
+  const form = document.getElementById('ctcForm');
+  if (!form) return;
+  const aviso = document.getElementById('ctcAviso');
+
+  function decir(txt, clase) {
+    aviso.textContent = txt;
+    aviso.className = 'ctc-aviso' + (clase ? ' ' + clase : '');
+  }
+
+  form.addEventListener('submit', function (e) {
+    e.preventDefault();
+    const datos = {};
+    let falta = null;
+    $n(form, '[name]').forEach(function (el) {
+      const campo = el.closest('.ctc-campo');
+      const vacio = !el.value.trim();
+      campo.classList.toggle('error', vacio);
+      if (vacio && !falta) falta = el;
+      datos[el.name] = el.value.trim();
+    });
+    if (falta) { decir('Falta completar ese campo.', 'mal'); falta.focus(); return; }
+
+    const cuerpo = 'Nombre: ' + datos.nombre + '\nContacto: ' + datos.contacto +
+      '\n\nProceso:\n' + datos.mensaje;
+
+    if (!CONTACTO.formspree) {
+      /* Sin endpoint configurado el formulario no se pierde: abre el correo
+         con todo redactado y avisa que hay que darle enviar. */
+      window.location.href = 'mailto:' + CONTACTO.correo +
+        '?subject=' + encodeURIComponent('Diagnóstico 48 h — ' + datos.nombre) +
+        '&body=' + encodeURIComponent(cuerpo);
+      decir('Te abrí el correo con el mensaje escrito: dale enviar.', 'ok');
+      return;
+    }
+
+    decir('Enviando…');
+    fetch(CONTACTO.formspree, {
+      method: 'POST',
+      headers: { 'Accept': 'application/json', 'Content-Type': 'application/json' },
+      body: JSON.stringify(datos)
+    }).then(function (r) {
+      if (!r.ok) throw new Error(r.status);
+      form.reset();
+      decir('Listo. Te respondo dentro de 48 horas.', 'ok');
+    }).catch(function () {
+      decir('No salió. Escríbeme directo a ' + CONTACTO.correo, 'mal');
+    });
+  });
+})();
+
+/* ============================================================
+   BANCO DE ENSAYOS — conmutador de motores
+   Los once motores comparten un solo chasis: al cambiar de canal
+   se apagan los temporizadores del anterior, se clona la plantilla
+   del siguiente y se monta con el mismo initDemos de las fichas.
+   ============================================================ */
+(function () {
+  const banco = document.getElementById('banco');
+  if (!banco) return;
+  const canales = document.getElementById('bancoCanales');
+  const monta = document.getElementById('bancoMonta');
+  const elRef = document.getElementById('bancoRef');
+  const elTit = document.getElementById('bancoTitulo');
+  const elKick = document.getElementById('bancoKicker');
+  const play = document.getElementById('bancoPlay');
+  const reduce = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+  const lista = PROYECTOS.filter(function (p) { return document.getElementById('tpl-' + p.ref); });
+  if (!lista.length) { banco.remove(); return; }
+
+  let activo = -1, recorriendo = null;
+
+  lista.forEach(function (p, i) {
+    const b = document.createElement('button');
+    b.type = 'button';
+    b.className = 'banco-canal';
+    b.setAttribute('role', 'tab');
+    b.setAttribute('aria-selected', 'false');
+    b.innerHTML = '<span class="r">' + esc(p.ref) + '</span><span class="t">' + esc(p.titulo) + '</span>';
+    b.addEventListener('click', function () { detener(); montar(i); });
+    canales.appendChild(b);
+  });
+
+  const botones = $n(canales, '.banco-canal');
+
+  function montar(i) {
+    if (i === activo) return;
+    activo = i;
+    const p = lista[i];
+    botones.forEach(function (b, k) { b.setAttribute('aria-selected', k === i ? 'true' : 'false'); });
+
+    limpiarDemos();
+    monta.classList.add('cambiando');
+
+    const pintar = function () {
+      monta.innerHTML = '';
+      elRef.textContent = p.ref;
+      elTit.textContent = p.titulo;
+      elKick.textContent = p.kicker;
+      monta.appendChild(document.getElementById('tpl-' + p.ref).content.cloneNode(true));
+      initDemos(monta);
+      monta.classList.remove('cambiando');
+    };
+    if (reduce) pintar(); else setTimeout(pintar, 180);
+  }
+
+  function detener() {
+    if (!recorriendo) return;
+    clearInterval(recorriendo);
+    recorriendo = null;
+    play.setAttribute('aria-pressed', 'false');
+    play.querySelector('.txt').textContent = 'recorrer los 11';
+  }
+
+  play.addEventListener('click', function () {
+    if (recorriendo) { detener(); return; }
+    play.setAttribute('aria-pressed', 'true');
+    play.querySelector('.txt').textContent = 'detener recorrido';
+    recorriendo = setInterval(function () {
+      montar((activo + 1) % lista.length);
+      const b = botones[activo];
+      if (b && canales.scrollWidth > canales.clientWidth) {
+        canales.scrollTo({ left: b.offsetLeft - 20, behavior: reduce ? 'auto' : 'smooth' });
+      }
+    }, 9000);
+  });
+
+  /* Cualquier clic dentro del panel es alguien probando la demo:
+     el recorrido automático deja de robarle el control. */
+  monta.addEventListener('click', detener);
+  monta.addEventListener('input', detener);
+
+  montar(0);
+})();
 
 
 /* ============================================================
@@ -4169,548 +4519,9 @@ initDemos(document);
   });
 })();
 
-/* ============================================================
-   6. BOT-01 — unidad de ronda
-   Persigue su objetivo con un lazo de primer orden, se inclina con la
-   velocidad, se esconde detrás de las tarjetas, baja por el pasillo
-   entre columnas, se cuelga del borde de las fichas y —lo importante—
-   opera las demos él mismo: llega hasta el control, estira el brazo y
-   dispara el evento de verdad. Lo que ves después lo calculó la demo.
-   ============================================================ */
-(function () {
-  const capa = document.getElementById('botCapa');
-  const ui = document.getElementById('botUI');
-  const hit = document.getElementById('botHit');
-  const globo = document.getElementById('botGlobo');
-  const texto = document.getElementById('botTexto');
-  const inclina = capa && capa.querySelector('.bot-inclina');
-  if (!capa) return;
-
-  const reduce = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-  let apagado = false;
-  try { apagado = localStorage.getItem('bot') === 'off'; } catch (e) {}
-
-  const SECCION = {
-    inicio: ['Iniciando escaneo... Te presento una arquitectura diseñada para escalar y automatizar.', 'Todo lo que ves es calculado en tiempo real. Soy tu asistente técnico, ponte cómodo.', 'Bienvenido al futuro de tus operaciones. ¿Listo para optimizar tu negocio?'],
-    trabajo: ['Tengo 11 sistemas en producción. Explora las tarjetas y yo operaré las demos para que veas el motor real.', 'Aquí transformamos horas de trabajo manual en milisegundos de código puro. Cero margen de error.', 'Estos no son simples dashboards. Son plataformas completas que operan sin licencias de terceros.'],
-    laboratorio: ['Llegamos al laboratorio. Activa los parámetros y mira cómo calculo las variables en tiempo real.', 'Observa esto: interactúo con los controles y la interfaz responde al instante. Pura ingeniería.'],
-    servicios: ['Dato clave: si un proceso humano es repetitivo, un sistema lo hará mil veces mejor, más rápido y sin descanso.', 'Deja de pagar consultorías infladas. Mis automatizaciones van directo a tu base de datos y te pertenecen 100%.'],
-    presupuesto: ['Los números hablan por sí solos. Sin licencias anuales de RPA, sin pagos ocultos. Solo ingeniería que funciona.', 'Transparencia total. Calcula un estimado y verás por qué las soluciones personalizadas aplastan al software comercial.'],
-    perfil: ['Fui ensamblado para mostrarte el talento de mi creador. Él domina tanto el código como las operaciones reales del negocio.', 'Mi creador, Marcelo, es experto en procesos de alta complejidad y arquitecturas de datos. Un puente entre la gerencia y TI.'],
-    metodo: ['Regla 01: Nunca asumas nada sin medirlo. Mis sensores indican que esta metodología es infalible.'],
-    contacto: ['Escribe tu desafío, por complejo que parezca. Reduciremos tus cuellos de botella operativos de inmediato.', 'Contacta a Marcelo. Transforma tu caos administrativo en un sistema autónomo.']
-  };
-  const OCIO = ['Monitoreando flujos de datos en segundo plano... Optimización al 100%.', '¿Sabías que un script bien hecho puede ahorrarte miles de dólares al año?',
-    'Este entorno es un sistema dinámico. Aquí nada es solo diseño, todo tiene un propósito funcional.',
-    'Verificando la integridad estructural de la interfaz. Latencia cero.',
-    'Si me escondo, es porque estoy inspeccionando los componentes del DOM. Todo está en orden.', 'Escaneando rutinas. Si notas lentitud en tu empresa, yo puedo solucionarlo.'];
-  const DETRAS = ['Sobrevolando esta tarjeta. Miles de líneas de pura optimización debajo.', 'Inspección en vuelo sobre el DOM. ¡La arquitectura es impecable!',
-    'Desde acá arriba se aprecia cómo se construyó la matriz. Todo fluye a 60 frames por segundo.', 'Inspección técnica: 100% operativa. Reviso capa por capa.'];
-  const ASOMADO = ['Me estiro para mostrarte esta interfaz. ¡Mira cómo opera el sistema bajo estrés!',
-    'Observa bien los detalles. Esto es software de grado empresarial.',
-    'Tengo una vista privilegiada. No te pierdas ninguna de las demos, son el corazón del proyecto.'];
-  const PASILLO = ['Navegando entre los nodos de información. Todo está hiperconectado.', 'Desplazándome por la red. Listos para implementar la siguiente solución.'];
-
-  const bot = {
-    x: 60, y: 260, tx: 60, ty: 260, vx: 0, vy: 0,
-    rueda: 0, dir: 1, estado: 'carril', espera: 0, desde: 0, truco: null
-  };
-  let ultimoMsg = 0, seccionVista = '', temporizador = 0, ultimoUsuario = 0, ultimoTruco = null;
-
-  window.botLadoDer = false;
-  function carrilX() {
-    const ancho = Math.min(1180, window.innerWidth - Math.min(88, Math.max(28, window.innerWidth * 0.06)));
-    const margen = Math.max(14, (window.innerWidth - ancho) / 2 / 2 - 14);
-    return window.botLadoDer ? window.innerWidth - margen - 60 : margen;
-  }
-  function decir(t, ms) {
-    if (apagado) return;
-    texto.textContent = t;
-    globo.classList.add('on');
-    clearTimeout(temporizador);
-    temporizador = setTimeout(function () { globo.classList.remove('on'); }, ms || 6500);
-    ultimoMsg = Date.now();
-  }
-  function frase(l) { return l[Math.floor(Math.random() * l.length)]; }
-
-  /* ---------- Dónde poner la burbuja sin tapar lo que estás leyendo ----------
-     Mide el texto que hay a la vista y prueba ocho posiciones alrededor del
-     bot: se queda con la que cubre menos superficie de texto, desempatando
-     por cercanía. Solo se cambia de lugar si la alternativa es bastante
-     mejor, para que no ande saltando de un lado a otro mientras lees. */
-  let cacheTextos = [], cacheAl = 0, ladoGlobo = null;
-  function textosVisibles() {
-    if (Date.now() - cacheAl < 600) return cacheTextos;
-    cacheAl = Date.now();
-    cacheTextos = [];
-    $n(document, 'h1, h2, h3, h4, p, li, blockquote, .card, .cell, .d-table').forEach(function (el) {
-      if (el.closest('.bot-globo') || !el.textContent.trim()) return;
-      const r = el.getBoundingClientRect();
-      if (r.width < 40 || r.height < 12 || r.bottom < 0 || r.top > window.innerHeight) return;
-      cacheTextos.push(r);
-    });
-    return cacheTextos;
-  }
-  function areaTapada(x, y, w, h) {
-    let area = 0;
-    const lista = textosVisibles();
-    for (let i = 0; i < lista.length; i++) {
-      const r = lista[i];
-      const ix = Math.min(x + w, r.right) - Math.max(x, r.left);
-      const iy = Math.min(y + h, r.bottom) - Math.max(y, r.top);
-      if (ix > 0 && iy > 0) area += ix * iy;
-    }
-    const cw = capa.offsetWidth || 120, ch = capa.offsetHeight || 120;
-    const bx = Math.min(x + w, bot.x + cw) - Math.max(x, bot.x);
-    const by = Math.min(y + h, bot.y + ch) - Math.max(y, bot.y);
-    if (bx > 0 && by > 0) area += bx * by * 50;
-    return area;
-  }
-  function ubicarGlobo() {
-    const w = globo.offsetWidth || 268, h = globo.offsetHeight || 96;
-    const cw = capa.offsetWidth || 120, ch = capa.offsetHeight || 120;
-    const cx = bot.x + cw / 2, cy = bot.y + ch / 2;
-    const g = 14;
-    const cands = [
-      [bot.x + cw + g, cy - h / 2], [bot.x - w - g, cy - h / 2],
-      [cx - w / 2, bot.y - h - g], [cx - w / 2, bot.y + ch + g],
-      [bot.x + cw + g, bot.y - h - g], [bot.x - w - g, bot.y - h - g],
-      [bot.x + cw + g, bot.y + ch + g], [bot.x - w - g, bot.y + ch + g],
-      /* Refugios: si alrededor del bot está todo escrito, se va a un borde. */
-      [12, cy - h / 2], [window.innerWidth - w - 12, cy - h / 2],
-      [12, window.innerHeight - h - 16], [window.innerWidth - w - 12, window.innerHeight - h - 16]
-    ];
-    /* Primero se buscan las ocho posiciones pegadas al bot: la burbuja tiene
-       que leerse como algo que dice él. Solo si todas tapan más de un tercio
-       de su superficie se consideran los refugios de los bordes. */
-    const encaja = function (c) {
-      return [Math.max(12, Math.min(window.innerWidth - w - 12, c[0])),
-              Math.max(78, Math.min(window.innerHeight - h - 12, c[1]))];
-    };
-    let mejor = null, mejorP = Infinity, actualP = Infinity, mejorArea = Infinity;
-    const evaluar = function (desde, hasta, pesoDist) {
-      for (let i = desde; i < hasta; i++) {
-        const q = encaja(cands[i]);
-        const area = areaTapada(q[0], q[1], w, h);
-        const p = area + Math.hypot(q[0] + w / 2 - cx, q[1] + h / 2 - cy) * pesoDist;
-        if (i === ladoGlobo) actualP = p;
-        if (p < mejorP) { mejorP = p; mejorArea = area; mejor = [q[0], q[1], i]; }
-      }
-    };
-    evaluar(0, 8, 30);
-    if (mejorArea > w * h * 0.6) evaluar(8, cands.length, 6);
-    if (!mejor) return;
-    if (ladoGlobo !== null && mejorP > actualP * 0.75) {
-      /* El lado de siempre sigue siendo razonable: solo lo reencuadra. */
-      const c = cands[ladoGlobo];
-      mejor = [Math.max(12, Math.min(window.innerWidth - w - 12, c[0])),
-               Math.max(78, Math.min(window.innerHeight - h - 12, c[1])), ladoGlobo];
-    }
-    ladoGlobo = mejor[2];
-    globo.style.left = mejor[0].toFixed(0) + 'px';
-    globo.style.top = mejor[1].toFixed(0) + 'px';
-  }
-
-  function hojaAbierta() {
-    const s = document.getElementById('sheet');
-    return s && s.classList.contains('open');
-  }
-  function aLaVista(el) {
-    const r = el.getBoundingClientRect();
-    return r.width > 6 && r.height > 6 && r.top > 90 && r.bottom < window.innerHeight - 30 &&
-      r.left > 40 && r.right < window.innerWidth - 20;
-  }
-  function seccionActiva() {
-    let activa = 'inicio';
-    Object.keys(SECCION).forEach(function (id) {
-      const el = document.getElementById(id);
-      if (el && el.getBoundingClientRect().top <= window.innerHeight * 0.34) activa = id;
-    });
-    return activa;
-  }
-  function tarjetasVisibles() {
-    return $n(document, '.card').filter(function (c) {
-      const r = c.getBoundingClientRect();
-      return !c.classList.contains('hidden') && r.top > 80 && r.bottom < window.innerHeight - 40;
-    });
-  }
-
-  /* ---------- Trucos: qué puede operar el robot en lo que estás viendo ---------- */
-  const GUION = {
-    'data-umbral': 'Ajusto el umbral predictivo: las filas con menor confianza se desvían a revisión humana.',
-    'data-fuzzy-run': 'Iniciando motor de comparación difusa. Cada línea que ves es un cruce de datos real.',
-    'data-ruta-b': 'Cambiando variables de entorno. Recalculando ruta óptima en tiempo real.',
-    'data-ruta-go': 'Ejecutando algoritmo A*. Fíjate en la cantidad de nodos evaluados en microsegundos.',
-    'data-ruta-nodos': 'Revelando nodos explorados. Así es como el sistema toma decisiones eficientes.',
-    'data-bot-add': 'Agregando carga al planificador. Observa cómo redistribuye los recursos sin colapsar.',
-    'data-aud-fix': 'Ejecutando script de reparación automática. Las fuentes de datos se alinean al instante.',
-    'data-ea-reset': 'Restaurando dataset original para que compares la eficiencia y el delta del modelo.',
-    'data-sql': 'Modificando lógica de negocio SQL simulada. La interfaz se actualiza sin pestañear.',
-    'data-mes': 'Filtrando serie de tiempo. Todos los KPIs y gráficos se recalculan dinámicamente.',
-    'data-unidad': 'Segmentando por unidad de negocio. El pipeline analítico responde al instante.'
-  };
-  const GENERICO = {
-    range: 'Ajusto los parámetros y el modelo subyacente recalcula todo al vuelo.',
-    boton: 'Ejecutando proceso en vivo. Ningún dato aquí es simulado ni estático.',
-    tab: 'Cambio de contexto para mostrarte otra dimensión del procesamiento de datos.',
-    select: 'Modifico los filtros dinámicos. El sistema responde con precisión.',
-    check: 'Habilito reglas de negocio avanzadas. Mira cómo cambia el resultado.'
-  };
-  function guion(el, alt) {
-    const attrs = el.getAttributeNames ? el.getAttributeNames() : [];
-    for (let i = 0; i < attrs.length; i++) if (GUION[attrs[i]]) return GUION[attrs[i]];
-    return GENERICO[alt];
-  }
-
-  /* Desplaza un contenedor con una curva propia en vez de scrollIntoView:
-     es el mismo efecto y no depende del comportamiento de scroll suave. */
-  function bajarHasta(cont, destino) {
-    const rc = cont.getBoundingClientRect(), rd = destino.getBoundingClientRect();
-    const ini = cont.scrollTop, delta = (rd.top - rc.top) - 70;
-    let i = 0;
-    const t = setInterval(function () {
-      i++;
-      cont.scrollTop = ini + delta * (1 - Math.pow(1 - i / 18, 3));
-      if (i >= 18) clearInterval(t);
-    }, 24);
-  }
-
-  function deslizar(el) {
-    const min = Number(el.min || 0), max = Number(el.max || 100), act = Number(el.value);
-    const meta = act > (min + max) / 2 ? min + Math.round((max - min) * 0.18) : max - Math.round((max - min) * 0.18);
-    let v = act;
-    const t = setInterval(function () {
-      v += (meta - act) / 14;
-      if ((meta > act && v >= meta) || (meta < act && v <= meta)) { v = meta; clearInterval(t); }
-      el.value = Math.round(v);
-      el.dispatchEvent(new Event('input', { bubbles: true }));
-    }, 55);
-  }
-
-  function trucos(scope) {
-    const lista = [];
-    const agregar = function (el, tipo, accion) {
-      if (!el || !aLaVista(el) || el.disabled) return;
-      lista.push({ el: el, msg: guion(el, tipo), accion: accion });
-    };
-    $n(scope, 'input[type="range"]').forEach(function (el) { agregar(el, 'range', function () { deslizar(el); }); });
-    $n(scope, '.run-btn').forEach(function (el) { agregar(el, 'boton', function () { el.click(); }); });
-    $n(scope, '.d-tabs [data-tab]').forEach(function (el) {
-      if (el.getAttribute('aria-selected') !== 'true') agregar(el, 'tab', function () { el.click(); });
-    });
-    $n(scope, '.seg button').forEach(function (el) {
-      if (el.getAttribute('aria-pressed') !== 'true') agregar(el, 'boton', function () { el.click(); });
-    });
-    $n(scope, 'select').forEach(function (el) {
-      agregar(el, 'select', function () {
-        const n = el.options.length;
-        if (n < 2) return;
-        el.selectedIndex = (el.selectedIndex + 1 + Math.floor(Math.random() * (n - 1))) % n;
-        el.dispatchEvent(new Event('change', { bubbles: true }));
-      });
-    });
-    $n(scope, 'input[type="checkbox"]').forEach(function (el) {
-      agregar(el, 'check', function () { el.checked = !el.checked; el.dispatchEvent(new Event('change', { bubbles: true })); });
-    });
-    $n(scope, '[data-mes], [data-unidad]').forEach(function (el) {
-      agregar(el, 'boton', function () { el.dispatchEvent(new MouseEvent('click', { bubbles: true })); });
-    });
-    return lista;
-  }
-
-  function demostrar() {
-    if (apagado || reduce) return;
-    if (Date.now() - ultimoUsuario < 6000) return;
-    if (bot.estado === 'demo' || bot.estado === 'excursion' || bot.estado === 'pasillo') return;
-
-    const enFicha = hojaAbierta();
-    const scope = enFicha ? document.getElementById('sheetBody') : document.getElementById('laboratorio');
-    if (!scope) return;
-    if (!enFicha && seccionActiva() !== 'laboratorio') return;
-
-    let lista = trucos(scope).filter(function (t) { return t.el !== ultimoTruco; });
-
-    /* En una ficha la demo suele quedar bajo el pliegue. Si no alcanza a
-       ver ningún control, baja la hoja él mismo y lo intenta de nuevo. */
-    if (!lista.length && enFicha && !bot.bajando) {
-      const demo = scope.querySelector('.demo');
-      if (demo && !aLaVista(demo)) {
-        bot.bajando = true;
-        decir('Bajo a la demo. Esto hay que verlo funcionando.', 4200);
-        bajarHasta(scope, demo);
-        setTimeout(function () { bot.bajando = false; demostrar(); }, 1500);
-      }
-      return;
-    }
-    if (!lista.length) return;
-    const t = lista[Math.floor(Math.random() * lista.length)];
-    ultimoTruco = t.el;
-
-    bot.truco = t;
-    bot.estado = 'demo';
-    bot.espera = 0;
-    capa.classList.add('mirando');
-    capa.classList.add(enFicha ? 'sobrehoja' : 'frente');
-    if (enFicha) ui.classList.add('sobrehoja');
-  }
-
-  /* ---------- Movimiento ----------
-     El rumbo se recalcula en cada cuadro y la posición lo persigue con un
-     resorte amortiguado. Antes el objetivo se refrescaba dos veces por
-     segundo y la velocidad era proporcional a la distancia: en cada
-     refresco el bot pegaba un tirón y frenaba, y eso se veía a saltos.
-     El paso se normaliza por el tiempo real del cuadro, así el andar es
-     el mismo a 60 o a 144 Hz. */
-  let ultimoCuadro = 0;
-  function paso(ahora) {
-    if (apagado) return;
-    const t = ahora || performance.now();
-    const dt = ultimoCuadro ? Math.max(0.2, Math.min(3, (t - ultimoCuadro) / 16.67)) : 1;
-    ultimoCuadro = t;
-
-    rumboObjetivo();
-    const dx = bot.tx - bot.x, dy = bot.ty - bot.y;
-    if (reduce) {
-      bot.vx = dx; bot.vy = dy;
-      bot.x = bot.tx; bot.y = bot.ty;
-    } else {
-      const rigidez = (bot.estado === 'demo' ? 0.016 : 0.012) * dt;
-      const freno = Math.pow(0.88, dt);
-      bot.vx = (bot.vx + dx * rigidez) * freno;
-      bot.vy = (bot.vy + dy * rigidez) * freno;
-      bot.x += bot.vx * dt; bot.y += bot.vy * dt;
-    }
-    const v = Math.sqrt(bot.vx * bot.vx + bot.vy * bot.vy);
-    if (window.updateBot3D) window.updateBot3D(v, bot, capa);
-    if (bot.estado !== 'asomado') bot.rueda += v * 7;
-    if (Math.abs(dx) > 0.4) bot.dir = dx > 0 ? 1 : -1;
-
-    if (v > 1.2 && bot.estado === 'carril') {
-        capa.classList.add('nave');
-    } else if (v < 0.5) {
-        capa.classList.remove('nave');
-    }
-
-    /* Se inclina hacia donde acelera y da un pequeño rebote al andar. */
-    const inc = Math.max(-13, Math.min(13, -bot.vx * bot.dir * 1.9));
-    const bote = reduce ? 0 : Math.sin(Date.now() / 330) * (v > 0.6 ? 1.7 : 0.7);
-    if (inclina) inclina.setAttribute('transform', 'rotate(' + inc.toFixed(1) + ' 30 45) translate(0 ' + bote.toFixed(2) + ')');
-
-    capa.style.transform = 'translate3d(' + bot.x.toFixed(1) + 'px,' + bot.y.toFixed(1) + 'px,0) scaleX(' + bot.dir + ')';
-    
-    // Animación de piernas al caminar
-    if (!capa.classList.contains('nave')) {
-        const pierna1 = Math.sin(Date.now() / 150) * v * 2;
-        const pierna2 = Math.cos(Date.now() / 150) * v * 2;
-        const pIzq = capa.querySelector('.bot-pierna-izq');
-        const pDer = capa.querySelector('.bot-pierna-der');
-        if (pIzq) pIzq.setAttribute('transform', 'translate(0 ' + pierna1.toFixed(1) + ')');
-        if (pDer) pDer.setAttribute('transform', 'translate(0 ' + pierna2.toFixed(1) + ')');
-    }
-
-    hit.style.transform = 'translate3d(' + bot.x.toFixed(1) + 'px,' + bot.y.toFixed(1) + 'px,0)';
-    ubicarGlobo();
-
-    if (v < 0.4 && bot.estado === 'excursion' && !bot.espera) {
-      bot.espera = Date.now();
-      capa.classList.remove('mirando');
-      decir(frase(DETRAS), 4200);
-    }
-    /* Llegó al control: estira el brazo, lo acciona y se queda mirando. */
-    if (v < 0.5 && bot.estado === 'demo' && bot.truco && !bot.espera) {
-      bot.espera = Date.now();
-      capa.classList.add('pulsando');
-      decir(bot.truco.msg, 5200);
-      setTimeout(function () {
-        try { bot.truco.accion(); } catch (e) {}
-        setTimeout(function () { capa.classList.remove('pulsando'); }, 420);
-      }, 380);
-    }
-    if (bot.espera && Date.now() - bot.espera > (bot.estado === 'demo' ? 3400 : 3200)) {
-      bot.espera = 0;
-      bot.truco = null;
-      capa.classList.remove('pulsando', 'frente', 'sobrehoja', 'mirando');
-      ui.classList.remove('sobrehoja');
-      bot.estado = hojaAbierta() ? 'asomado' : 'carril';
-      if (bot.estado === 'asomado') { capa.classList.add('encima', 'trepa'); ui.classList.add('encima'); }
-    }
-    requestAnimationFrame(paso);
-  }
-
-  /* Adónde quiere ir en este cuadro. Es barato a propósito: corre 60 veces
-     por segundo, así que acá no va nada que recorra el documento. */
-  function rumboObjetivo() {
-    if (bot.estado === 'demo' && bot.truco) {
-      const r = bot.truco.el.getBoundingClientRect();
-      bot.tx = Math.max(6, r.left - 52);
-      bot.ty = r.top + r.height / 2 - 16;
-      return;
-    }
-    if (bot.estado === 'asomado') {
-      /* Entero al costado de la hoja: la capa va en z-index 90 y la hoja en
-         91, así que todo lo que invada el borde se ve cortado por la mitad. */
-      const hoja = document.getElementById('sheet').getBoundingClientRect();
-      const cw = capa.offsetWidth || 80;
-      const cabe = hoja.left > cw + 16;
-      /* Si no hay margen libre a la izquierda de la hoja, en vez de dejarlo
-         a medio tapar se pasa por encima de ella (92). */
-      capa.classList.toggle('sobrehoja', !cabe);
-      bot.tx = cabe ? hoja.left - cw - 10 : hoja.left + 12;
-      bot.ty = hoja.top + 120 + Math.sin((Date.now() - bot.desde) / 1500) * 130;
-      return;
-    }
-    if (bot.estado === 'carril') {
-      /* Ronda con más vaivén: se mueve en los dos ejes, no solo sube y baja. */
-      const t = Date.now();
-      bot.tx = carrilX() + Math.sin(t / 1900) * 26;
-      bot.ty = window.innerHeight * 0.40 + Math.sin(t / 1350) * 155 + Math.sin(t / 610) * 22;
-    } else if (bot.estado === 'pasillo') {
-      const t = (Date.now() - bot.desde) / 5200;
-      bot.ty = 110 + t * (window.innerHeight - 200);
-      if (t >= 1) bot.estado = 'carril';
-    }
-  }
-
-  /* Lo caro —mirar en qué sección vas— sigue yendo cada medio segundo. */
-  function rumbo() {
-    if (apagado || bot.estado === 'demo' || bot.estado === 'asomado') return;
-    const sec = seccionActiva();
-    if (sec !== seccionVista) {
-      seccionVista = sec;
-      if (Date.now() - ultimoMsg > 2500) decir(frase(SECCION[sec]));
-      capa.classList.add('mirando');
-      setTimeout(function () { capa.classList.remove('mirando'); }, 1800);
-    }
-  }
-
-  function excursion() {
-    if (apagado || bot.estado !== 'carril') return;
-    if (Date.now() - ultimoUsuario < 4000) return;
-    const vis = tarjetasVisibles();
-    if (!vis.length) return;
-    if (vis.length > 1 && Math.random() < 0.45) {
-      const r0 = vis[0].getBoundingClientRect(), r1 = vis[1].getBoundingClientRect();
-      if (Math.abs(r0.top - r1.top) < 30 && r1.left > r0.right) {
-        bot.tx = (r0.right + r1.left) / 2 - 31;
-        bot.desde = Date.now();
-        bot.estado = 'pasillo';
-        capa.classList.add('mirando');
-        setTimeout(function () { capa.classList.remove('mirando'); }, 2200);
-        if (Date.now() - ultimoMsg > 8000) decir(frase(PASILLO), 4200);
-        return;
-      }
-    }
-    const c = vis[Math.floor(Math.random() * vis.length)];
-    const r = c.getBoundingClientRect();
-    bot.tx = r.left + r.width / 2 - 31;
-    bot.ty = r.top + r.height / 2 - 25;
-    bot.estado = 'excursion';
-    capa.classList.add('mirando');
-  }
-
-  function tic() {
-    if (apagado || reduce) return;
-    if (bot.estado !== 'carril' || Math.random() > 0.4) return;
-    capa.classList.add('mirando');
-    setTimeout(function () { capa.classList.remove('mirando'); }, 900);
-    if (Math.random() < 0.3) window.botLadoDer = !window.botLadoDer;
-  }
-  function ocio() {
-    if (apagado || bot.estado === 'asomado' || bot.estado === 'demo') return;
-    if (Date.now() - ultimoMsg > 22000) decir(frase(OCIO), 5000);
-  }
-
-  const hoja = document.getElementById('sheet');
-  if (hoja) {
-    new MutationObserver(function () {
-      if (apagado) return;
-      const abierta = hoja.classList.contains('open');
-      if (abierta && bot.estado !== 'asomado' && bot.estado !== 'demo') {
-        bot.estado = 'asomado';
-        bot.desde = Date.now();
-        bot.espera = 0;
-        capa.classList.add('encima', 'trepa', 'mirando');
-        ui.classList.add('encima');
-        const r = hoja.getBoundingClientRect();
-        setTimeout(function () {
-          if (bot.estado === 'asomado' && r.left > 300) decir(frase(ASOMADO), 6000);
-        }, 1300);
-        setTimeout(demostrar, 5200);
-      } else if (!abierta && (bot.estado === 'asomado' || bot.estado === 'demo')) {
-        bot.estado = 'carril';
-        bot.truco = null; bot.espera = 0;
-        capa.classList.remove('encima', 'trepa', 'mirando', 'pulsando', 'sobrehoja', 'frente');
-        ui.classList.remove('encima', 'sobrehoja');
-      }
-    }).observe(hoja, { attributes: true, attributeFilter: ['class'] });
-  }
-
-  function encender() {
-    apagado = false;
-    try { localStorage.removeItem('bot'); } catch (e) {}
-    capa.style.display = ''; ui.style.display = '';
-    decir('Vuelvo a la ronda.', 4000);
-    requestAnimationFrame(paso);
-  }
-  document.getElementById('botApagar').addEventListener('click', function () {
-    apagado = true;
-    try { localStorage.setItem('bot', 'off'); } catch (e) {}
-    globo.classList.remove('on');
-    capa.style.display = 'none'; ui.style.display = 'none';
-    const pie = document.getElementById('botPie');
-    if (pie) pie.hidden = false;
-  });
-  const volver = document.getElementById('botVolver');
-  if (volver) volver.addEventListener('click', function () {
-    const pie = document.getElementById('botPie');
-    if (pie) pie.hidden = true;
-    encender();
-  });
-
-  hit.addEventListener('click', function () {
-    ultimoUsuario = 0;   // si te lo pide, va altiro
-    if (seccionActiva() === 'laboratorio' || hojaAbierta()) { demostrar(); return; }
-    decir(frase(OCIO.concat(['Reportando: ' + PROYECTOS.length + ' fichas, ' +
-      Object.keys(MOTORES).length + ' motores corriendo y cero dependencias externas.'])), 5200);
-  });
-  hit.addEventListener('mouseenter', function () { capa.classList.add('mirando'); });
-  hit.addEventListener('mouseleave', function () { if (bot.estado !== 'asomado') capa.classList.remove('mirando'); });
-
-  /* Si estás usando la página, se hace a un lado. */
-  ['pointerdown', 'keydown', 'wheel'].forEach(function (ev) {
-    document.addEventListener(ev, function (e) { if (e.isTrusted) ultimoUsuario = Date.now(); }, { capture: true, passive: true });
-  });
-  document.addEventListener('click', function (e) {
-    if (apagado || !e.isTrusted || Date.now() - ultimoMsg < 5000) return;
-    const chip = e.target.closest('.chip[data-filter]');
-    if (chip) decir('Filtrando por «' + chip.textContent.replace(/\d+$/, '').trim() + '». Los contadores salen de los propios datos.', 5000);
-  }, true);
-
-  if (apagado) {
-    capa.style.display = 'none'; ui.style.display = 'none';
-    const pie = document.getElementById('botPie');
-    if (pie) pie.hidden = false;
-  } else {
-    window.addEventListener('scroll', rumbo, { passive: true });
-    window.addEventListener('resize', rumbo);
-    setInterval(rumbo, 500);
-    setInterval(ocio, 9000);
-    setInterval(tic, 4200);
-    if (!reduce) {
-      setInterval(excursion, 13000);
-      setInterval(demostrar, 9000);
-    }
-    rumbo();
-    requestAnimationFrame(paso);
-    setTimeout(function () { decir(frase(SECCION.inicio), 7000); }, 2600);
-  }
-})();
-
 document.getElementById('year').textContent = new Date().getFullYear();
 </script>
 
-<!-- Three.js 3D Background & 3D Tilt UI Script -->
-<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
 <script>
 (function() {
   // 1. 3D Tilt Effect para las tarjetas y demos
@@ -4748,580 +4559,6 @@ document.getElementById('year').textContent = new Date().getFullYear();
       el.style.transition = 'opacity .6s var(--ease), border-color .25s var(--ease), background .25s var(--ease), box-shadow .25s var(--ease)'; // remove transform transition for instant tracking
     });
   });
-
-  // 2. Three.js Data Node Background
-  const canvas = document.createElement('canvas');
-  canvas.style.position = 'fixed';
-  canvas.style.top = '0';
-  canvas.style.left = '0';
-  canvas.style.width = '100vw';
-  canvas.style.height = '100vh';
-  canvas.style.zIndex = '-1';
-  canvas.style.pointerEvents = 'none';
-  canvas.style.opacity = '0.4';
-  document.body.prepend(canvas);
-
-  const scene = new THREE.Scene();
-  const camera = new THREE.PerspectiveCamera(60, window.innerWidth / window.innerHeight, 0.1, 1000);
-  camera.position.z = 200;
-
-  const renderer = new THREE.WebGLRenderer({ canvas: canvas, alpha: true, antialias: true });
-  renderer.setSize(window.innerWidth, window.innerHeight);
-  renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
-
-  // Particle System
-  const particleCount = 150;
-  const geometry = new THREE.BufferGeometry();
-  const positions = new Float32Array(particleCount * 3);
-  const velocities = [];
-
-  for (let i = 0; i < particleCount; i++) {
-    positions[i * 3] = (Math.random() - 0.5) * 400;
-    positions[i * 3 + 1] = (Math.random() - 0.5) * 400;
-    positions[i * 3 + 2] = (Math.random() - 0.5) * 400;
-    velocities.push({
-      x: (Math.random() - 0.5) * 0.2,
-      y: (Math.random() - 0.5) * 0.2,
-      z: (Math.random() - 0.5) * 0.2
-    });
-  }
-
-  geometry.setAttribute('position', new THREE.BufferAttribute(positions, 3));
-  
-  const isDark = document.documentElement.getAttribute('data-theme') === 'dark' || (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches);
-  const color = isDark ? 0xE4894A : 0xB04E17;
-
-  const material = new THREE.PointsMaterial({
-    size: 2,
-    color: color,
-    transparent: true,
-    opacity: 0.8,
-    sizeAttenuation: true
-  });
-
-  const particles = new THREE.Points(geometry, material);
-  scene.add(particles);
-
-  // Lines
-  const lineMaterial = new THREE.LineBasicMaterial({
-    color: color,
-    transparent: true,
-    opacity: 0.15
-  });
-
-  // Mouse interaction
-  let mouseX = 0;
-  let mouseY = 0;
-  let targetX = 0;
-  let targetY = 0;
-  const windowHalfX = window.innerWidth / 2;
-  const windowHalfY = window.innerHeight / 2;
-
-  document.addEventListener('mousemove', (e) => {
-    mouseX = (e.clientX - windowHalfX) * 0.1;
-    mouseY = (e.clientY - windowHalfY) * 0.1;
-  });
-
-  function animate() {
-    requestAnimationFrame(animate);
-
-    targetX = mouseX * 0.5;
-    targetY = mouseY * 0.5;
-    
-    // Lerp camera
-    camera.position.x += (targetX - camera.position.x) * 0.02;
-    camera.position.y += (-targetY - camera.position.y) * 0.02;
-    camera.lookAt(scene.position);
-
-    const positions = particles.geometry.attributes.position.array;
-    
-    // Update particle positions
-    for(let i = 0; i < particleCount; i++) {
-      positions[i * 3] += velocities[i].x;
-      positions[i * 3 + 1] += velocities[i].y;
-      positions[i * 3 + 2] += velocities[i].z;
-
-      // Bounce off boundaries
-      if(Math.abs(positions[i * 3]) > 200) velocities[i].x *= -1;
-      if(Math.abs(positions[i * 3 + 1]) > 200) velocities[i].y *= -1;
-      if(Math.abs(positions[i * 3 + 2]) > 200) velocities[i].z *= -1;
-    }
-    
-    particles.geometry.attributes.position.needsUpdate = true;
-    renderer.render(scene, camera);
-  }
-
-  animate();
-
-  window.addEventListener('resize', () => {
-    camera.aspect = window.innerWidth / window.innerHeight;
-    camera.updateProjectionMatrix();
-    renderer.setSize(window.innerWidth, window.innerHeight);
-  });
-})();
-</script>
-
-<script>
-// ==========================================
-// THREE.JS ROBOT (bot3D)
-// ==========================================
-(function() {
-  const botContainer = document.getElementById('bot3DContainer');
-  if (!botContainer || typeof THREE === 'undefined') return;
-
-  const botCanvas = document.createElement('canvas');
-  botContainer.appendChild(botCanvas);
-
-  const botRenderer = new THREE.WebGLRenderer({ canvas: botCanvas, alpha: true, antialias: true });
-  botRenderer.setSize(120, 120);
-  botRenderer.setPixelRatio(window.devicePixelRatio);
-
-  const botScene = new THREE.Scene();
-  const botCamera = new THREE.PerspectiveCamera(50, 1, 0.1, 1000);
-  botCamera.position.set(0, 5, 80);
-
-  const ironRed = 0xC80505; // Rojo medio, no tan oscuro ni tan brillante
-  const ironGold = 0xFFC600; // Oro intermedio
-  const cyanGlow = 0x00F0FF; 
-
-  // Valores intermedios de metalness y roughness
-  const redMat = new THREE.MeshPhysicalMaterial({ color: ironRed, metalness: 0.65, roughness: 0.2, clearcoat: 1.0 });
-  const goldMat = new THREE.MeshPhysicalMaterial({ color: ironGold, metalness: 0.75, roughness: 0.15, clearcoat: 1.0 });
-  const glowMat = new THREE.MeshStandardMaterial({ color: cyanGlow, emissive: cyanGlow, emissiveIntensity: 3.5 });
-  const jointMat = new THREE.MeshStandardMaterial({ color: 0x1A1A1A, metalness: 0.75, roughness: 0.45 });
-
-  // Procedural Detailed Iron Man builder and animation logic for index.html
-
-  function createLimb(r1, r2, len, mat) {
-    const geo = new THREE.CylinderGeometry(r1, r2, len, 32);
-    geo.translate(0, -len/2, 0);
-    return new THREE.Mesh(geo, mat);
-  }
-
-  function createArmorPlate(w, h, d, mat) {
-    const geo = new THREE.BoxGeometry(w, h, d);
-    return new THREE.Mesh(geo, mat);
-  }
-
-  const robotGroup = new THREE.Group();
-  botScene.add(robotGroup);
-
-  const botLight = new THREE.AmbientLight(0xffffff, 1.2);
-  botScene.add(botLight);
-  const botDirLight = new THREE.DirectionalLight(0xffffff, 2.2);
-  botDirLight.position.set(20, 40, 50);
-  botScene.add(botDirLight);
-
-  let mouseX = 0, mouseY = 0;
-  document.addEventListener('mousemove', e => {
-    mouseX = (e.clientX / window.innerWidth) * 2 - 1;
-    mouseY = -(e.clientY / window.innerHeight) * 2 + 1;
-  });
-
-  // --- CONSTRUCCIÓN PROCEDURAL MEGA-DETALLADA (IRON MAN) ---
-  const torsoGroup = new THREE.Group();
-  torsoGroup.position.y = 10;
-  robotGroup.add(torsoGroup);
-  const torso = torsoGroup; 
-
-  // Core Body Base (Spine area)
-  const spineGeo = new THREE.CylinderGeometry(3.5, 4, 11, 16);
-  const spine = new THREE.Mesh(spineGeo, jointMat);
-  spine.position.y = 0;
-  torsoGroup.add(spine);
-
-  // Chest Plate (Upper Torso)
-  const chestGeo = new THREE.BoxGeometry(11, 7.5, 7.5);
-  const chest = new THREE.Mesh(chestGeo, redMat);
-  chest.position.set(0, 3, 0.5);
-  // Pecho algo abultado
-  chestGeo.translate(0,0,1);
-  torsoGroup.add(chest);
-
-  // Chest gold plates (sides)
-  const chestSideGeo = new THREE.BoxGeometry(11.5, 5, 6);
-  const chestSide = new THREE.Mesh(chestSideGeo, goldMat);
-  chestSide.position.set(0, 3, -0.5);
-  torsoGroup.add(chestSide);
-
-  // Abdomen (Lower Torso Plates)
-  const abdomenGeo = new THREE.BoxGeometry(8, 6, 6.5);
-  const abdomen = new THREE.Mesh(abdomenGeo, redMat);
-  abdomen.position.y = -3.5;
-  abdomen.position.z = 1.2;
-  torsoGroup.add(abdomen);
-
-  const absGoldGeo = new THREE.BoxGeometry(6, 5, 7);
-  const absGold = new THREE.Mesh(absGoldGeo, goldMat);
-  absGold.position.y = -3.5;
-  torsoGroup.add(absGold);
-
-  // Arc Reactor
-  const coreGeo = new THREE.CylinderGeometry(1.6, 1.6, 1.2, 32);
-  coreGeo.rotateX(Math.PI / 2);
-  const core = new THREE.Mesh(coreGeo, glowMat);
-  core.position.set(0, 4.5, 5.2);
-  torsoGroup.add(core);
-  
-  // Arc Reactor outer ring (silver)
-  const coreRingGeo = new THREE.CylinderGeometry(2.1, 2.1, 1.0, 32);
-  coreRingGeo.rotateX(Math.PI / 2);
-  const coreRing = new THREE.Mesh(coreRingGeo, jointMat);
-  coreRing.position.set(0, 4.5, 5.0);
-  torsoGroup.add(coreRing);
-
-  // Arc Reactor Glow Light
-  const chestLight = new THREE.PointLight(cyanGlow, 1.5, 15);
-  chestLight.position.set(0, 4.5, 5.5);
-  torsoGroup.add(chestLight);
-
-  // --- HEAD ---
-  const headGroup = new THREE.Group();
-  headGroup.position.y = 8;
-  torsoGroup.add(headGroup);
-  const head = headGroup;
-
-  // Neck
-  const neckGeo = new THREE.CylinderGeometry(1.8, 2.2, 2.5, 16);
-  const neck = new THREE.Mesh(neckGeo, jointMat);
-  neck.position.y = -1;
-  headGroup.add(neck);
-
-  // Helmet Base (Red)
-  const helmetGeo = new THREE.BoxGeometry(6.2, 7.5, 7);
-  // Redondear un poco la parte superior de la cabeza
-  const helmetTopGeo = new THREE.CylinderGeometry(3.1, 3.1, 7, 32);
-  helmetTopGeo.rotateZ(Math.PI/2);
-  helmetTopGeo.translate(0, 3.5, 0);
-  const helmet = new THREE.Mesh(helmetGeo, redMat);
-  const helmetTop = new THREE.Mesh(helmetTopGeo, redMat);
-  helmet.add(helmetTop);
-  helmet.position.y = 3;
-  headGroup.add(helmet);
-
-  // Faceplate (Gold)
-  const faceplateGeo = new THREE.BoxGeometry(5.2, 6.2, 1.5);
-  const faceplate = new THREE.Mesh(faceplateGeo, goldMat);
-  faceplate.position.set(0, 3, 3.4);
-  faceplate.rotation.x = -0.15;
-  headGroup.add(faceplate);
-  
-  // Cheeks (Gold angled)
-  const cheekGeo = new THREE.BoxGeometry(1.5, 4, 1);
-  const cheekL = new THREE.Mesh(cheekGeo, goldMat);
-  cheekL.position.set(-2, 1.5, 3.6);
-  cheekL.rotation.y = -0.2;
-  headGroup.add(cheekL);
-  const cheekR = new THREE.Mesh(cheekGeo, goldMat);
-  cheekR.position.set(2, 1.5, 3.6);
-  cheekR.rotation.y = 0.2;
-  headGroup.add(cheekR);
-
-  // Eyes
-  const eyeGeo = new THREE.BoxGeometry(1.6, 0.5, 0.6);
-  const eyeL = new THREE.Mesh(eyeGeo, glowMat);
-  eyeL.position.set(-1.4, 1.5, 0.8);
-  eyeL.rotation.z = -0.18;
-  faceplate.add(eyeL);
-  
-  const eyeR = new THREE.Mesh(eyeGeo, glowMat);
-  eyeR.position.set(1.4, 1.5, 0.8);
-  eyeR.rotation.z = 0.18;
-  faceplate.add(eyeR);
-
-  // --- ARMS ---
-  const shoulderGeo = new THREE.SphereGeometry(3.2, 16, 16);
-  const padGeo = new THREE.BoxGeometry(5.5, 3.5, 5.5);
-  
-  // LEFT ARM
-  const shoulderL = new THREE.Mesh(shoulderGeo, redMat);
-  shoulderL.position.set(-7.5, 5, 0);
-  torsoGroup.add(shoulderL);
-  
-  const padL = new THREE.Mesh(padGeo, goldMat);
-  padL.position.y = 1.5;
-  padL.rotation.z = 0.2;
-  shoulderL.add(padL);
-
-  const upperArmL = createLimb(2.6, 2.0, 7, redMat);
-  shoulderL.add(upperArmL);
-  
-  const elbowL = new THREE.Mesh(new THREE.SphereGeometry(1.8, 16, 16), jointMat);
-  elbowL.position.set(0, -7, 0);
-  upperArmL.add(elbowL);
-  
-  const lowerArmL = createLimb(2.2, 1.6, 7.5, goldMat);
-  elbowL.add(lowerArmL);
-
-  const gauntletGeo = new THREE.CylinderGeometry(2.4, 1.8, 5, 16);
-  gauntletGeo.translate(0, -5, 0);
-  const gauntletL = new THREE.Mesh(gauntletGeo, redMat);
-  elbowL.add(gauntletL);
-
-  const handL = new THREE.Mesh(new THREE.BoxGeometry(2.2, 3, 2.2), redMat);
-  handL.position.set(0, -8.5, 0);
-  elbowL.add(handL);
-  
-  const repulsorHandL = new THREE.Mesh(new THREE.CylinderGeometry(0.8, 0.8, 0.2, 16), glowMat);
-  repulsorHandL.rotation.x = Math.PI/2;
-  repulsorHandL.position.set(0, -1, 1.1);
-  handL.add(repulsorHandL);
-
-  // RIGHT ARM
-  const shoulderR = new THREE.Mesh(shoulderGeo, redMat);
-  shoulderR.position.set(7.5, 5, 0);
-  torsoGroup.add(shoulderR);
-
-  const padR = new THREE.Mesh(padGeo, goldMat);
-  padR.position.y = 1.5;
-  padR.rotation.z = -0.2;
-  shoulderR.add(padR);
-
-  const upperArmR = createLimb(2.6, 2.0, 7, redMat);
-  shoulderR.add(upperArmR);
-  
-  const elbowR = new THREE.Mesh(new THREE.SphereGeometry(1.8, 16, 16), jointMat);
-  elbowR.position.set(0, -7, 0);
-  upperArmR.add(elbowR);
-  
-  const lowerArmR = createLimb(2.2, 1.6, 7.5, goldMat);
-  elbowR.add(lowerArmR);
-
-  const gauntletR = new THREE.Mesh(gauntletGeo, redMat);
-  elbowR.add(gauntletR);
-
-  const handR = new THREE.Mesh(new THREE.BoxGeometry(2.2, 3, 2.2), redMat);
-  handR.position.set(0, -8.5, 0);
-  elbowR.add(handR);
-
-  const repulsorHandR = new THREE.Mesh(new THREE.CylinderGeometry(0.8, 0.8, 0.2, 16), glowMat);
-  repulsorHandR.rotation.x = Math.PI/2;
-  repulsorHandR.position.set(0, -1, 1.1);
-  handR.add(repulsorHandR);
-
-  // --- LEGS ---
-  const pelvisGeo = new THREE.BoxGeometry(9.5, 4.5, 6.5);
-  const pelvis = new THREE.Mesh(pelvisGeo, goldMat);
-  pelvis.position.y = -8;
-  torsoGroup.add(pelvis);
-
-  // Red belt area
-  const beltGeo = new THREE.BoxGeometry(10, 2, 7);
-  const belt = new THREE.Mesh(beltGeo, redMat);
-  belt.position.y = 1;
-  pelvis.add(belt);
-
-  // Left Leg
-  const thighL = createLimb(3.2, 2.4, 9, redMat);
-  thighL.position.set(-3.2, -10, 0);
-  torsoGroup.add(thighL);
-  
-  const kneeGeo = new THREE.SphereGeometry(2.2, 16, 16);
-  const kneeL = new THREE.Mesh(kneeGeo, jointMat);
-  kneeL.position.set(0, -9, 0);
-  thighL.add(kneeL);
-  
-  const calfL = createLimb(2.6, 1.8, 10, goldMat);
-  kneeL.add(calfL);
-
-  const bootGeo = new THREE.CylinderGeometry(2.8, 2.2, 7, 16);
-  bootGeo.translate(0, -6.5, 0);
-  const bootL = new THREE.Mesh(bootGeo, redMat);
-  kneeL.add(bootL);
-
-  const footGeo = new THREE.BoxGeometry(3.5, 2, 5.5);
-  footGeo.translate(0, -1, 1);
-  const footL = new THREE.Mesh(footGeo, redMat);
-  footL.position.set(0, -10.5, 0);
-  kneeL.add(footL);
-
-  // Right Leg
-  const thighR = createLimb(3.2, 2.4, 9, redMat);
-  thighR.position.set(3.2, -10, 0);
-  torsoGroup.add(thighR);
-  
-  const kneeR = new THREE.Mesh(kneeGeo, jointMat);
-  kneeR.position.set(0, -9, 0);
-  thighR.add(kneeR);
-  
-  const calfR = createLimb(2.6, 1.8, 10, goldMat);
-  kneeR.add(calfR);
-
-  const bootR = new THREE.Mesh(bootGeo, redMat);
-  kneeR.add(bootR);
-
-  const footR = new THREE.Mesh(footGeo, redMat);
-  footR.position.set(0, -10.5, 0);
-  kneeR.add(footR);
-
-  // --- THRUSTERS (Jets) ---
-  function createJet(scale) {
-    const jetGroup = new THREE.Group();
-    const jetGeo = new THREE.ConeGeometry(0.8 * scale, 3 * scale, 16);
-    jetGeo.translate(0, -1.5 * scale, 0);
-    const jet = new THREE.Mesh(jetGeo, glowMat);
-    jetGroup.add(jet);
-    const light = new THREE.PointLight(cyanGlow, 2, 15);
-    light.position.y = -1;
-    jetGroup.add(light);
-    return jetGroup;
-  }
-
-  const jetArmL = createJet(0.8);
-  jetArmL.position.set(0, -1.5, 0);
-  handL.add(jetArmL);
-  
-  const jetArmR = createJet(0.8);
-  jetArmR.position.set(0, -1.5, 0);
-  handR.add(jetArmR);
-
-  const jetLegL = createJet(1.2);
-  jetLegL.position.set(0, -2, 0);
-  footL.add(jetLegL);
-
-  const jetLegR = createJet(1.2);
-  jetLegR.position.set(0, -2, 0);
-  footR.add(jetLegR);
-  
-  window.batteryState = {
-      failing: false,
-      nextFail: Date.now() + Math.random() * 10000 + 10000,
-      recoverAt: 0
-  };
-
-  window.updateBot3D = function(v, botData, capaElement) {
-    if (!window.batteryState) {
-       window.batteryState = {
-          failing: false,
-          nextFail: Date.now() + Math.random() * 10000 + 10000,
-          recoverAt: 0
-       };
-    }
-    
-    if (!window.batteryState.failing && Date.now() > window.batteryState.nextFail) {
-       window.batteryState.failing = true;
-       window.batteryState.recoverAt = Date.now() + 1500;
-    }
-    
-    if (window.batteryState.failing && Date.now() > window.batteryState.recoverAt) {
-       window.batteryState.failing = false;
-       window.batteryState.nextFail = Date.now() + Math.random() * 20000 + 15000;
-    }
-
-    const t = Date.now() / 150;
-    const isMoving = v > 0.1;
-    const isPulsando = capaElement.classList.contains('pulsando');
-    const isMirando = capaElement.classList.contains('mirando');
-    const isNave = capaElement.classList.contains('nave');
-
-    let tThighL = 0, tCalfL = 0, tThighR = 0, tCalfR = 0;
-    let tArmL = 0, tForearmL = 0, tArmR = 0, tForearmR = 0;
-    let tArmZL = -0.08, tArmZR = 0.08; 
-    let tTorsoX = -botData.vy * 0.05, tTorsoZ = -botData.vx * 0.05, tTorsoY = window.botLadoDer ? -Math.PI / 5 : Math.PI / 5;
-    let tHeadY = 0, tHeadX = 0;
-    let tTorsoPosY = 10; 
-
-    if (isMoving || isNave) {
-       tTorsoX = 0.15 - botData.vy * 0.03;
-       tTorsoY = 0; 
-       tTorsoZ = -botData.vx * 0.03 + Math.sin(t * 0.4) * 0.05;
-       tTorsoPosY = 12 + Math.sin(t * 0.55) * 1.6; 
-
-       tThighL = 0.15;
-       tCalfL = -0.08;
-       tThighR = 0.25;
-       tCalfR = -0.18;
-
-       tArmL = 0.4;
-       tArmR = 0.4;
-       tArmZL = -0.6;
-       tArmZR = 0.6;
-       tForearmL = 0.15;
-       tForearmR = 0.15;
-
-       tHeadY = -mouseX * 0.3;
-       tHeadX = Math.max(-0.2, Math.min(0.2, mouseY * 0.3));
-
-       jetArmL.visible = true;
-       jetArmR.visible = true;
-       jetLegL.visible = true;
-       jetLegR.visible = true;
-       
-       const flicker = 0.8 + Math.random() * 0.4;
-       jetArmL.scale.set(flicker, flicker, flicker);
-       jetArmR.scale.set(flicker, flicker, flicker);
-       jetLegL.scale.set(flicker, flicker, flicker);
-       jetLegR.scale.set(flicker, flicker, flicker);
-    } else {
-       jetArmL.visible = false;
-       jetArmR.visible = false;
-       jetLegL.visible = false;
-       jetLegR.visible = false;
-       
-       tTorsoX = 0.15; 
-       tTorsoZ = 0;
-       tTorsoPosY = 9 + Math.sin(t * 0.5) * 1.2; 
-       
-       tThighL = -0.3;
-       tCalfL = 0.15;
-       tThighR = -0.15;
-       tCalfR = 0.1;
-       
-       tArmL = 0.2;
-       tForearmL = -0.3;
-       tArmR = 0.1;
-       tForearmR = -0.2;
-       
-       if (!isPulsando && !isMirando) {
-          tHeadY = -mouseX * 0.8;
-          tHeadX = mouseY * 0.8 - 0.15;
-       }
-    }
-
-    if (window.batteryState.failing) {
-       tTorsoZ = Math.PI / 3.5; 
-       tTorsoPosY = -2;
-       tArmR = Math.PI / 1.2;
-       tArmL = Math.PI / 8;
-       tArmZR = 0.8;
-       tThighR = 0.2;
-       tCalfR = 0;
-       jetLegR.visible = false;
-       jetArmR.visible = false;
-    }
-
-    if (isPulsando) {
-       tArmR = -Math.PI / 1.5;
-       tForearmR = -0.2;
-       tArmZR = 0.05; 
-       tTorsoX += 0.3;
-    }
-    if (isMirando) {
-       tHeadY = window.botLadoDer ? -Math.PI / 4 : Math.PI / 4;
-    }
-
-    const lerp = 0.08; 
-    thighL.rotation.x += (tThighL - thighL.rotation.x) * lerp;
-    calfL.rotation.x += (tCalfL - calfL.rotation.x) * lerp;
-    thighR.rotation.x += (tThighR - thighR.rotation.x) * lerp;
-    calfR.rotation.x += (tCalfR - calfR.rotation.x) * lerp;
-    upperArmL.rotation.x += (tArmL - upperArmL.rotation.x) * lerp;
-    lowerArmL.rotation.x += (tForearmL - lowerArmL.rotation.x) * lerp;
-    upperArmR.rotation.x += (tArmR - upperArmR.rotation.x) * lerp;
-    lowerArmR.rotation.x += (tForearmR - lowerArmR.rotation.x) * lerp;
-    upperArmL.rotation.z += (tArmZL - upperArmL.rotation.z) * lerp;
-    upperArmR.rotation.z += (tArmZR - upperArmR.rotation.z) * lerp;
-
-    torso.rotation.x += (tTorsoX - torso.rotation.x) * lerp;
-    torso.rotation.z += (tTorsoZ - torso.rotation.z) * lerp;
-    torso.position.y += (tTorsoPosY - torso.position.y) * lerp;
-    robotGroup.rotation.y += (tTorsoY - robotGroup.rotation.y) * lerp;
-    head.rotation.y += (tHeadY - head.rotation.y) * lerp;
-    head.rotation.x += (tHeadX - head.rotation.x) * lerp;
-
-    botRenderer.render(botScene, botCamera);
-  };
-
 })();
 </script>
 
