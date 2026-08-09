@@ -360,8 +360,9 @@ nav.links a[aria-current="true"] { color: var(--accent); background: var(--accen
 }
 
 .hero h1 {
-  font-size: clamp(2.05rem, 6.6vw, 5rem);
+  font-size: clamp(2.05rem, 5.4vw, 4.1rem);
   line-height: 1.05; margin: 0 0 26px; letter-spacing: -0.022em;
+  text-wrap: balance;
   background: linear-gradient(135deg, var(--ink) 40%, var(--accent) 100%);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
@@ -1104,6 +1105,32 @@ input[type="range"]::-moz-range-thumb {
   .d-scroll .d-table { min-width: 520px; }
 }
 
+/* ============================================================
+   TESTIMONIOS
+   ============================================================ */
+.testi[hidden] { display: none; }
+.testi-grid {
+  display: grid; gap: 18px; margin-top: 20px;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+}
+.testi-card {
+  border: 1px solid var(--line); border-radius: 12px; background: var(--surface);
+  padding: 22px 22px 18px; display: grid; gap: 14px; align-content: start;
+  box-shadow: var(--shadow-lift);
+}
+.testi-card blockquote {
+  margin: 0; font-family: var(--display); font-size: 1.16rem; line-height: 1.4; color: var(--ink);
+}
+.testi-card blockquote::before { content: '\201C'; color: var(--accent); margin-right: 2px; }
+.testi-card blockquote::after { content: '\201D'; color: var(--accent); }
+.testi-card figcaption { display: grid; gap: 2px; padding-top: 12px; border-top: 1px solid var(--line-soft); }
+.testi-card .quien { font-size: 0.85rem; color: var(--ink); font-weight: 500; }
+.testi-card .cargo {
+  font-family: var(--mono); font-size: 0.63rem; letter-spacing: 0.08em;
+  text-transform: uppercase; color: var(--ink-faint);
+}
+.testi-card .dato { font-size: 0.78rem; color: var(--accent); }
+
 .svc-cta {
   margin-top: 34px; padding-top: 22px; border-top: 1px solid var(--line-soft);
   font-size: 0.92rem; color: var(--ink-faint);
@@ -1279,20 +1306,20 @@ input[type="range"]::-moz-range-thumb {
       <div>
         <p class="eyebrow"><span class="pulse" aria-hidden="true"></span> Disponible para proyectos · Santiago, Chile</p>
         <h1>
-          Tu tiempo es oro.<br>
-          Deja que las máquinas<br>
-          hagan el trabajo <em>aburrido</em>.
+          El cruce que te toma
+          media jornada debería
+          tomar <em>8 segundos</em>.
           <span class="rule" aria-hidden="true"></span>
         </h1>
         <p class="lede">
-          Transformo procesos manuales lentos, frustrantes y propensos a errores en sistemas inteligentes que operan en piloto automático. Imagina reducir días de trabajo a segundos. Sin consultorías eternas, sin software costoso. Solo soluciones a medida que devuelven a tu equipo lo más valioso: su tiempo para innovar.
+          Soy ingeniero en automatización y trabajo dentro de operaciones, no desde afuera: los problemas que resuelvo los he vivido en turno. Once sistemas míos corren hoy en producción en un hospital de alta complejidad — planillas, informes, conciliaciones y archivos de papel. Acá abajo puedes probarlos, no solo mirarlos.
         </p>
         <div class="cta-row">
-          <a class="btn primary" href="#trabajo">
-            Descubre mi trabajo
+          <a class="btn primary" href="#contacto">
+            Diagnóstico gratis en 48 h
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
           </a>
-          <a class="btn" href="mailto:marcelopoblete16@gmail.com">Cotiza tu solución</a>
+          <a class="btn" href="#laboratorio">Probar las demos</a>
         </div>
       </div>
 
@@ -1629,6 +1656,17 @@ input[type="range"]::-moz-range-thumb {
           </div>
         </div>
       </div>
+    </div>
+  </section>
+
+  <!-- ══════════════ TESTIMONIOS ══════════════
+       Se dibuja sola desde el array TESTIMONIOS del script. Con el
+       array vacío la sección entera se quita: nunca queda un hueco
+       ni un testimonio de relleno. -->
+  <section class="band testi" id="testimonios" hidden>
+    <div class="wrap">
+      <span class="tag-label">Lo que dicen de trabajar conmigo</span>
+      <div class="testi-grid" id="testiGrid"></div>
     </div>
   </section>
 
@@ -4182,6 +4220,31 @@ $n(document, '[data-mount]').forEach(function (slot) {
 });
 
 initDemos(document);
+
+/* ============================================================
+   TESTIMONIOS
+   Agregar uno = agregar un objeto acá. El campo `dato` es el que
+   convierte: un resultado medible vale más que un elogio. Con la
+   lista vacía la sección no se muestra.
+   ============================================================ */
+const TESTIMONIOS = [
+  // { texto: '…', quien: 'Nombre Apellido', cargo: 'Cargo · Empresa', dato: 'Resultado concreto' }
+];
+
+(function () {
+  const sec = document.getElementById('testimonios');
+  const grid = document.getElementById('testiGrid');
+  if (!sec || !TESTIMONIOS.length) return;
+  grid.innerHTML = TESTIMONIOS.map(function (t) {
+    return '<figure class="testi-card">' +
+      '<blockquote>' + esc(t.texto) + '</blockquote>' +
+      '<figcaption><span class="quien">' + esc(t.quien) + '</span>' +
+      '<span class="cargo">' + esc(t.cargo) + '</span>' +
+      (t.dato ? '<span class="dato">' + esc(t.dato) + '</span>' : '') +
+      '</figcaption></figure>';
+  }).join('');
+  sec.hidden = false;
+})();
 
 /* ============================================================
    CONTACTO — canales y formulario de diagnóstico
