@@ -628,6 +628,22 @@ nav.links a[aria-current="true"] { color: var(--accent); background: var(--accen
 }
 .proceso b { display: block; color: var(--ink); font-weight: 500; margin-bottom: 4px; }
 .proceso span { display: block; font-size: 0.9rem; color: var(--ink-soft); line-height: 1.55; }
+/* Enlace al demo de pantalla completa, dentro de la ficha técnica. */
+.demo-full {
+  display: inline-flex; align-items: center; gap: 7px; margin-top: 14px;
+  font-family: var(--mono); font-size: .74rem; letter-spacing: .04em; text-transform: uppercase;
+  color: var(--accent); text-decoration: none;
+  padding: 8px 14px; border: 1px solid var(--accent-line); border-radius: 999px;
+  transition: background .2s var(--ease), border-color .2s var(--ease);
+}
+.demo-full:hover { background: var(--accent-soft); border-color: var(--accent); }
+.demo-full svg { width: 14px; height: 14px; }
+.galeria-nota {
+  margin: 28px 0 0; font-size: .92rem; color: var(--ink-soft);
+  border-top: 1px solid var(--line-soft); padding-top: 18px; max-width: 72ch;
+}
+.galeria-nota a { color: var(--accent); font-weight: 600; }
+
 .result-box {
   border: 1px solid var(--accent-line); border-radius: 11px; background: var(--accent-soft);
   padding: 16px 18px; font-size: 0.95rem; color: var(--ink);
@@ -1406,6 +1422,10 @@ input[type="range"]::-moz-range-thumb {
 
         <div class="grid" id="cardGrid"></div>
         <div class="empty-state" id="emptyState" hidden>Ningún proyecto usa esa tecnología todavía.</div>
+
+        <p class="galeria-nota">Varios de estos sistemas tienen además un <a href="demos/index.html">demo de pantalla completa</a>
+          que se puede recorrer entero: doce vistas con datos ficticios, incluidos la firma digital de órdenes de trabajo,
+          el validador de activos por QR y los bots de extracción.</p>
       </div>
     </div>
   </section>
@@ -2092,7 +2112,7 @@ input[type="range"]::-moz-range-thumb {
    ============================================================ */
 const PROYECTOS = [
   {
-    ref: 'OPS-01', areas: ['python', 'web', 'ia'],
+    ref: 'OPS-01', demo: 'demos/panel-operacional/index.html', areas: ['python', 'web', 'ia'],
     titulo: 'Panel de control operacional',
     kicker: 'La herramienta interna se colgaba entera cada vez que alguien pedía un reporte pesado.',
     glyph: '<svg viewBox="0 0 48 48" fill="none" stroke="currentColor" stroke-width="1.6"><rect x="4" y="8" width="40" height="32" rx="3"/><path d="M4 17h40M13 8v9"/><circle cx="17" cy="28" r="5"/><path d="M27 24h13M27 30h9M27 35h13"/></svg>',
@@ -2117,7 +2137,7 @@ const PROYECTOS = [
     resultado: '<b>Seis módulos</b> en producción —automatización de tareas, monitoreo en vivo, mantenimiento de equipos y consulta a documentación con IA— sin un solo bloqueo desde la migración.'
   },
   {
-    ref: 'DATA-02', areas: ['python', 'datos'],
+    ref: 'DATA-02', demo: 'demos/pipeline-datos/index.html', areas: ['python', 'datos'],
     titulo: 'Pipeline de consolidación de datos',
     kicker: 'Dos sistemas escribían los mismos nombres distinto, y alguien los cruzaba a mano cada mes.',
     glyph: '<svg viewBox="0 0 48 48" fill="none" stroke="currentColor" stroke-width="1.6"><ellipse cx="14" cy="12" rx="9" ry="4"/><path d="M5 12v10c0 2.2 4 4 9 4s9-1.8 9-4V12"/><ellipse cx="34" cy="30" rx="9" ry="4"/><path d="M25 30v10c0 2.2 4 4 9 4s9-1.8 9-4V30"/><path d="M23 20h6a4 4 0 0 1 4 4v3" stroke-dasharray="2 2"/></svg>',
@@ -2142,7 +2162,7 @@ const PROYECTOS = [
     resultado: 'Proceso reproducible que valida y clasifica <b>miles de registros por corrida</b>, con trazabilidad de cada emparejamiento y saneo de rutas tras la revisión de seguridad.'
   },
   {
-    ref: 'BI-03', areas: ['bi', 'sql', 'datos'],
+    ref: 'BI-03', demo: 'demos/modelo-bi/index.html', areas: ['bi', 'sql', 'datos'],
     titulo: 'Modelos y tableros en Power BI',
     kicker: 'Los informes de gestión se armaban a mano en Excel, llegaban tarde y cada área tenía su propia versión de la cifra.',
     glyph: '<svg viewBox="0 0 48 48" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M6 42V26M17 42V14M28 42V32M39 42V8"/><path d="M4 42h40" stroke-width="1.2"/></svg>',
@@ -2169,7 +2189,7 @@ const PROYECTOS = [
     resultado: '<b>Tres modelos</b> construidos y actualizándose solos, con las cifras de gestión disponibles el primer día del mes en vez de la tercera semana.'
   },
   {
-    ref: 'OPS-04', areas: ['python', 'datos'],
+    ref: 'OPS-04', demo: 'demos/auditoria-inventario/index.html', areas: ['python', 'datos'],
     titulo: 'Validación y auditoría de inventario',
     kicker: 'Conciliar el inventario contra la auditoría externa tomaba horas y los errores pasaban colados.',
     glyph: '<svg viewBox="0 0 48 48" fill="none" stroke="currentColor" stroke-width="1.6"><rect x="7" y="5" width="26" height="34" rx="3"/><path d="M14 14h12M14 21h12M14 28h7"/><circle cx="34" cy="32" r="9"/><path d="m40.5 38.5 4 4"/></svg>',
@@ -2194,7 +2214,7 @@ const PROYECTOS = [
     resultado: 'La conciliación mensual pasó de <b>horas a minutos</b>, con historial versionado de cada revisión y evidencia de cada diferencia.'
   },
   {
-    ref: 'DATA-05', areas: ['sql', 'datos'],
+    ref: 'DATA-05', demo: 'demos/mantencion-sql/index.html', areas: ['sql', 'datos'],
     titulo: 'Mantenimiento de base de datos SQL Server',
     kicker: 'Los jobs nocturnos entregaban cifras equivocadas y fallaban sin avisarle a nadie.',
     glyph: '<svg viewBox="0 0 48 48" fill="none" stroke="currentColor" stroke-width="1.6"><ellipse cx="24" cy="10" rx="15" ry="5"/><path d="M9 10v12c0 2.8 6.7 5 15 5s15-2.2 15-5V10"/><path d="M9 22v12c0 2.8 6.7 5 15 5s15-2.2 15-5V22"/><path d="m33 36 3 3 6-6"/></svg>',
@@ -2218,7 +2238,7 @@ const PROYECTOS = [
     resultado: 'Jobs corriendo <b>sin errores cada noche</b> y cifras de reporting re-validadas contra el origen, más de 200.000 registros incluidos.'
   },
   {
-    ref: 'AI-06', areas: ['ia', 'python'],
+    ref: 'AI-06', demo: 'demos/asistente-contractual/index.html', areas: ['ia', 'python'],
     titulo: 'Asistente de IA local',
     kicker: 'Quería automatizar tareas puntuales sin pagar una suscripción por cada herramienta.',
     glyph: '<svg viewBox="0 0 48 48" fill="none" stroke="currentColor" stroke-width="1.6"><rect x="10" y="14" width="28" height="22" rx="4"/><circle cx="19" cy="24" r="2.4"/><circle cx="29" cy="24" r="2.4"/><path d="M20 30h8M24 14V8M18 8h12M4 22v6M44 22v6"/></svg>',
@@ -2241,7 +2261,7 @@ const PROYECTOS = [
     resultado: 'Asistente que ejecuta tareas reales sobre el sistema de archivos, con <b>respaldo local sin conexión</b> y sin costo mensual.'
   },
   {
-    ref: 'WEB-07', areas: ['python', 'web'],
+    ref: 'WEB-07', demo: 'demos/visor-planos/index.html', areas: ['python', 'web'],
     titulo: 'Visor de planos 2D/3D con wayfinding',
     kicker: 'Encontrar un recinto en un hospital de catorce pisos dependía de conocerse los planos de memoria.',
     glyph: '<svg viewBox="0 0 48 48" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M6 12 18 8l12 4 12-4v28l-12 4-12-4-6 2"/><path d="M18 8v28M30 12v28" stroke-dasharray="3 3"/><circle cx="14" cy="30" r="3" fill="currentColor" stroke="none"/><path d="M14 30c4 0 6-6 10-6s6 6 10 6" stroke-dasharray="2 2"/></svg>',
@@ -2474,8 +2494,15 @@ function abrirFicha(p, origen) {
   if (tpl) {
     slot.appendChild(tpl.content.cloneNode(true));
     initDemos(slot);
-  } else {
+  } else if (!p.demo) {
     slot.remove();
+  }
+  // Versión de pantalla completa del demo, cuando existe.
+  if (p.demo && slot.isConnected) {
+    slot.insertAdjacentHTML('beforeend',
+      '<a class="demo-full" href="' + p.demo + '" target="_blank" rel="noopener">' +
+      'Abrir el demo completo en una pestaña ' +
+      '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg></a>');
   }
 
   backdrop.classList.add('open');

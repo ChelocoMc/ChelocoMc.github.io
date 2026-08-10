@@ -1,0 +1,177 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Validación y auditoría de inventario — Demo</title>
+<link rel="stylesheet" href="../assets/demo.css">
+<style>
+  .regla { display: flex; gap: 10px; align-items: flex-start; padding: 8px 0; border-bottom: 1px solid var(--border); font-size: 13.5px; }
+  .regla:last-child { border-bottom: none; }
+  .regla .mark { flex: none; font-weight: 700; }
+  .dif { color: var(--bad); font-weight: 600; }
+  .correo { font-family: var(--mono); font-size: 12px; white-space: pre-wrap; background: var(--surface-2);
+            border: 1px solid var(--border); border-radius: 8px; padding: 14px; }
+</style>
+</head>
+<body>
+<div class="demo-flag"><b>Demo</b><span>Inventario, zonas y auditoría inventados para este demo.</span><a href="../index.html">Todos los demos</a></div>
+
+<div class="wrap">
+  <header class="page-head">
+    <div class="ref">Ref. OPS-04</div>
+    <h1>Validación y auditoría de inventario</h1>
+    <p>Cada mes hay que cuadrar el inventario operativo contra el informe del auditor externo. Aquí las
+       reglas de negocio se revisan solas, el PDF del auditor se lee con OCR y las diferencias salen
+       listadas — con el borrador del correo ya escrito.</p>
+    <div class="tags">
+      <span class="tag">Python</span><span class="tag">Excel (COM)</span><span class="tag">OCR · PyMuPDF</span>
+      <span class="tag">Flask</span><span class="tag">openpyxl</span>
+    </div>
+  </header>
+
+  <div class="app">
+    <div class="app-bar"><span class="dots"><i></i><i></i><i></i></span><span class="app-url">localhost:5300 — Auditoría de inventario</span></div>
+    <div class="app-body">
+      <div class="tabs">
+        <button data-panel="a-reglas">Validar Excel</button>
+        <button data-panel="a-pdf">Comparar con auditor</button>
+        <button data-panel="a-hist">Histórico</button>
+      </div>
+
+      <section id="a-reglas" class="panel">
+        <div class="row" style="margin-bottom:12px">
+          <button class="btn" id="run-reglas">▶ Ejecutar validación</button>
+          <span class="muted" id="msg-reglas">inventario_operativo_2026-07.xlsx cargado (1.842 filas).</span>
+        </div>
+        <div class="card"><h3>Reglas de negocio</h3><div id="reglas"></div></div>
+        <p class="note">La regla que estaba mal desde el principio: la clasificación de zonas no dependía de
+           la columna «Zona» del Excel, sino de la categoría real del área. Ese supuesto equivocado generaba
+           diferencias contra la auditoría externa todos los meses. La columna quedó como fórmula contra una
+           base maestra, así que corregir la base actualiza los seis meses de reportes de una vez.</p>
+      </section>
+
+      <section id="a-pdf" class="panel" hidden>
+        <div class="grid" style="grid-template-columns:1fr 1fr">
+          <div class="card">
+            <h3>Excel operativo</h3>
+            <div class="table-scroll"><table><tbody id="t-excel"></tbody></table></div>
+          </div>
+          <div class="card">
+            <h3>Informe del auditor (OCR del PDF)</h3>
+            <div class="table-scroll"><table><tbody id="t-pdf"></tbody></table></div>
+          </div>
+        </div>
+        <div class="card" style="margin-top:14px">
+          <div class="spread"><h3 style="margin:0">Diferencias detectadas</h3><span class="pill bad" id="total-dif">—</span></div>
+          <div class="table-scroll" style="margin-top:8px">
+            <table><thead><tr><th>Zona</th><th>Excel</th><th>Auditor</th><th>Diferencia</th></tr></thead><tbody id="t-dif"></tbody></table>
+          </div>
+          <button class="btn" id="btn-correo" style="margin-top:12px">Redactar correo con las diferencias</button>
+          <div class="correo" id="correo" style="margin-top:12px" hidden></div>
+        </div>
+        <p class="note">Cuando el OCR y el Excel discrepan, la fuente de verdad es el Excel operativo:
+           el PDF escaneado confunde dígitos y no se puede reprocesar. La comparación es celda a celda,
+           no total contra total, para saber exactamente qué zona revisar.</p>
+      </section>
+
+      <section id="a-hist" class="panel" hidden>
+        <div class="table-scroll">
+          <table>
+            <thead><tr><th>Período</th><th>Diferencias</th><th>Resultado</th><th>Revisión</th></tr></thead>
+            <tbody>
+              <tr><td>Julio 2026</td><td>7 unidades</td><td><span class="pill warn">zona B por revisar</span></td><td class="muted">v12 · hoy</td></tr>
+              <tr><td>Junio 2026</td><td>0</td><td><span class="pill ok">conciliado</span></td><td class="muted">v11</td></tr>
+              <tr><td>Mayo 2026</td><td>7 unidades</td><td><span class="pill ok">corregido y conciliado</span></td><td class="muted">v10</td></tr>
+              <tr><td>Abril 2026</td><td>0</td><td><span class="pill ok">conciliado</span></td><td class="muted">v9</td></tr>
+              <tr><td>Marzo 2026</td><td>2 unidades</td><td><span class="pill ok">corregido y conciliado</span></td><td class="muted">v8</td></tr>
+            </tbody>
+          </table>
+        </div>
+        <p class="note">Cada corrida queda versionada con su Excel de entrada, así que una diferencia
+           reclamada tres meses después se puede reconstruir tal cual estaba.</p>
+      </section>
+    </div>
+  </div>
+
+  <nav class="footer-nav">
+    <a href="../index.html">← Todos los demos</a>
+    <span>Inventario ficticio</span>
+  </nav>
+</div>
+
+<script src="../assets/demo.js"></script>
+<script>
+const REGLAS = [
+  ['Stock total cuadra con la hoja maestra', 'ok', '1.842 filas · 0 descuadres'],
+  ['Sin categorías vacías', 'bad', 'Zona A: 3 filas sin categoría asignada'],
+  ['Sin stock negativo', 'ok', '0 filas bajo cero'],
+  ['Códigos de activo únicos', 'warn', '2 códigos duplicados (corregidos automáticamente)'],
+  ['Zonas cruzadas contra base maestra', 'ok', 'todas las áreas resueltas por categoría real'],
+  ['Formato de fecha uniforme', 'ok', 'convertidas 41 celdas de texto a fecha'],
+];
+
+const inventario = [
+  ['Zona A', 420, 420], ['Zona B', 318, 311], ['Zona C', 265, 265],
+  ['Zona D', 194, 194], ['Bodega central', 645, 645],
+];
+
+const cont = document.getElementById('reglas');
+function pintarReglas(hasta = 0) {
+  cont.innerHTML = REGLAS.slice(0, hasta).map(([txt, st, det]) => {
+    const mark = st === 'ok' ? '✓' : st === 'warn' ? '!' : '✕';
+    const color = st === 'ok' ? 'var(--ok)' : st === 'warn' ? 'var(--warn)' : 'var(--bad)';
+    return `<div class="regla"><span class="mark" style="color:${color}">${mark}</span>
+            <span>${txt}<br><span class="muted" style="font-size:12.5px">${det}</span></span></div>`;
+  }).join('') || '<span class="muted">Sin validación ejecutada.</span>';
+}
+pintarReglas();
+
+document.getElementById('run-reglas').addEventListener('click', async (ev) => {
+  ev.currentTarget.disabled = true;
+  for (let i = 1; i <= REGLAS.length; i++) {
+    pintarReglas(i);
+    document.getElementById('msg-reglas').textContent = `Evaluando regla ${i} de ${REGLAS.length}…`;
+    await sleep(420);
+  }
+  document.getElementById('msg-reglas').textContent = '6 reglas evaluadas · 1 error, 1 corrección automática.';
+  ev.currentTarget.disabled = false;
+});
+
+/* --- Comparación con el auditor --- */
+document.getElementById('t-excel').innerHTML = inventario.map(([z, e]) =>
+  `<tr><td>${z}</td><td style="text-align:right">${e}</td></tr>`).join('');
+document.getElementById('t-pdf').innerHTML = inventario.map(([z, , p]) =>
+  `<tr><td>${z}</td><td style="text-align:right">${p}</td></tr>`).join('');
+
+const difs = inventario.filter(([, e, p]) => e !== p);
+document.getElementById('t-dif').innerHTML = difs.length
+  ? difs.map(([z, e, p]) => `<tr><td>${z}</td><td>${e}</td><td>${p}</td><td class="dif">${e - p > 0 ? '+' : ''}${e - p}</td></tr>`).join('')
+  : '<tr><td colspan="4" class="muted">Sin diferencias.</td></tr>';
+document.getElementById('total-dif').textContent =
+  difs.reduce((a, [, e, p]) => a + Math.abs(e - p), 0) + ' unidades';
+
+document.getElementById('btn-correo').addEventListener('click', () => {
+  const el = document.getElementById('correo');
+  el.hidden = false;
+  el.textContent =
+`Para   : auditoria.externa@ejemplo.cl
+Asunto : Diferencias inventario julio 2026 — conciliación
+
+Estimados:
+
+Al cruzar el inventario operativo con el informe de auditoría de julio
+se detectó la siguiente diferencia:
+
+  Zona B — Excel operativo: 318 · Informe auditoría: 311 · Diferencia: 7 unidades
+
+Las zonas A, C, D y bodega central cuadran sin observaciones. Adjuntamos
+el detalle por código de activo de la zona B para su revisión.
+
+Saludos,
+Coordinación de mantenimiento
+(correo de ejemplo · destinatario ficticio)`;
+});
+</script>
+</body>
+</html>

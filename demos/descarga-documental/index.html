@@ -1,0 +1,138 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Descarga documental masiva — Demo</title>
+<link rel="stylesheet" href="../assets/demo.css">
+<style>
+  .arbol { font-family: var(--mono); font-size: 12.5px; line-height: 1.7; }
+  .arbol .dir { color: var(--accent); }
+  .arbol .f { color: var(--text-dim); }
+</style>
+</head>
+<body>
+<div class="demo-flag"><b>Demo</b><span>Órdenes, archivos y carpetas inventados. No se descarga nada.</span><a href="../index.html">Todos los demos</a></div>
+
+<div class="wrap">
+  <header class="page-head">
+    <div class="ref">Ref. RPA-13</div>
+    <h1>Descarga documental masiva</h1>
+    <p>Los respaldos de cada orden de trabajo —fotos, informes, actas— viven dentro del sistema de gestión,
+       uno por uno, sin forma de exportarlos. Cuando llega una auditoría hay que bajar cientos. El bot lo
+       hace por lote y los deja ordenados en carpetas por año y número.</p>
+    <div class="tags">
+      <span class="tag">Python</span><span class="tag">Playwright</span><span class="tag">Reanudable</span>
+      <span class="tag">Variables de entorno</span>
+    </div>
+  </header>
+
+  <div class="app">
+    <div class="app-bar"><span class="dots"><i></i><i></i><i></i></span><span class="app-url">descarga_adjuntos.py --input avisos.xlsx</span></div>
+    <div class="app-body">
+      <div class="grid" style="grid-template-columns:repeat(auto-fit,minmax(150px,1fr)); margin-bottom:14px">
+        <div class="card"><h3>Entrada</h3><div style="font-size:13.5px">avisos.xlsx<br><span class="muted">8 órdenes en cola</span></div></div>
+        <div class="card"><h3>Descargados</h3><div class="stat" id="s-ok">0</div></div>
+        <div class="card"><h3>Sin adjuntos</h3><div class="stat" id="s-vacio">0</div></div>
+        <div class="card"><h3>Peso total</h3><div class="stat" id="s-peso">0 MB</div></div>
+      </div>
+
+      <div class="row" style="margin-bottom:12px">
+        <button class="btn" id="run">▶ Iniciar descarga</button>
+        <button class="btn ghost" id="reanudar">Reanudar corrida interrumpida</button>
+        <span class="muted" id="msg">En espera.</span>
+      </div>
+      <div class="bar" style="margin-bottom:14px"><i id="prog" style="width:0%"></i></div>
+
+      <div class="grid" style="grid-template-columns:1.2fr 1fr">
+        <div class="card"><h3>Bitácora</h3><pre class="log" id="log" style="max-height:300px"></pre></div>
+        <div class="card"><h3>Carpeta de salida</h3><div class="arbol" id="arbol"><span class="muted">Vacía.</span></div></div>
+      </div>
+
+      <p class="note">Dos decisiones que hacen la diferencia en una corrida larga: las credenciales se leen
+         de variables de entorno y nunca quedan en el código, y cada archivo ya bajado se saltea, así que
+         si la corrida se corta a la orden 300 se retoma ahí en vez de empezar de nuevo.</p>
+    </div>
+  </div>
+
+  <nav class="footer-nav">
+    <a href="../index.html">← Todos los demos</a>
+    <span>Documentos ficticios</span>
+  </nav>
+</div>
+
+<script src="../assets/demo.js"></script>
+<script>
+const ordenes = [
+  { n: '2026-04801', arch: ['foto_antes.jpg', 'foto_despues.jpg', 'informe_tecnico.pdf'], mb: 4.2 },
+  { n: '2026-04802', arch: ['acta_recepcion.pdf'], mb: 0.8 },
+  { n: '2026-04803', arch: [], mb: 0 },
+  { n: '2026-04804', arch: ['foto_tablero.jpg', 'checklist.pdf'], mb: 2.6 },
+  { n: '2026-04805', arch: ['informe_tecnico.pdf', 'certificado.pdf'], mb: 1.9 },
+  { n: '2026-04806', arch: [], mb: 0 },
+  { n: '2026-04807', arch: ['foto_antes.jpg', 'foto_despues.jpg'], mb: 3.4 },
+  { n: '2026-04808', arch: ['informe_tecnico.pdf'], mb: 1.1 },
+];
+
+let yaBajadas = new Set();
+
+async function correr(desde) {
+  const log = document.getElementById('log');
+  const arbol = document.getElementById('arbol');
+  if (desde === 0) { log.textContent = ''; arbol.innerHTML = ''; yaBajadas = new Set(); }
+  let ok = +document.getElementById('s-ok').textContent;
+  let vacio = +document.getElementById('s-vacio').textContent;
+  let peso = parseFloat(document.getElementById('s-peso').textContent) || 0;
+
+  await logLines(log, ['credenciales leídas de variables de entorno', 'sesión iniciada'], 260);
+  const salida = [];
+
+  for (let i = desde; i < ordenes.length; i++) {
+    const o = ordenes[i];
+    document.getElementById('prog').style.width = Math.round(((i + 1) / ordenes.length) * 100) + '%';
+    document.getElementById('msg').textContent = `Orden ${o.n} (${i + 1}/${ordenes.length})…`;
+    await sleep(340);
+
+    if (yaBajadas.has(o.n)) { log.textContent += `\n[${o.n}] ya descargada — se omite`; continue; }
+    if (!o.arch.length) {
+      vacio++;
+      log.textContent += `\n[${o.n}] sin adjuntos`;
+    } else {
+      ok += o.arch.length; peso += o.mb;
+      log.textContent += `\n[${o.n}] ${o.arch.length} archivo(s) · ${o.mb.toFixed(1)} MB`;
+      salida.push(`<div><span class="dir">salida/2026/${o.n}/</span></div>` +
+        o.arch.map((a) => `<div class="f">&nbsp;&nbsp;└─ ${a}</div>`).join(''));
+      arbol.innerHTML = salida.join('');
+    }
+    yaBajadas.add(o.n);
+    document.getElementById('s-ok').textContent = ok;
+    document.getElementById('s-vacio').textContent = vacio;
+    document.getElementById('s-peso').textContent = peso.toFixed(1) + ' MB';
+    log.scrollTop = log.scrollHeight;
+  }
+  await logLines(log, [`corrida terminada · ${ok} archivos · ${peso.toFixed(1)} MB`], 260);
+  document.getElementById('msg').textContent = `${ok} archivos descargados en ${ordenes.length} órdenes.`;
+}
+
+document.getElementById('run').addEventListener('click', async (ev) => {
+  ev.currentTarget.disabled = true;
+  document.getElementById('s-ok').textContent = '0';
+  document.getElementById('s-vacio').textContent = '0';
+  document.getElementById('s-peso').textContent = '0 MB';
+  await correr(0);
+  ev.currentTarget.disabled = false;
+});
+
+document.getElementById('reanudar').addEventListener('click', async (ev) => {
+  ev.currentTarget.disabled = true;
+  const log = document.getElementById('log');
+  log.textContent = '';
+  // Simula una corrida previa cortada a la mitad
+  ordenes.slice(0, 4).forEach((o) => yaBajadas.add(o.n));
+  await logLines(log, ['corrida anterior detectada: 4 órdenes ya procesadas', 'retomando desde 2026-04805'], 320);
+  await correr(4);
+  ev.currentTarget.disabled = false;
+});
+</script>
+</body>
+</html>

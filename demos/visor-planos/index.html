@@ -1,0 +1,292 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Visor de planos con wayfinding — Demo</title>
+<link rel="stylesheet" href="../assets/demo.css">
+<style>
+  .plano { width: 100%; height: auto; background: var(--surface-2); border: 1px solid var(--border); border-radius: 10px; display: block; }
+  .sala { fill: var(--surface); stroke: var(--border); stroke-width: 1.5; }
+  .sala.destino { fill: var(--accent-soft); stroke: var(--accent); }
+  .sala-txt { font: 9px var(--sans); fill: var(--text-dim); pointer-events: none; }
+  .pasillo { stroke: var(--border); stroke-width: 12; stroke-linecap: round; stroke-linejoin: round; fill: none; }
+  .ruta { stroke: var(--accent); stroke-width: 4; fill: none; stroke-linecap: round; stroke-linejoin: round;
+          stroke-dasharray: 1000; stroke-dashoffset: 1000; animation: traza 1.4s ease forwards; }
+  @keyframes traza { to { stroke-dashoffset: 0; } }
+  .marca { fill: var(--accent); }
+  .puerta { stroke: var(--ok); stroke-width: 3; stroke-linecap: round; }
+  .pisos { display: flex; flex-wrap: wrap; gap: 6px; }
+  .pisos button { font: inherit; font-size: 13px; padding: 5px 12px; border-radius: 8px; border: 1px solid var(--border);
+                  background: var(--surface); color: var(--text-dim); cursor: pointer; }
+  .pisos button.on { background: var(--accent); border-color: var(--accent); color: #fff; }
+  .pasos { list-style: none; margin: 0; padding: 0; counter-reset: p; }
+  .pasos li { display: flex; gap: 10px; padding: 8px 0; border-bottom: 1px solid var(--border); font-size: 13.5px; }
+  .pasos li:last-child { border-bottom: none; }
+  .pasos li::before { counter-increment: p; content: counter(p); flex: none; width: 22px; height: 22px; border-radius: 50%;
+                      background: var(--accent-soft); color: var(--accent); font-size: 11px; font-weight: 700;
+                      display: grid; place-items: center; }
+  .split { display: grid; gap: 16px; grid-template-columns: 1.6fr 1fr; }
+  @media (max-width: 780px) { .split { grid-template-columns: 1fr; } }
+</style>
+</head>
+<body>
+<div class="demo-flag"><b>Demo</b><span>Planta esquemática inventada. No corresponde a ningún edificio real.</span><a href="../index.html">Todos los demos</a></div>
+
+<div class="wrap">
+  <header class="page-head">
+    <div class="ref">Ref. WEB-07</div>
+    <h1>Visor de planos con wayfinding</h1>
+    <p>Buscas un recinto por su nombre y el visor te dice cómo llegar: traza la ruta por el centro
+       del pasillo, cambia de piso por el ascensor correcto y describe el camino en lenguaje natural.
+       El grafo de pasillos se construye desde el plano, no se dibuja a mano.</p>
+    <div class="tags">
+      <span class="tag">Python</span><span class="tag">FastAPI</span><span class="tag">PyMuPDF</span>
+      <span class="tag">OpenCV</span><span class="tag">A* sobre grafos</span><span class="tag">JavaScript</span>
+    </div>
+  </header>
+
+  <div class="app">
+    <div class="app-bar"><span class="dots"><i></i><i></i><i></i></span><span class="app-url">localhost:8080 — Visor de planos · Cómo llegar</span></div>
+    <div class="app-body">
+      <div class="split">
+        <div>
+          <div class="row" style="margin-bottom:10px">
+            <span class="muted" style="font-size:12.5px">Piso visible</span>
+            <div class="pisos" id="pisos"></div>
+          </div>
+          <svg class="plano" id="plano" viewBox="0 0 640 400" role="img" aria-label="Planta esquemática del piso"></svg>
+          <div class="row" style="margin-top:10px; font-size:12.5px" class="muted">
+            <span class="pill dim">Puertas reconocidas en este piso: <b id="n-puertas">—</b></span>
+            <span class="pill dim">Recall del detector: 95%</span>
+          </div>
+        </div>
+
+        <div>
+          <div class="card">
+            <h3>Cómo llegar</h3>
+            <div class="field">
+              <label for="origen">Estoy en</label>
+              <select id="origen"></select>
+            </div>
+            <div class="field">
+              <label for="destino">Quiero llegar a</label>
+              <select id="destino"></select>
+            </div>
+            <button class="btn" id="btn-ruta" style="width:100%">Calcular ruta</button>
+            <div id="resumen" class="muted" style="font-size:13px; margin-top:12px">
+              Elige origen y destino. El demo trae tres pisos de un edificio inventado.
+            </div>
+          </div>
+
+          <div class="card" style="margin-top:14px">
+            <h3>Indicaciones</h3>
+            <ol class="pasos" id="pasos"><li>Sin ruta calculada todavía.</li></ol>
+          </div>
+        </div>
+      </div>
+
+      <p class="note">En el sistema real cada plano llega en PDF: se normaliza la rotación y el recuadro
+         de página para que el texto extraído coincida con la imagen, se detectan las puertas con un
+         clasificador entrenado sobre arcos marcados a mano, y con eso se arma el grafo de pasillos que
+         alimenta el A*. Aquí la planta es esquemática, pero el ruteo sí se calcula: el trazo sale de
+         recorrer el grafo, no de una animación pregrabada.</p>
+    </div>
+  </div>
+
+  <nav class="footer-nav">
+    <a href="../index.html">← Todos los demos</a>
+    <span>Planta y recintos ficticios</span>
+  </nav>
+</div>
+
+<script src="../assets/demo.js"></script>
+<script>
+/* ---------- Edificio ficticio: 3 pisos, grafo de pasillos + recintos ---------- */
+const pisos = {
+  1: {
+    nombre: 'Piso 1 — Acceso',
+    puertas: 487,
+    nodos: { asc:[320,210], a:[90,210], b:[190,210], c:[450,210], d:[560,210], e:[320,100], f:[320,320] },
+    aristas: [['a','b'],['b','asc'],['asc','c'],['c','d'],['asc','e'],['asc','f']],
+    salas: [
+      { id:'recepcion',  nom:'Recepción',        rect:[40,60,130,110],  puerta:'a' },
+      { id:'admision',   nom:'Admisión',         rect:[40,250,130,110], puerta:'a' },
+      { id:'urgencia',   nom:'Urgencia',         rect:[430,60,170,110], puerta:'c' },
+      { id:'farmacia',   nom:'Farmacia',         rect:[430,250,170,110],puerta:'c' },
+      { id:'cafeteria',  nom:'Cafetería',        rect:[240,30,160,55],  puerta:'e' },
+      { id:'sala-espera',nom:'Sala de espera',   rect:[240,330,160,55], puerta:'f' },
+    ],
+  },
+  3: {
+    nombre: 'Piso 3 — Diagnóstico',
+    puertas: 312,
+    nodos: { asc:[320,210], g:[180,210], h:[180,90], i:[180,330], j:[470,210], k:[470,90] },
+    aristas: [['asc','g'],['g','h'],['g','i'],['asc','j'],['j','k']],
+    salas: [
+      { id:'muestras',  nom:'Toma de muestras', rect:[60,40,220,100], puerta:'h' },
+      { id:'imagen',    nom:'Imagenología',     rect:[60,280,220,100],puerta:'i' },
+      { id:'box4',      nom:'Box 4',            rect:[380,40,220,100],puerta:'k' },
+      { id:'lab',       nom:'Laboratorio',      rect:[380,250,220,110],puerta:'j' },
+    ],
+  },
+  8: {
+    nombre: 'Piso 8 — Técnico',
+    puertas: 54,
+    nodos: { asc:[320,210], m:[160,210], n:[500,210], o:[500,90] },
+    aristas: [['asc','m'],['asc','n'],['n','o']],
+    salas: [
+      { id:'maquinas', nom:'Sala de máquinas', rect:[40,120,220,180], puerta:'m' },
+      { id:'terraza',  nom:'Terraza técnica',  rect:[400,30,200,110], puerta:'o' },
+      { id:'bodega',   nom:'Bodega técnica',   rect:[400,260,200,100],puerta:'n' },
+    ],
+  },
+};
+
+const svg = document.getElementById('plano');
+let pisoActivo = 1;
+let rutaActual = null; // { [piso]: [[x,y],…] }
+
+/* ---------- A* (con heurística euclidiana) sobre el grafo del piso ---------- */
+function dist(p, q) { return Math.hypot(p[0] - q[0], p[1] - q[1]); }
+
+function aEstrella(piso, desde, hasta) {
+  const { nodos, aristas } = pisos[piso];
+  if (!nodos[desde] || !nodos[hasta]) return null;
+  const vecinos = {};
+  aristas.forEach(([a, b]) => {
+    (vecinos[a] ||= []).push(b);
+    (vecinos[b] ||= []).push(a);
+  });
+  const abierto = [desde];
+  const g = { [desde]: 0 };
+  const previo = {};
+  const f = { [desde]: dist(nodos[desde], nodos[hasta]) };
+  while (abierto.length) {
+    abierto.sort((x, y) => f[x] - f[y]);
+    const actual = abierto.shift();
+    if (actual === hasta) {
+      const camino = [actual];
+      let n = actual;
+      while (previo[n]) { n = previo[n]; camino.unshift(n); }
+      return camino;
+    }
+    for (const v of vecinos[actual] || []) {
+      const tentativo = g[actual] + dist(nodos[actual], nodos[v]);
+      if (g[v] === undefined || tentativo < g[v]) {
+        g[v] = tentativo; previo[v] = actual;
+        f[v] = tentativo + dist(nodos[v], nodos[hasta]);
+        if (!abierto.includes(v)) abierto.push(v);
+      }
+    }
+  }
+  return null;
+}
+
+/* ---------- Dibujo ---------- */
+function dibujar(piso) {
+  const cfg = pisos[piso];
+  const partes = [];
+
+  cfg.aristas.forEach(([a, b]) => {
+    const [x1, y1] = cfg.nodos[a], [x2, y2] = cfg.nodos[b];
+    partes.push(`<line class="pasillo" x1="${x1}" y1="${y1}" x2="${x2}" y2="${y2}"/>`);
+  });
+
+  const destinoSel = document.getElementById('destino').value;
+  cfg.salas.forEach((s) => {
+    const [x, y, w, h] = s.rect;
+    const esDestino = destinoSel === `${piso}:${s.id}`;
+    partes.push(`<rect class="sala${esDestino ? ' destino' : ''}" x="${x}" y="${y}" width="${w}" height="${h}" rx="4"/>`);
+    partes.push(`<text class="sala-txt" x="${x + w / 2}" y="${y + h / 2}" text-anchor="middle">${s.nom}</text>`);
+    const [px, py] = cfg.nodos[s.puerta];
+    const cx = x + w / 2, cy = y + h / 2;
+    const t = 0.5;
+    partes.push(`<line class="puerta" x1="${cx + (px - cx) * t * 0.8}" y1="${cy + (py - cy) * t * 0.8}" x2="${px}" y2="${py}"/>`);
+  });
+
+  const [ax, ay] = cfg.nodos.asc;
+  partes.push(`<rect class="sala" x="${ax - 26}" y="${ay - 26}" width="52" height="52" rx="6"/>`);
+  partes.push(`<text class="sala-txt" x="${ax}" y="${ay + 3}" text-anchor="middle">Ascensor</text>`);
+
+  if (rutaActual && rutaActual[piso]) {
+    const pts = rutaActual[piso].map((p) => p.join(',')).join(' ');
+    partes.push(`<polyline class="ruta" points="${pts}"/>`);
+    const ini = rutaActual[piso][0], fin = rutaActual[piso].at(-1);
+    partes.push(`<circle class="marca" cx="${ini[0]}" cy="${ini[1]}" r="6"/>`);
+    partes.push(`<circle class="marca" cx="${fin[0]}" cy="${fin[1]}" r="6" fill-opacity=".45"/>`);
+  }
+
+  svg.innerHTML = partes.join('');
+  document.getElementById('n-puertas').textContent = cfg.puertas;
+}
+
+function pintarPisos() {
+  document.getElementById('pisos').innerHTML = Object.keys(pisos)
+    .map((p) => `<button data-piso="${p}" class="${+p === pisoActivo ? 'on' : ''}">Piso ${p}</button>`).join('');
+  document.querySelectorAll('#pisos button').forEach((b) => b.addEventListener('click', () => {
+    pisoActivo = +b.dataset.piso; pintarPisos(); dibujar(pisoActivo);
+  }));
+}
+
+/* ---------- Selectores ---------- */
+function opciones() {
+  return Object.entries(pisos).flatMap(([p, cfg]) =>
+    cfg.salas.map((s) => `<option value="${p}:${s.id}">Piso ${p} — ${s.nom}</option>`)).join('');
+}
+document.getElementById('origen').innerHTML = opciones();
+document.getElementById('destino').innerHTML = opciones();
+document.getElementById('origen').value = '1:recepcion';
+document.getElementById('destino').value = '3:box4';
+document.getElementById('destino').addEventListener('change', () => dibujar(pisoActivo));
+
+/* ---------- Cálculo de la ruta completa ---------- */
+document.getElementById('btn-ruta').addEventListener('click', () => {
+  const [po, so] = document.getElementById('origen').value.split(':');
+  const [pd, sd] = document.getElementById('destino').value.split(':');
+  const salaO = pisos[po].salas.find((s) => s.id === so);
+  const salaD = pisos[pd].salas.find((s) => s.id === sd);
+  const pasos = [];
+  rutaActual = {};
+
+  const tramo = (piso, desde, hasta) => {
+    const camino = aEstrella(piso, desde, hasta);
+    return camino ? camino.map((n) => pisos[piso].nodos[n]) : [];
+  };
+  const largo = (pts) => pts.reduce((acc, p, k) => (k ? acc + dist(pts[k - 1], p) : 0), 0);
+
+  let metros = 0;
+
+  if (po === pd) {
+    const pts = tramo(po, salaO.puerta, salaD.puerta);
+    rutaActual[po] = pts;
+    metros = largo(pts) / 6;
+    pasos.push(`Sales de <b>${salaO.nom}</b> hacia el pasillo principal.`);
+    pasos.push(`Sigues el pasillo ${Math.round(metros)} metros sin cambiar de piso.`);
+    pasos.push(`Llegaste a <b>${salaD.nom}</b>, piso ${pd}.`);
+  } else {
+    const ida = tramo(po, salaO.puerta, 'asc');
+    const vuelta = tramo(pd, 'asc', salaD.puerta);
+    rutaActual[po] = ida;
+    rutaActual[pd] = vuelta;
+    metros = (largo(ida) + largo(vuelta)) / 6;
+    pasos.push(`Sales de <b>${salaO.nom}</b> (piso ${po}) hacia el pasillo principal.`);
+    pasos.push(`Caminas hasta el <b>ascensor central</b>, ${Math.round(largo(ida) / 6)} metros.`);
+    pasos.push(`Subes o bajas al <b>piso ${pd}</b>.`);
+    pasos.push(`Al salir del ascensor sigues ${Math.round(largo(vuelta) / 6)} metros por el pasillo.`);
+    pasos.push(`Llegaste a <b>${salaD.nom}</b>.`);
+  }
+
+  document.getElementById('pasos').innerHTML = pasos.map((p) => `<li><span>${p}</span></li>`).join('');
+  document.getElementById('resumen').innerHTML =
+    `Ruta calculada: <b>${Math.round(metros)} m</b> aprox. · ${po === pd ? 'mismo piso' : `cambio de piso ${po} → ${pd}`} · ${Math.max(1, Math.round(metros / 70))} min caminando.`;
+
+  pisoActivo = +po; pintarPisos(); dibujar(pisoActivo);
+  if (po !== pd) setTimeout(() => { pisoActivo = +pd; pintarPisos(); dibujar(pisoActivo); }, 1900);
+});
+
+pintarPisos();
+dibujar(pisoActivo);
+</script>
+</body>
+</html>

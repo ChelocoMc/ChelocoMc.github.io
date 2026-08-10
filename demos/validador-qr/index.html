@@ -1,0 +1,155 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Validador de activos por QR — Demo</title>
+<link rel="stylesheet" href="../assets/demo.css">
+<style>
+  .qr { width: 148px; height: 148px; image-rendering: pixelated; border: 8px solid var(--surface); border-radius: 8px; background: #fff; }
+  .ficha { display: grid; gap: 14px; grid-template-columns: auto 1fr; align-items: start; }
+  @media (max-width: 560px) { .ficha { grid-template-columns: 1fr; } }
+  .teclado { display: grid; grid-template-columns: repeat(3, 1fr); gap: 6px; max-width: 240px; }
+  .teclado button { font: inherit; padding: 10px; border-radius: 8px; border: 1px solid var(--border);
+                    background: var(--surface); color: var(--text); cursor: pointer; }
+</style>
+</head>
+<body>
+<div class="demo-flag"><b>Demo</b><span>Activos y códigos inventados. El gráfico imita un QR, no codifica datos reales.</span><a href="../index.html">Todos los demos</a></div>
+
+<div class="wrap">
+  <header class="page-head">
+    <div class="ref">Ref. QR-11</div>
+    <h1>Validador de activos por QR</h1>
+    <p>Cada equipo lleva una etiqueta. El técnico la escanea con el celular y ve al instante de qué activo
+       se trata, cuándo se revisó por última vez y si tiene algo pendiente — y su paso queda registrado
+       sin llenar ningún formulario.</p>
+    <div class="tags">
+      <span class="tag">PWA</span><span class="tag">JavaScript</span><span class="tag">Google Apps Script</span>
+      <span class="tag">Google Sheets</span><span class="tag">Funciona sin señal</span>
+    </div>
+  </header>
+
+  <div class="app">
+    <div class="app-bar"><span class="dots"><i></i><i></i><i></i></span><span class="app-url">validador.demo — lectura de etiqueta</span></div>
+    <div class="app-body">
+      <div class="grid" style="grid-template-columns:1fr 1.4fr">
+        <div class="card">
+          <h3>Escanear</h3>
+          <p class="muted" style="font-size:13px">En terreno se usa la cámara. Aquí escribe o elige un código.</p>
+          <div class="field"><input id="codigo" placeholder="AC-0421" autocomplete="off"></div>
+          <button class="btn" id="validar" style="width:100%">Validar</button>
+          <div class="row" style="margin-top:12px; font-size:12.5px">
+            <span class="muted">Prueba:</span>
+            <button class="btn ghost" data-c="AC-0421">AC-0421</button>
+            <button class="btn ghost" data-c="AS-0102">AS-0102</button>
+            <button class="btn ghost" data-c="XX-9999">XX-9999</button>
+          </div>
+        </div>
+
+        <div class="card" id="resultado">
+          <h3>Resultado</h3>
+          <span class="muted">Sin lectura todavía.</span>
+        </div>
+      </div>
+
+      <div class="card" style="margin-top:14px">
+        <h3>Bitácora de lecturas (local)</h3>
+        <div class="table-scroll">
+          <table>
+            <thead><tr><th>Hora</th><th>Código</th><th>Activo</th><th>Resultado</th></tr></thead>
+            <tbody id="bitacora"><tr><td colspan="4" class="muted">Vacía.</td></tr></tbody>
+          </table>
+        </div>
+      </div>
+
+      <p class="note">La app guarda las lecturas en el dispositivo y las sube cuando hay señal: en subterráneos
+         y salas de máquinas no hay cobertura, y un validador que exige conexión para funcionar simplemente
+         no se usa. El respaldo corre sobre una planilla, así que la institución puede auditar sin depender
+         de un servidor propio.</p>
+    </div>
+  </div>
+
+  <nav class="footer-nav">
+    <a href="../index.html">← Todos los demos</a>
+    <span>Activos ficticios</span>
+  </nav>
+</div>
+
+<script src="../assets/demo.js"></script>
+<script>
+const activos = {
+  'AC-0421': { nom: 'Central de aire — Nivel 4', ubi: 'Torre A · Nivel 4', ult: '02-08-2026',
+               prox: '02-09-2026', estado: 'ok', pend: 'Ninguna' },
+  'AS-0102': { nom: 'Ascensor Torre B', ubi: 'Torre B · foso', ult: '18-06-2026',
+               prox: '18-07-2026', estado: 'warn', pend: 'Mantención preventiva vencida hace 23 días' },
+  'CL-0033': { nom: 'Caldera 3', ubi: 'Pabellón técnico', ult: '29-07-2026',
+               prox: '29-08-2026', estado: 'ok', pend: 'Control de dureza de agua pendiente' },
+};
+
+/* Dibuja un patrón determinista con aire de QR — decorativo, no codifica nada */
+function patron(texto) {
+  const n = 21, celda = 7;
+  let h = 2166136261;
+  for (const c of texto) { h ^= c.charCodeAt(0); h = Math.imul(h, 16777619) >>> 0; }
+  const rnd = () => { h ^= h << 13; h ^= h >>> 17; h ^= h << 5; h >>>= 0; return h / 4294967296; };
+  const c = document.createElement('canvas');
+  c.width = c.height = n * celda;
+  const g = c.getContext('2d');
+  g.fillStyle = '#fff'; g.fillRect(0, 0, c.width, c.height);
+  g.fillStyle = '#000';
+  const ojo = (x, y) => {
+    g.fillRect(x * celda, y * celda, celda * 7, celda * 7);
+    g.fillStyle = '#fff'; g.fillRect((x + 1) * celda, (y + 1) * celda, celda * 5, celda * 5);
+    g.fillStyle = '#000'; g.fillRect((x + 2) * celda, (y + 2) * celda, celda * 3, celda * 3);
+  };
+  for (let y = 0; y < n; y++) for (let x = 0; x < n; x++) {
+    const enOjo = (x < 8 && y < 8) || (x > n - 9 && y < 8) || (x < 8 && y > n - 9);
+    if (!enOjo && rnd() > 0.52) g.fillRect(x * celda, y * celda, celda, celda);
+  }
+  ojo(0, 0); ojo(n - 7, 0); ojo(0, n - 7);
+  return c.toDataURL();
+}
+
+const bit = [];
+function validar(cod) {
+  const c = cod.trim().toUpperCase();
+  const a = activos[c];
+  const caja = document.getElementById('resultado');
+  const hora = new Date().toLocaleTimeString('es-CL', { hour12: false });
+
+  if (!a) {
+    caja.innerHTML = `<h3>Resultado</h3>
+      <div class="row"><span class="pill bad">Código no reconocido</span></div>
+      <p style="font-size:13.5px">El código <b>${c || '—'}</b> no corresponde a ningún activo del inventario.
+         La lectura queda registrada igual para detectar etiquetas dañadas o duplicadas.</p>`;
+    bit.unshift([hora, c || '—', '—', '<span class="pill bad">no reconocido</span>']);
+  } else {
+    caja.innerHTML = `<h3>Resultado</h3>
+      <div class="ficha">
+        <img class="qr" src="${patron(c)}" alt="Etiqueta del activo ${c}">
+        <div>
+          <div style="font-size:16px; font-weight:600">${a.nom}</div>
+          <div class="muted" style="font-size:13px; margin-bottom:8px">${c} · ${a.ubi}</div>
+          <table><tbody>
+            <tr><td class="muted">Última revisión</td><td>${a.ult}</td></tr>
+            <tr><td class="muted">Próxima</td><td>${a.prox}</td></tr>
+            <tr><td class="muted">Pendientes</td><td>${a.pend}</td></tr>
+          </tbody></table>
+          <div style="margin-top:10px"><span class="pill ${a.estado}">${a.estado === 'ok' ? 'al día' : 'requiere atención'}</span></div>
+        </div>
+      </div>`;
+    bit.unshift([hora, c, a.nom, `<span class="pill ${a.estado}">${a.estado === 'ok' ? 'al día' : 'con pendiente'}</span>`]);
+  }
+  document.getElementById('bitacora').innerHTML = bit.slice(0, 8)
+    .map((f) => `<tr><td>${f[0]}</td><td>${f[1]}</td><td>${f[2]}</td><td>${f[3]}</td></tr>`).join('');
+}
+
+document.getElementById('validar').addEventListener('click', () => validar(document.getElementById('codigo').value));
+document.getElementById('codigo').addEventListener('keydown', (e) => { if (e.key === 'Enter') validar(e.target.value); });
+document.querySelectorAll('[data-c]').forEach((b) => b.addEventListener('click', () => {
+  document.getElementById('codigo').value = b.dataset.c; validar(b.dataset.c);
+}));
+</script>
+</body>
+</html>

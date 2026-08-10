@@ -1,0 +1,141 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Modelo de Business Intelligence — Demo</title>
+<link rel="stylesheet" href="../assets/demo.css">
+<style>
+  .kpis { display: grid; gap: 12px; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); }
+  .chart { width: 100%; height: auto; max-height: 280px; display: block; }
+  .leyenda { display: flex; gap: 14px; flex-wrap: wrap; font-size: 12.5px; color: var(--text-dim); margin-top: 8px; }
+  .leyenda i { width: 10px; height: 10px; border-radius: 2px; display: inline-block; margin-right: 5px; }
+  .filtros { display: flex; gap: 10px; flex-wrap: wrap; margin-bottom: 16px; }
+  .filtros select { width: auto; min-width: 170px; }
+</style>
+</head>
+<body>
+<div class="demo-flag"><b>Demo</b><span>Cifras inventadas. No reflejan el desempeño de ninguna institución.</span><a href="../index.html">Todos los demos</a></div>
+
+<div class="wrap">
+  <header class="page-head">
+    <div class="ref">Ref. BI-03</div>
+    <h1>Modelo de Business Intelligence</h1>
+    <p>El reporte ejecutivo de cumplimiento dejó de armarse a mano en Excel: un modelo semántico con
+       medidas en DAX lee la fuente y el tablero se actualiza solo. Cambias el mes o la unidad y todo
+       recalcula desde el mismo modelo, no desde una copia.</p>
+    <div class="tags">
+      <span class="tag">Power BI</span><span class="tag">DAX</span><span class="tag">Power Query (M)</span>
+      <span class="tag">SQL Server</span><span class="tag">SharePoint</span>
+    </div>
+  </header>
+
+  <div class="app">
+    <div class="app-bar"><span class="dots"><i></i><i></i><i></i></span><span class="app-url">Resumen ejecutivo — modelo de cumplimiento</span></div>
+    <div class="app-body">
+      <div class="filtros">
+        <select id="mes"></select>
+        <select id="unidad">
+          <option>Todas las unidades</option>
+          <option>Climatización</option>
+          <option>Electricidad</option>
+          <option>Transporte vertical</option>
+          <option>Agua y sanitarios</option>
+        </select>
+      </div>
+
+      <div class="kpis">
+        <div class="card"><h3>Cumplimiento</h3><div class="stat" id="k-cump">—</div><div class="stat-label">meta contractual 95%</div></div>
+        <div class="card"><h3>Programados</h3><div class="stat" id="k-prog">—</div><div class="stat-label">mantenciones del mes</div></div>
+        <div class="card"><h3>Pendientes</h3><div class="stat" id="k-pend">—</div><div class="stat-label">fuera de plazo</div></div>
+        <div class="card"><h3>Descuento estimado</h3><div class="stat" id="k-desc">—</div><div class="stat-label">UF según cláusula 9.4</div></div>
+      </div>
+
+      <div class="card" style="margin-top:14px">
+        <div class="spread"><h3 style="margin:0">Cumplimiento mensual vs. meta</h3><span class="muted" id="pie-chart" style="font-size:12.5px"></span></div>
+        <svg class="chart" id="grafico" viewBox="0 0 640 240" role="img" aria-label="Gráfico de cumplimiento mensual"></svg>
+        <div class="leyenda">
+          <span><i style="background:var(--accent)"></i>Ejecutadas</span>
+          <span><i style="background:var(--border)"></i>Programadas</span>
+          <span><i style="background:var(--bad)"></i>Meta 95%</span>
+        </div>
+      </div>
+
+      <div class="card" style="margin-top:14px">
+        <h3>Medida del modelo</h3>
+        <pre class="log">Cumplimiento % =
+VAR Ejecutadas  = CALCULATE( COUNTROWS( Mantenciones ), Mantenciones[Estado] = "Ejecutada" )
+VAR Programadas = COUNTROWS( Mantenciones )
+RETURN DIVIDE( Ejecutadas, Programadas )</pre>
+        <p class="note">La regla que costó encontrar: una columna calculada referenciaba a otra creada en el
+           mismo bloque de agregación, algo que DAX no permite aunque no lo marque como error evidente.
+           Se resolvió recalculando con variables, como arriba. Y del lado de la carga, un error sin línea
+           ni columna ("se esperaba el token Literal") resultó ser un operador de coalescencia que ese motor
+           de M no soporta — se aisló instalando el parser oficial del lenguaje.</p>
+      </div>
+    </div>
+  </div>
+
+  <nav class="footer-nav">
+    <a href="../index.html">← Todos los demos</a>
+    <span>Cifras ficticias</span>
+  </nav>
+</div>
+
+<script src="../assets/demo.js"></script>
+<script>
+const meses = ['Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio', 'Julio'];
+const serie = { // programadas / ejecutadas por mes (ficticio)
+  'Todas las unidades':   [[1180, 1042], [1205, 1108], [1240, 1173], [1198, 1150], [1262, 1209], [1230, 1191], [1248, 1074]],
+  'Climatización':        [[320, 288], [330, 305], [338, 322], [322, 312], [344, 331], [336, 327], [340, 296]],
+  'Electricidad':         [[290, 259], [296, 273], [305, 291], [294, 285], [310, 299], [302, 294], [307, 267]],
+  'Transporte vertical':  [[186, 160], [190, 172], [196, 184], [189, 180], [199, 190], [194, 187], [197, 166]],
+  'Agua y sanitarios':    [[384, 335], [389, 358], [401, 376], [393, 373], [409, 389], [398, 383], [404, 345]],
+};
+
+document.getElementById('mes').innerHTML = meses.map((m, i) => `<option value="${i}">${m} 2026</option>`).join('');
+document.getElementById('mes').value = '6';
+
+function pintar() {
+  const unidad = document.getElementById('unidad').value;
+  const idx = +document.getElementById('mes').value;
+  const datos = serie[unidad];
+  const [prog, ejec] = datos[idx];
+  const cump = ejec / prog;
+  const pend = prog - ejec;
+  // Cláusula 9.4 del contrato ficticio: 0,5 UF por mantención no ejecutada, tope 30
+  const desc = Math.min(30, pend * 0.5);
+
+  document.getElementById('k-cump').textContent = (cump * 100).toFixed(1) + '%';
+  document.getElementById('k-cump').style.color = cump >= 0.95 ? 'var(--ok)' : 'var(--bad)';
+  document.getElementById('k-prog').textContent = prog.toLocaleString('es-CL');
+  document.getElementById('k-pend').textContent = pend.toLocaleString('es-CL');
+  document.getElementById('k-desc').textContent = desc.toFixed(1);
+  document.getElementById('pie-chart').textContent = unidad + ' · 2026';
+
+  const W = 640, H = 240, pad = 34, n = datos.length;
+  const ancho = (W - pad * 2) / n;
+  const max = Math.max(...datos.map((d) => d[0])) * 1.08;
+  const y = (v) => H - pad - (v / max) * (H - pad * 2);
+  const partes = [];
+  datos.forEach(([p, e], i) => {
+    const x = pad + i * ancho + ancho * 0.18;
+    const w = ancho * 0.64;
+    partes.push(`<rect x="${x}" y="${y(p)}" width="${w}" height="${H - pad - y(p)}" fill="var(--border)" rx="3"/>`);
+    partes.push(`<rect x="${x}" y="${y(e)}" width="${w}" height="${H - pad - y(e)}" fill="var(--accent)" rx="3" opacity="${i === idx ? 1 : .62}"/>`);
+    partes.push(`<text x="${x + w / 2}" y="${y(p) - 6}" text-anchor="middle" font-size="10.5"
+                 fill="${e / p >= 0.95 ? 'var(--ok)' : 'var(--bad)'}" font-weight="600">${Math.round((e / p) * 100)}%</text>`);
+    partes.push(`<text x="${x + w / 2}" y="${H - pad + 15}" text-anchor="middle" font-size="10" fill="var(--text-dim)">${meses[i].slice(0, 3)}</text>`);
+  });
+  // línea de meta (95% del programado de cada mes)
+  const puntos = datos.map(([p], i) => `${pad + i * ancho + ancho / 2},${y(p * 0.95)}`).join(' ');
+  partes.push(`<polyline points="${puntos}" fill="none" stroke="var(--bad)" stroke-width="1.6" stroke-dasharray="5 4"/>`);
+  document.getElementById('grafico').innerHTML = partes.join('');
+}
+
+document.getElementById('mes').addEventListener('change', pintar);
+document.getElementById('unidad').addEventListener('change', pintar);
+pintar();
+</script>
+</body>
+</html>

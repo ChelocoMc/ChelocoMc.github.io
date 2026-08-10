@@ -1,0 +1,158 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Asistente contractual con IA local — Demo</title>
+<link rel="stylesheet" href="../assets/demo.css">
+<style>
+  .chat { display: flex; flex-direction: column; gap: 12px; max-height: 460px; overflow-y: auto; padding-right: 4px; }
+  .msg { display: flex; gap: 10px; }
+  .msg .quien { flex: none; width: 28px; height: 28px; border-radius: 50%; display: grid; place-items: center;
+                font-size: 11px; font-weight: 700; background: var(--surface-2); color: var(--text-dim); }
+  .msg.ia .quien { background: var(--accent-soft); color: var(--accent); }
+  .burbuja { background: var(--surface-2); border: 1px solid var(--border); border-radius: 10px; padding: 10px 13px; font-size: 14px; }
+  .msg.ia .burbuja { background: var(--surface); }
+  .cita { font-size: 12px; color: var(--text-dim); border-left: 2px solid var(--accent); padding: 4px 0 4px 10px; margin-top: 8px; }
+  .sugerencias { display: flex; flex-wrap: wrap; gap: 6px; margin: 12px 0; }
+  .sugerencias button { font: inherit; font-size: 12.5px; padding: 5px 11px; border-radius: 999px;
+                        border: 1px solid var(--border); background: var(--surface); color: var(--text-dim); cursor: pointer; }
+  .docs { display: grid; gap: 10px; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); margin-bottom: 16px; }
+  .doc { border: 1px solid var(--border); border-radius: 10px; padding: 11px; background: var(--surface); font-size: 13px; }
+  .doc b { display: block; margin-bottom: 3px; }
+</style>
+</head>
+<body>
+<div class="demo-flag"><b>Demo</b><span>Los tres documentos consultables son inventados para este demo.</span><a href="../index.html">Todos los demos</a></div>
+
+<div class="wrap">
+  <header class="page-head">
+    <div class="ref">Ref. AI-06</div>
+    <h1>Asistente contractual con IA</h1>
+    <p>Pregunta en lenguaje natural sobre el contrato y el asistente responde citando el párrafo exacto
+       de dónde lo sacó. Corre contra un modelo local, así que ningún documento sale de la institución.</p>
+    <div class="tags">
+      <span class="tag">Python</span><span class="tag">RAG</span><span class="tag">Ollama (modelo local)</span>
+      <span class="tag">Embeddings</span><span class="tag">FastAPI</span>
+    </div>
+  </header>
+
+  <div class="app">
+    <div class="app-bar"><span class="dots"><i></i><i></i><i></i></span><span class="app-url">localhost:5100/ia — Consulta documental</span></div>
+    <div class="app-body">
+      <div class="docs" id="docs"></div>
+
+      <div class="chat" id="chat"></div>
+
+      <div class="sugerencias" id="sug"></div>
+
+      <form class="row" id="form" style="gap:8px; flex-wrap:nowrap">
+        <input id="q" placeholder="Ej: ¿cuánto dura la garantía del ascensor?" autocomplete="off">
+        <button class="btn" type="submit">Enviar</button>
+      </form>
+
+      <p class="note">La recuperación de este demo corre entera en el navegador: puntúa los párrafos por
+         coincidencia de términos y responde con el mejor. El sistema real usa embeddings y un modelo de
+         lenguaje local para redactar la respuesta, pero la regla es la misma — si ningún párrafo respalda
+         la pregunta, el asistente dice que no está en los documentos en vez de inventar.</p>
+    </div>
+  </div>
+
+  <nav class="footer-nav">
+    <a href="../index.html">← Todos los demos</a>
+    <span>Corpus ficticio de 3 documentos</span>
+  </nav>
+</div>
+
+<script src="../assets/demo.js"></script>
+<script>
+/* ---------- Corpus ficticio ---------- */
+const corpus = [
+  { doc: 'Contrato de mantenimiento preventivo (ficticio)', art: 'Cláusula 7.2',
+    txt: 'La garantía de los equipos de transporte vertical (ascensores y montacargas) es de veinticuatro (24) meses contados desde el acta de recepción, e incluye repuestos y mano de obra.' },
+  { doc: 'Contrato de mantenimiento preventivo (ficticio)', art: 'Cláusula 4.1',
+    txt: 'El prestador ejecutará las mantenciones preventivas según el programa anual. El cumplimiento mínimo exigido es de 95% de las mantenciones programadas en cada mes calendario.' },
+  { doc: 'Contrato de mantenimiento preventivo (ficticio)', art: 'Cláusula 9.4',
+    txt: 'El incumplimiento del programa preventivo se sanciona con un descuento de 0,5 unidades de fomento por cada mantención no ejecutada dentro del mes, con tope de 30 unidades mensuales.' },
+  { doc: 'Contrato de mantenimiento preventivo (ficticio)', art: 'Cláusula 5.3',
+    txt: 'Los avisos correctivos de emergencia deben ser atendidos en un plazo máximo de 30 minutos desde su emisión, y resueltos o mitigados dentro de 4 horas.' },
+  { doc: 'SLA de servicio de aseo (ficticio)', art: 'Punto 3',
+    txt: 'La limpieza terminal de pabellones quirúrgicos debe completarse en un máximo de 45 minutos entre cirugías, verificada mediante registro fotográfico y firma del supervisor.' },
+  { doc: 'SLA de servicio de aseo (ficticio)', art: 'Punto 6',
+    txt: 'El nivel de servicio se mide con inspecciones aleatorias mensuales. Un puntaje inferior a 90 puntos genera plan de acción; bajo 80 puntos, descuento del 3% de la facturación mensual del servicio.' },
+  { doc: 'Acta de recepción de obra (ficticia)', art: 'Sección 2',
+    txt: 'Se recibe conforme la instalación de climatización del nivel 4, con observaciones menores en dos difusores que deben ser corregidas dentro de 15 días hábiles.' },
+  { doc: 'Acta de recepción de obra (ficticia)', art: 'Sección 5',
+    txt: 'El período de marcha blanca de las instalaciones recibidas es de 90 días corridos, durante los cuales no se aplicarán descuentos por incumplimiento de indicadores.' },
+];
+
+const normaliza = (s) => s.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '');
+const vacias = new Set(['de','la','el','los','las','que','cuanto','cuanta','cual','cuales','y','en','del','para','por','un','una','se','es','son','con','como','hay','dice','sobre','me','mi','a','al','o']);
+
+function buscar(pregunta) {
+  const terminos = normaliza(pregunta).split(/[^a-z0-9]+/).filter((t) => t.length > 2 && !vacias.has(t));
+  if (!terminos.length) return [];
+  return corpus
+    .map((p) => {
+      const texto = normaliza(p.txt + ' ' + p.doc + ' ' + p.art);
+      const puntaje = terminos.reduce((acc, t) => acc + (texto.includes(t) ? 1 : 0) + (texto.includes(t.slice(0, 5)) ? 0.4 : 0), 0);
+      return { ...p, puntaje };
+    })
+    .filter((p) => p.puntaje >= 1)
+    .sort((a, b) => b.puntaje - a.puntaje)
+    .slice(0, 2);
+}
+
+/* ---------- Render ---------- */
+const chat = document.getElementById('chat');
+function burbuja(quien, html) {
+  const div = document.createElement('div');
+  div.className = 'msg ' + (quien === 'IA' ? 'ia' : 'yo');
+  div.innerHTML = `<span class="quien">${quien === 'IA' ? 'IA' : 'Tú'}</span><div class="burbuja">${html}</div>`;
+  chat.appendChild(div);
+  chat.scrollTop = chat.scrollHeight;
+  return div;
+}
+
+document.getElementById('docs').innerHTML = [...new Set(corpus.map((c) => c.doc))]
+  .map((d) => `<div class="doc"><b>${d}</b><span class="muted">${corpus.filter((c) => c.doc === d).length} cláusulas indexadas</span></div>`).join('');
+
+const sugeridas = [
+  '¿Cuánto dura la garantía del ascensor?',
+  '¿Qué pasa si no se cumple el programa preventivo?',
+  '¿En cuánto tiempo hay que atender una emergencia?',
+  '¿Cuánto dura la marcha blanca?',
+  '¿Cuál es el plazo de la limpieza terminal de pabellón?',
+];
+document.getElementById('sug').innerHTML = sugeridas.map((s) => `<button type="button">${s}</button>`).join('');
+document.querySelectorAll('#sug button').forEach((b) =>
+  b.addEventListener('click', () => { document.getElementById('q').value = b.textContent; responder(b.textContent); }));
+
+async function responder(pregunta) {
+  burbuja('Tú', pregunta);
+  const pensando = burbuja('IA', '<span class="muted">Buscando en los documentos…</span>');
+  await sleep(650);
+  const hits = buscar(pregunta);
+  if (!hits.length) {
+    pensando.querySelector('.burbuja').innerHTML =
+      'No encuentro respaldo para eso en los tres documentos cargados. Prefiero decírtelo antes que inventar una cláusula que no existe.';
+    return;
+  }
+  const mejor = hits[0];
+  const citas = hits.map((h) => `<div class="cita"><b>${h.doc}</b> · ${h.art}<br>${h.txt}</div>`).join('');
+  pensando.querySelector('.burbuja').innerHTML =
+    `Según los documentos cargados: ${mejor.txt}${citas}`;
+}
+
+document.getElementById('form').addEventListener('submit', (e) => {
+  e.preventDefault();
+  const q = document.getElementById('q').value.trim();
+  if (!q) return;
+  document.getElementById('q').value = '';
+  responder(q);
+});
+
+burbuja('IA', 'Tengo cargados tres documentos ficticios: un contrato de mantenimiento preventivo, un SLA de aseo y un acta de recepción de obra. Pregúntame lo que quieras sobre ellos.');
+</script>
+</body>
+</html>

@@ -1,0 +1,173 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Pipeline de consolidación de datos — Demo</title>
+<link rel="stylesheet" href="../assets/demo.css">
+<style>
+  .etapas { list-style: none; margin: 0 0 16px; padding: 0; }
+  .etapas li { display: flex; align-items: center; gap: 10px; padding: 7px 0; font-size: 13.5px; border-bottom: 1px solid var(--border); }
+  .etapas li:last-child { border-bottom: none; }
+  .etapas .ico { flex: none; width: 20px; height: 20px; border-radius: 50%; border: 1px solid var(--border);
+                 display: grid; place-items: center; font-size: 11px; color: var(--text-dim); }
+  .etapas li.on .ico { border-color: var(--accent); color: var(--accent); }
+  .etapas li.ok .ico { border-color: var(--ok); color: var(--ok); }
+  .archivo { display: flex; gap: 10px; align-items: center; border: 1px dashed var(--border); border-radius: 10px; padding: 11px; font-size: 13px; }
+  .archivo .ico { width: 32px; height: 32px; border-radius: 8px; background: var(--accent-soft); color: var(--accent);
+                  display: grid; place-items: center; font-weight: 700; font-size: 12px; flex: none; }
+</style>
+</head>
+<body>
+<div class="demo-flag"><b>Demo</b><span>Planillas y registros inventados. Ninguna solicitud corresponde a un caso real.</span><a href="../index.html">Todos los demos</a></div>
+
+<div class="wrap">
+  <header class="page-head">
+    <div class="ref">Ref. DATA-02</div>
+    <h1>Pipeline de consolidación de datos</h1>
+    <p>Dos sistemas registran las mismas solicitudes con nombres escritos distinto. El pipeline los cruza,
+       normaliza los nombres con distancia de edición, clasifica el estado de cada registro y deja el
+       resultado trazable: se puede repetir la corrida y obtener lo mismo.</p>
+    <div class="tags">
+      <span class="tag">Python</span><span class="tag">pandas</span><span class="tag">Levenshtein</span>
+      <span class="tag">Flask</span><span class="tag">openpyxl</span>
+    </div>
+  </header>
+
+  <div class="app">
+    <div class="app-bar"><span class="dots"><i></i><i></i><i></i></span><span class="app-url">localhost:5000 — Consolidación de solicitudes</span></div>
+    <div class="app-body">
+      <div class="grid" style="grid-template-columns:1fr 1fr; margin-bottom:16px">
+        <div class="archivo"><span class="ico">A</span><span><b>solicitudes_origen_A.xlsx</b><br><span class="muted">4,2 MB · 1.284 filas</span></span></div>
+        <div class="archivo"><span class="ico">B</span><span><b>solicitudes_origen_B.csv</b><br><span class="muted">1,8 MB · 1.197 filas</span></span></div>
+      </div>
+
+      <div class="row" style="margin-bottom:14px">
+        <button class="btn" id="run">▶ Ejecutar consolidación</button>
+        <span class="muted" id="msg">Ambas fuentes cargadas y validadas.</span>
+      </div>
+
+      <div class="grid" style="grid-template-columns:1fr 1.4fr">
+        <div class="card">
+          <h3>Etapas</h3>
+          <ul class="etapas" id="etapas"></ul>
+          <div class="bar"><i id="prog" style="width:0%"></i></div>
+        </div>
+
+        <div class="card">
+          <h3>Registros consolidados</h3>
+          <div class="table-scroll">
+            <table>
+              <thead><tr><th>Registro</th><th>Nombre en A</th><th>Nombre en B</th><th>Similitud</th><th>Estado</th></tr></thead>
+              <tbody id="tabla"><tr><td colspan="5" class="muted">Sin corrida todavía.</td></tr></tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+      <div class="grid" style="margin-top:14px">
+        <div class="card"><h3>Pareados</h3><div class="stat" id="s-par">—</div><div class="stat-label">coincidencia ≥ 0,80</div></div>
+        <div class="card"><h3>Dudosos</h3><div class="stat" id="s-dud">—</div><div class="stat-label">requieren revisión manual</div></div>
+        <div class="card"><h3>Sin par</h3><div class="stat" id="s-sin">—</div><div class="stat-label">solo en una fuente</div></div>
+      </div>
+
+      <p class="note">Dos hallazgos que este pipeline dejó atrás: siete asignaciones encadenadas del tipo
+         <code>df[col].fillna(..., inplace=True)</code> que en pandas 3 se vuelven un no-op silencioso —
+         la columna queda igual y nadie se entera —, y endpoints que armaban rutas de archivo con el nombre
+         que mandaba el navegador, sin validar. Ambos corregidos antes de que fallaran en producción.</p>
+    </div>
+  </div>
+
+  <nav class="footer-nav">
+    <a href="../index.html">← Todos los demos</a>
+    <span>Datos ficticios</span>
+  </nav>
+</div>
+
+<script src="../assets/demo.js"></script>
+<script>
+/* ---------- Pares ficticios con las inconsistencias típicas ---------- */
+const pares = [
+  ['Reg-0142', 'CLIMATIZACION NIVEL 4',      'Climatizacion Nivel 4'],
+  ['Reg-0143', 'Ascensor Torre B',           'ASCENSOR TORRE  B'],
+  ['Reg-0144', 'Grupo Electrogeno',          'Grupo Electrógeno'],
+  ['Reg-0145', 'Caldera Pabellon 3',         'Caldera Pabellón III'],
+  ['Reg-0146', 'Bomba agua caliente',        'Bba. agua caliente'],
+  ['Reg-0147', 'Central de gases clinicos',  ''],
+  ['Reg-0148', '',                           'Estanque acumulacion'],
+  ['Reg-0149', 'Red humeda piso 2',          'Red húmeda piso 2'],
+];
+
+/* Distancia de Levenshtein — la misma idea que usa el pipeline en Python */
+function levenshtein(a, b) {
+  const m = a.length, n = b.length;
+  const fila = Array.from({ length: n + 1 }, (_, j) => j);
+  for (let i = 1; i <= m; i++) {
+    let prev = fila[0]; fila[0] = i;
+    for (let j = 1; j <= n; j++) {
+      const tmp = fila[j];
+      fila[j] = Math.min(fila[j] + 1, fila[j - 1] + 1, prev + (a[i - 1] === b[j - 1] ? 0 : 1));
+      prev = tmp;
+    }
+  }
+  return fila[n];
+}
+const normaliza = (s) => s.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '').replace(/\s+/g, ' ').trim();
+function similitud(a, b) {
+  if (!a || !b) return 0;
+  const x = normaliza(a), y = normaliza(b);
+  return 1 - levenshtein(x, y) / Math.max(x.length, y.length);
+}
+
+const ETAPAS = [
+  'Cargar planilla origen A',
+  'Cargar planilla origen B',
+  'Normalizar texto (mayúsculas, tildes, espacios)',
+  'Cruzar por distancia de edición',
+  'Clasificar estado de cada registro',
+  'Escribir consolidado y bitácora',
+];
+const ulEtapas = document.getElementById('etapas');
+function pintarEtapas(indice = -1) {
+  ulEtapas.innerHTML = ETAPAS.map((e, i) => {
+    const cls = i < indice ? 'ok' : i === indice ? 'on' : '';
+    const ico = i < indice ? '✓' : i + 1;
+    return `<li class="${cls}"><span class="ico">${ico}</span><span>${e}</span></li>`;
+  }).join('');
+}
+pintarEtapas();
+
+document.getElementById('run').addEventListener('click', async (ev) => {
+  const btn = ev.currentTarget;
+  btn.disabled = true;
+  document.getElementById('tabla').innerHTML = '';
+  for (let i = 0; i < ETAPAS.length; i++) {
+    pintarEtapas(i);
+    document.getElementById('prog').style.width = Math.round(((i + 1) / ETAPAS.length) * 100) + '%';
+    document.getElementById('msg').textContent = ETAPAS[i] + '…';
+    await sleep(520);
+  }
+  pintarEtapas(ETAPAS.length);
+
+  let par = 0, dud = 0, sin = 0;
+  const filas = pares.map(([id, a, b]) => {
+    const s = similitud(a, b);
+    let estado, cls;
+    if (!a || !b) { estado = 'sin par'; cls = 'bad'; sin++; }
+    else if (s >= 0.8) { estado = 'pareado'; cls = 'ok'; par++; }
+    else { estado = 'revisar'; cls = 'warn'; dud++; }
+    return `<tr><td>${id}</td><td>${a || '<span class="muted">—</span>'}</td>
+            <td>${b || '<span class="muted">—</span>'}</td>
+            <td>${a && b ? s.toFixed(2) : '—'}</td>
+            <td><span class="pill ${cls}">${estado}</span></td></tr>`;
+  });
+  document.getElementById('tabla').innerHTML = filas.join('');
+  document.getElementById('s-par').textContent = par;
+  document.getElementById('s-dud').textContent = dud;
+  document.getElementById('s-sin').textContent = sin;
+  document.getElementById('msg').textContent = `Corrida terminada: ${pares.length} registros procesados, bitácora escrita.`;
+  btn.disabled = false;
+});
+</script>
+</body>
+</html>

@@ -1,0 +1,127 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Bot de extracción de avisos — Demo</title>
+<link rel="stylesheet" href="../assets/demo.css">
+</head>
+<body>
+<div class="demo-flag"><b>Demo</b><span>Sistema origen, avisos y equipos inventados para este demo.</span><a href="../index.html">Todos los demos</a></div>
+
+<div class="wrap">
+  <header class="page-head">
+    <div class="ref">Ref. RPA-09</div>
+    <h1>Bot de extracción de avisos</h1>
+    <p>El sistema de gestión de mantenimiento no tiene API ni exportación útil: hay que buscar aviso por
+       aviso en un formulario web. El bot hace esa búsqueda por lotes, arma la planilla con los campos
+       que importan y deja registro de lo que no encontró.</p>
+    <div class="tags">
+      <span class="tag">Python</span><span class="tag">Playwright</span><span class="tag">pandas</span>
+      <span class="tag">openpyxl</span><span class="tag">Reintentos</span>
+    </div>
+  </header>
+
+  <div class="app">
+    <div class="app-bar"><span class="dots"><i></i><i></i><i></i></span><span class="app-url">bot_avisos.py — extracción por lote</span></div>
+    <div class="app-body">
+      <div class="grid" style="grid-template-columns:repeat(auto-fit,minmax(160px,1fr)); margin-bottom:14px">
+        <div class="card"><label for="desde">Rango de avisos</label>
+          <div class="row" style="flex-wrap:nowrap"><input id="desde" value="4801"><span class="muted">–</span><input id="hasta" value="4812"></div></div>
+        <div class="card"><label for="anio">Año</label><input id="anio" value="2026"></div>
+        <div class="card"><label for="modo">Modo</label>
+          <select id="modo"><option>Navegador oculto (headless)</option><option>Navegador visible</option></select></div>
+      </div>
+
+      <div class="row" style="margin-bottom:14px">
+        <button class="btn" id="run">▶ Ejecutar extracción</button>
+        <button class="btn ghost" id="descargar" disabled>Ver planilla resultante</button>
+        <span class="muted" id="msg">Listo. 12 avisos en cola.</span>
+      </div>
+
+      <div class="bar" style="margin-bottom:14px"><i id="prog" style="width:0%"></i></div>
+
+      <div class="grid" style="grid-template-columns:1fr 1.3fr">
+        <div class="card"><h3>Bitácora</h3><pre class="log" id="log" style="max-height:300px"></pre></div>
+        <div class="card">
+          <h3>Hoja «Avisos» del Excel</h3>
+          <div class="table-scroll">
+            <table>
+              <thead><tr><th>Aviso</th><th>Equipo</th><th>Tipo</th><th>Emitido</th><th>SLA</th></tr></thead>
+              <tbody id="tabla"><tr><td colspan="5" class="muted">Sin corrida todavía.</td></tr></tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+      <p class="note">Lo frágil de automatizar un sistema ajeno es que el formulario cambia sin aviso.
+         Por eso los selectores viven en un solo archivo de configuración, cada búsqueda reintenta con
+         espera creciente, y si un aviso no aparece el bot lo anota y sigue: una corrida de 400 avisos
+         no se puede caer por uno.</p>
+    </div>
+  </div>
+
+  <nav class="footer-nav">
+    <a href="../index.html">← Todos los demos</a>
+    <span>Avisos ficticios</span>
+  </nav>
+</div>
+
+<script src="../assets/demo.js"></script>
+<script>
+const equipos = ['Central de aire N4', 'Ascensor Torre B', 'Caldera 3', 'Grupo electrógeno',
+                 'Bomba agua caliente', 'Red húmeda piso 2', 'Estanque acumulación', 'Central de gases'];
+const tipos = ['Correctivo', 'Preventivo', 'Emergencia'];
+
+document.getElementById('run').addEventListener('click', async (ev) => {
+  ev.currentTarget.disabled = true;
+  const log = document.getElementById('log');
+  const tabla = document.getElementById('tabla');
+  log.textContent = ''; tabla.innerHTML = '';
+  const desde = +document.getElementById('desde').value;
+  const hasta = +document.getElementById('hasta').value;
+  const anio = document.getElementById('anio').value;
+  const total = Math.max(1, hasta - desde + 1);
+
+  await logLines(log, ['sesión iniciada · navegador ' + (document.getElementById('modo').selectedIndex ? 'visible' : 'headless'),
+                       'formulario de búsqueda detectado'], 260);
+
+  let ok = 0, fallas = 0;
+  for (let i = 0; i < total; i++) {
+    const num = desde + i;
+    document.getElementById('prog').style.width = Math.round(((i + 1) / total) * 100) + '%';
+    document.getElementById('msg').textContent = `Buscando aviso ${num}/${hasta}…`;
+    const noExiste = i === 4;              // un aviso que no está en el sistema
+    const reintento = i === 7;             // uno que responde lento y reintenta
+    await sleep(230);
+
+    if (reintento) { log.textContent += `\n[${num}] sin respuesta — reintento 1 de 3 (espera 2 s)`; await sleep(350); }
+    if (noExiste) {
+      fallas++;
+      log.textContent += `\n[${num}] no encontrado — anotado en hoja «Sin resultado»`;
+    } else {
+      ok++;
+      const eq = equipos[i % equipos.length];
+      const tipo = tipos[i % tipos.length];
+      const sla = tipo === 'Emergencia' ? '4 h' : tipo === 'Correctivo' ? '48 h' : '30 días';
+      const dia = String((i % 27) + 1).padStart(2, '0');
+      log.textContent += `\n[${num}] extraído · ${eq}`;
+      tabla.innerHTML += `<tr><td>${anio}-${num}</td><td>${eq}</td><td>${tipo}</td><td>${dia}-07-${anio}</td><td>${sla}</td></tr>`;
+    }
+    log.scrollTop = log.scrollHeight;
+  }
+
+  await logLines(log, [`corrida terminada · ${ok} extraídos · ${fallas} sin resultado`,
+                       'planilla escrita: Busqueda_Avisos_2026-07.xlsx (hojas: Avisos · Sin resultado · Resumen)'], 300);
+  document.getElementById('msg').textContent = `${ok} avisos extraídos, ${fallas} sin resultado.`;
+  document.getElementById('descargar').disabled = false;
+  ev.currentTarget.disabled = false;
+});
+
+document.getElementById('descargar').addEventListener('click', () => {
+  document.getElementById('msg').textContent =
+    'En el sistema real esto abre el Excel generado; aquí la hoja «Avisos» es la tabla de la derecha.';
+});
+</script>
+</body>
+</html>

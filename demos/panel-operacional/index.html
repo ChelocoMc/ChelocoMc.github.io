@@ -1,0 +1,218 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Panel de control operacional — Demo</title>
+<link rel="stylesheet" href="../assets/demo.css">
+</head>
+<body>
+<div class="demo-flag"><b>Demo</b><span>Datos ficticios. Ninguna cifra, equipo o persona corresponde a una institución real.</span><a href="../index.html">Todos los demos</a></div>
+
+<div class="wrap">
+  <header class="page-head">
+    <div class="ref">Ref. OPS-01</div>
+    <h1>Panel de control operacional</h1>
+    <p>Un solo lugar donde el equipo de mantenimiento ve qué automatizaciones están corriendo,
+       cómo están los equipos críticos y qué tareas quedaron pendientes hoy. Las métricas llegan
+       empujadas desde el servidor, no por refresco manual.</p>
+    <div class="tags">
+      <span class="tag">Python</span><span class="tag">Flask</span><span class="tag">Server-Sent Events</span>
+      <span class="tag">SQLite</span><span class="tag">Sin build de JS</span>
+    </div>
+  </header>
+
+  <div class="app">
+    <div class="app-bar"><span class="dots"><i></i><i></i><i></i></span><span class="app-url">localhost:5100 — Panel de Control</span></div>
+    <div class="app-body">
+
+      <div class="tabs">
+        <button data-panel="p-resumen">Resumen</button>
+        <button data-panel="p-bots">Automatizaciones</button>
+        <button data-panel="p-equipos">Equipos críticos</button>
+        <button data-panel="p-rondas">Rondas</button>
+      </div>
+
+      <!-- ============ RESUMEN ============ -->
+      <section id="p-resumen" class="panel">
+        <div class="grid">
+          <div class="card"><h3>Procesos activos</h3><div class="stat" id="s-activos">3</div><div class="stat-label">corriendo ahora</div></div>
+          <div class="card"><h3>Completados hoy</h3><div class="stat" id="s-ok">12</div><div class="stat-label">sin intervención</div></div>
+          <div class="card"><h3>Con error</h3><div class="stat" id="s-err">2</div><div class="stat-label">requieren revisión</div></div>
+          <div class="card"><h3>Cumplimiento preventivo</h3><div class="stat" id="s-cump">86%</div><div class="stat-label">mes en curso</div></div>
+        </div>
+
+        <div class="card" style="margin-top:14px">
+          <div class="spread"><h3 style="margin:0">Flujo de eventos (SSE)</h3><span class="pill ok" id="sse-estado">conectado</span></div>
+          <pre class="log" id="sse-log" style="margin-top:10px"></pre>
+          <p class="note">En el sistema real esta consola es el mismo canal que alimenta las tarjetas:
+             el servidor emite un evento por cada cambio de estado y el navegador solo escucha.
+             No hay <em>polling</em>, así que un proceso largo no congela la interfaz.</p>
+        </div>
+      </section>
+
+      <!-- ============ BOTS ============ -->
+      <section id="p-bots" class="panel" hidden>
+        <div class="row" style="margin-bottom:12px">
+          <button class="btn" id="btn-run">▶ Ejecutar «Consolidado mensual»</button>
+          <span class="muted" id="run-msg">Listo para ejecutar.</span>
+        </div>
+        <div class="table-scroll">
+          <table>
+            <thead><tr><th>Automatización</th><th>Última corrida</th><th>Duración</th><th>Estado</th><th style="width:140px">Progreso</th></tr></thead>
+            <tbody id="tabla-bots"></tbody>
+          </table>
+        </div>
+        <p class="note">Cada automatización se lanza como proceso aparte y reporta avance por el mismo canal de eventos;
+           si una falla, el panel la marca sin afectar a las demás.</p>
+      </section>
+
+      <!-- ============ EQUIPOS ============ -->
+      <section id="p-equipos" class="panel" hidden>
+        <div class="grid" style="grid-template-columns:repeat(auto-fit,minmax(150px,1fr))">
+          <div class="card"><h3>Equipos OK</h3><div class="stat" style="color:var(--ok)">21</div></div>
+          <div class="card"><h3>Por revisar</h3><div class="stat" style="color:var(--warn)">3</div></div>
+          <div class="card"><h3>Fuera de servicio</h3><div class="stat" style="color:var(--bad)">1</div></div>
+        </div>
+        <div class="table-scroll" style="margin-top:14px">
+          <table>
+            <thead><tr><th>Equipo</th><th>Ubicación</th><th>Lectura</th><th>Estado</th></tr></thead>
+            <tbody id="tabla-equipos"></tbody>
+          </table>
+        </div>
+      </section>
+
+      <!-- ============ RONDAS ============ -->
+      <section id="p-rondas" class="panel" hidden>
+        <div class="card">
+          <h3>Optimizador de ronda</h3>
+          <div class="field"><label for="turno">Turno</label>
+            <select id="turno">
+              <option>Mañana — 08:00 a 16:00</option>
+              <option>Tarde — 16:00 a 00:00</option>
+              <option>Noche — 00:00 a 08:00</option>
+            </select>
+          </div>
+          <button class="btn ghost" id="btn-ruta">Recalcular ruta</button>
+          <div class="table-scroll" style="margin-top:14px">
+            <table>
+              <thead><tr><th>#</th><th>Tarea</th><th>Zona</th><th>Estimado</th></tr></thead>
+              <tbody id="tabla-ruta"></tbody>
+            </table>
+          </div>
+          <p class="note">La ruta se ordena por zona y criticidad para no cruzar el edificio dos veces:
+             en el piloto bajó el tiempo de traslado del turno de 3,0 a 1,5 horas.</p>
+        </div>
+      </section>
+
+    </div>
+  </div>
+
+  <nav class="footer-nav">
+    <a href="../index.html">← Todos los demos</a>
+    <span>Vista recreada con datos ficticios · sin marca ni datos de ninguna institución</span>
+  </nav>
+</div>
+
+<script src="../assets/demo.js"></script>
+<script>
+const bots = [
+  { nombre: 'Consolidado mensual',      hora: '07:12', dur: '00:42', estado: 'ok',   prog: 100 },
+  { nombre: 'Reporte de cumplimiento',  hora: '07:55', dur: '01:18', estado: 'run',  prog: 62  },
+  { nombre: 'Sincronización de activos',hora: '06:30', dur: '00:09', estado: 'ok',   prog: 100 },
+  { nombre: 'Descarga de adjuntos',     hora: '05:40', dur: '02:05', estado: 'err',  prog: 34  },
+  { nombre: 'Respaldo de planillas',    hora: '04:00', dur: '00:21', estado: 'ok',   prog: 100 },
+];
+
+const equipos = [
+  { eq: 'Bomba de agua caliente',   loc: 'Torre A · Subterráneo', val: '62 °C',    st: 'ok'   },
+  { eq: 'Grupo electrógeno',        loc: 'Sala de máquinas',      val: '480 V',    st: 'ok'   },
+  { eq: 'Caldera 3',                loc: 'Pabellón técnico',      val: '118 ppm',  st: 'warn' },
+  { eq: 'Ascensor B',               loc: 'Torre B · Piso 1',      val: '—',        st: 'bad'  },
+  { eq: 'Central de aire',          loc: 'Nivel 4',               val: '21 °C',    st: 'ok'   },
+  { eq: 'Estanque de acumulación',  loc: 'Exterior norte',        val: '84 %',     st: 'warn' },
+];
+
+const ruta = [
+  ['1', 'Lectura de presión — caldera 3', 'Zona B', '15 min'],
+  ['2', 'Cambio de filtro — central de aire', 'Zona B', '30 min'],
+  ['3', 'Revisión de tablero eléctrico', 'Zona B', '20 min'],
+  ['4', 'Inspección de ascensor B', 'Zona C', '25 min'],
+];
+
+const etiqueta = { ok: ['ok', 'completado'], run: ['warn', 'corriendo'], err: ['bad', 'con error'] };
+
+function pintarBots() {
+  document.getElementById('tabla-bots').innerHTML = bots.map((b) => `
+    <tr>
+      <td>${b.nombre}</td><td>${b.hora}</td><td>${b.dur}</td>
+      <td><span class="pill ${etiqueta[b.estado][0]}">${etiqueta[b.estado][1]}</span></td>
+      <td><div class="bar"><i style="width:${b.prog}%"></i></div></td>
+    </tr>`).join('');
+}
+
+function pintarEquipos() {
+  const txt = { ok: 'normal', warn: 'revisar', bad: 'fuera de servicio' };
+  document.getElementById('tabla-equipos').innerHTML = equipos.map((e) => `
+    <tr><td>${e.eq}</td><td class="muted">${e.loc}</td><td>${e.val}</td>
+        <td><span class="pill ${e.st}">${txt[e.st]}</span></td></tr>`).join('');
+}
+
+function pintarRuta() {
+  document.getElementById('tabla-ruta').innerHTML = ruta.map((r) => `
+    <tr><td class="muted">${r[0]}</td><td>${r[1]}</td><td>${r[2]}</td><td>${r[3]}</td></tr>`).join('');
+}
+
+pintarBots(); pintarEquipos(); pintarRuta();
+
+/* --- Canal de eventos simulado: reproduce lo que en producción llega por SSE --- */
+const eventos = [
+  'evento: heartbeat        · procesos activos = 3',
+  'evento: bot.progreso     · Reporte de cumplimiento 64%',
+  'evento: sensor.lectura   · Caldera 3 → 118 ppm (umbral 100)',
+  'evento: alerta.abierta   · Caldera 3 fuera de rango',
+  'evento: bot.progreso     · Reporte de cumplimiento 71%',
+  'evento: bot.finalizado   · Sincronización de activos (00:09)',
+  'evento: heartbeat        · procesos activos = 2',
+];
+const logEl = document.getElementById('sse-log');
+let i = 0;
+setInterval(() => {
+  const hora = new Date().toLocaleTimeString('es-CL', { hour12: false });
+  logEl.textContent += (logEl.textContent ? '\n' : '') + `[${hora}] ${eventos[i % eventos.length]}`;
+  logEl.scrollTop = logEl.scrollHeight;
+  i++;
+  if (i % 3 === 0) {
+    const cump = document.getElementById('s-cump');
+    cump.textContent = (85 + (i % 4)) + '%';
+  }
+}, 1800);
+
+/* --- Ejecutar una automatización --- */
+document.getElementById('btn-run').addEventListener('click', async (ev) => {
+  const btn = ev.currentTarget;
+  const msg = document.getElementById('run-msg');
+  btn.disabled = true;
+  bots[0].estado = 'run'; bots[0].prog = 0; pintarBots();
+  for (let p = 0; p <= 100; p += 10) {
+    bots[0].prog = p; pintarBots();
+    msg.textContent = `Consolidando registros… ${p}%`;
+    await sleep(160);
+  }
+  bots[0].estado = 'ok'; bots[0].dur = '00:38';
+  bots[0].hora = new Date().toLocaleTimeString('es-CL', { hour12: false }).slice(0, 5);
+  pintarBots();
+  msg.textContent = 'Completado — 1.482 registros consolidados, 0 errores.';
+  document.getElementById('s-ok').textContent = String(+document.getElementById('s-ok').textContent + 1);
+  btn.disabled = false;
+});
+
+/* --- Recalcular ruta --- */
+document.getElementById('btn-ruta').addEventListener('click', () => {
+  ruta.reverse();
+  ruta.forEach((r, n) => (r[0] = String(n + 1)));
+  pintarRuta();
+});
+</script>
+</body>
+</html>

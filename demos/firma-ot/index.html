@@ -1,0 +1,259 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Firma digital de órdenes de trabajo — Demo</title>
+<link rel="stylesheet" href="../assets/demo.css">
+<style>
+  .fase { display: flex; gap: 6px; margin-bottom: 18px; flex-wrap: wrap; }
+  .fase span { font-size: 11.5px; padding: 4px 10px; border-radius: 999px; border: 1px solid var(--border); color: var(--text-dim); }
+  .fase span.on { background: var(--accent); border-color: var(--accent); color: #fff; }
+  .fase span.done { border-color: var(--ok); color: var(--ok); }
+  #lienzo { width: 100%; height: 190px; border: 1px dashed var(--border); border-radius: 10px;
+            background: var(--surface); touch-action: none; display: block; cursor: crosshair; }
+  .check { display: flex; gap: 9px; align-items: flex-start; font-size: 13.5px; padding: 6px 0; }
+  .check b { color: var(--ok); flex: none; }
+  .recibo { font-family: var(--mono); font-size: 12px; background: var(--surface-2);
+            border: 1px solid var(--border); border-radius: 8px; padding: 14px; overflow-x: auto; }
+  .telefono { max-width: 420px; margin: 0 auto; }
+</style>
+</head>
+<body>
+<div class="demo-flag"><b>Demo</b><span>Orden, personas y RUT inventados. Ninguna firma aquí tiene efecto legal.</span><a href="../index.html">Todos los demos</a></div>
+
+<div class="wrap">
+  <header class="page-head">
+    <div class="ref">Ref. SIGN-08</div>
+    <h1>Firma digital de órdenes de trabajo</h1>
+    <p>Reemplaza la hoja de papel que el técnico hace firmar en terreno. El receptor valida su RUT,
+       firma con el dedo en el celular y la orden queda sellada con hash, hora, ubicación y clave de
+       confirmación: verificable después, no una imagen de firma pegada sobre un PDF.</p>
+    <div class="tags">
+      <span class="tag">Next.js</span><span class="tag">TypeScript</span><span class="tag">Prisma</span>
+      <span class="tag">PWA</span><span class="tag">SHA-256</span><span class="tag">Ley 19.799</span>
+    </div>
+  </header>
+
+  <div class="app">
+    <div class="app-bar"><span class="dots"><i></i><i></i><i></i></span><span class="app-url">firma-ot.demo — cierre de orden en terreno</span></div>
+    <div class="app-body">
+      <div class="telefono">
+        <div class="fase" id="fase">
+          <span data-f="1">1 · Orden</span><span data-f="2">2 · Técnico</span>
+          <span data-f="3">3 · Receptor</span><span data-f="4">4 · Firma</span><span data-f="5">5 · Sello</span>
+        </div>
+
+        <!-- Paso 1 -->
+        <section class="panel" id="f1">
+          <div class="card">
+            <h3>Datos leídos del PDF</h3>
+            <div class="table-scroll">
+              <table>
+                <tbody>
+                  <tr><td class="muted">N° de orden</td><td><b>OT-04821</b></td></tr>
+                  <tr><td class="muted">Servicio</td><td>Mantenimiento preventivo</td></tr>
+                  <tr><td class="muted">Equipo</td><td>Central de aire — Nivel 4</td></tr>
+                  <tr><td class="muted">Emitida</td><td>10-08-2026 · 09:15</td></tr>
+                  <tr><td class="muted">Archivo</td><td>orden_trabajo_04821.pdf · 312 KB</td></tr>
+                </tbody>
+              </table>
+            </div>
+            <p class="note">El técnico solo carga el PDF: el número, el equipo y la fecha se extraen
+               del documento, así que no hay tipeo manual que después no cuadre con el papel.</p>
+            <button class="btn" style="width:100%; margin-top:12px" data-ir="2">Continuar</button>
+          </div>
+        </section>
+
+        <!-- Paso 2 -->
+        <section class="panel" id="f2" hidden>
+          <div class="card">
+            <h3>Técnico responsable</h3>
+            <div class="field"><label for="tec">Nombre</label><input id="tec" value="Camila Rojas (ficticio)"></div>
+            <div class="field"><label for="cargo">Cargo</label><input id="cargo" value="Técnico de climatización"></div>
+            <div class="field"><label for="obs">Observación del trabajo</label>
+              <textarea id="obs" rows="3">Se cambió filtro y se registró presión de salida. Equipo operativo.</textarea></div>
+            <button class="btn" style="width:100%" data-ir="3">Continuar</button>
+          </div>
+        </section>
+
+        <!-- Paso 3 -->
+        <section class="panel" id="f3" hidden>
+          <div class="card">
+            <h3>Receptor conforme</h3>
+            <div class="field"><label for="rec">Nombre de quien recibe</label><input id="rec" value="Jorge Salinas (ficticio)"></div>
+            <div class="field">
+              <label for="rut">RUT (se valida el dígito verificador)</label>
+              <input id="rut" value="12.345.678-5" inputmode="text">
+              <div id="rut-msg" style="font-size:12.5px; margin-top:6px" class="muted">Escribe un RUT para validarlo.</div>
+            </div>
+            <button class="btn" style="width:100%" id="ir4" data-ir="4">Continuar a la firma</button>
+          </div>
+        </section>
+
+        <!-- Paso 4 -->
+        <section class="panel" id="f4" hidden>
+          <div class="card">
+            <h3>Firma en pantalla</h3>
+            <canvas id="lienzo"></canvas>
+            <div class="row" style="margin-top:10px">
+              <button class="btn ghost" id="limpiar">Borrar</button>
+              <button class="btn" id="sellar" style="flex:1">Firmar y sellar</button>
+            </div>
+            <p class="note">El lienzo está pensado para el dedo, no para el mouse: trazo grueso,
+               área amplia y sin controles pequeños, porque se firma de pie en un pasillo.</p>
+          </div>
+        </section>
+
+        <!-- Paso 5 -->
+        <section class="panel" id="f5" hidden>
+          <div class="card">
+            <h3>Orden cerrada y verificable</h3>
+            <div class="check"><b>✓</b><span>RUT válido — dígito verificador calculado con módulo 11.</span></div>
+            <div class="check"><b>✓</b><span>Sello <b>SHA-256</b> sobre el documento más la firma: cualquier edición posterior lo rompe.</span></div>
+            <div class="check"><b>✓</b><span>Hora, dispositivo y coordenadas registrados en la bitácora de auditoría.</span></div>
+            <div class="check"><b>✓</b><span>Clave de confirmación de 6 dígitos enviada al receptor.</span></div>
+            <div class="recibo" id="recibo" style="margin-top:14px"></div>
+            <button class="btn ghost" style="width:100%; margin-top:12px" id="reiniciar">Volver a empezar</button>
+          </div>
+        </section>
+      </div>
+
+      <p class="note">El flujo se diseñó contra los requisitos de firma electrónica simple de la Ley 19.799:
+         vínculo entre firmante y documento, integridad verificable y registro de auditoría. La app es
+         instalable (PWA) porque el técnico usa el celular que ya tiene, sin pasar por tienda de aplicaciones.</p>
+    </div>
+  </div>
+
+  <nav class="footer-nav">
+    <a href="../index.html">← Todos los demos</a>
+    <span>Orden y firmantes ficticios</span>
+  </nav>
+</div>
+
+<script src="../assets/demo.js"></script>
+<script>
+/* ---------- Navegación entre pasos ---------- */
+let paso = 1;
+function irA(n) {
+  paso = n;
+  for (let i = 1; i <= 5; i++) document.getElementById('f' + i).hidden = i !== n;
+  document.querySelectorAll('#fase span').forEach((s) => {
+    const f = +s.dataset.f;
+    s.classList.toggle('on', f === n);
+    s.classList.toggle('done', f < n);
+  });
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+document.querySelectorAll('[data-ir]').forEach((b) => b.addEventListener('click', () => irA(+b.dataset.ir)));
+irA(1);
+
+/* ---------- Validación de RUT chileno (módulo 11) ---------- */
+function rutValido(valor) {
+  const limpio = valor.replace(/[.\-\s]/g, '').toUpperCase();
+  if (!/^\d{7,8}[\dK]$/.test(limpio)) return false;
+  const cuerpo = limpio.slice(0, -1);
+  const dv = limpio.slice(-1);
+  let suma = 0, factor = 2;
+  for (let i = cuerpo.length - 1; i >= 0; i--) {
+    suma += +cuerpo[i] * factor;
+    factor = factor === 7 ? 2 : factor + 1;
+  }
+  const resto = 11 - (suma % 11);
+  const esperado = resto === 11 ? '0' : resto === 10 ? 'K' : String(resto);
+  return dv === esperado;
+}
+
+const rutInput = document.getElementById('rut');
+const rutMsg = document.getElementById('rut-msg');
+const btn4 = document.getElementById('ir4');
+function revisarRut() {
+  const ok = rutValido(rutInput.value);
+  rutMsg.innerHTML = rutInput.value.trim() === ''
+    ? 'Escribe un RUT para validarlo.'
+    : ok ? '<span class="pill ok">RUT válido</span>' : '<span class="pill bad">Dígito verificador incorrecto</span>';
+  btn4.disabled = !ok;
+}
+rutInput.addEventListener('input', revisarRut);
+revisarRut();
+
+/* ---------- Lienzo de firma ---------- */
+const canvas = document.getElementById('lienzo');
+const ctx = canvas.getContext('2d');
+let trazos = 0;
+function ajustar() {
+  const r = canvas.getBoundingClientRect();
+  const dpr = window.devicePixelRatio || 1;
+  canvas.width = r.width * dpr; canvas.height = r.height * dpr;
+  ctx.scale(dpr, dpr);
+  ctx.lineWidth = 2.6; ctx.lineCap = 'round'; ctx.lineJoin = 'round';
+  ctx.strokeStyle = getComputedStyle(document.body).color;
+}
+new ResizeObserver(ajustar).observe(canvas);
+ajustar();
+
+let dibujando = false;
+const punto = (e) => {
+  const r = canvas.getBoundingClientRect();
+  return [e.clientX - r.left, e.clientY - r.top];
+};
+canvas.addEventListener('pointerdown', (e) => {
+  dibujando = true; trazos++; canvas.setPointerCapture(e.pointerId);
+  const [x, y] = punto(e); ctx.beginPath(); ctx.moveTo(x, y);
+});
+canvas.addEventListener('pointermove', (e) => {
+  if (!dibujando) return;
+  const [x, y] = punto(e); ctx.lineTo(x, y); ctx.stroke();
+});
+canvas.addEventListener('pointerup', () => { dibujando = false; });
+document.getElementById('limpiar').addEventListener('click', () => {
+  ctx.clearRect(0, 0, canvas.width, canvas.height); trazos = 0;
+});
+
+/* ---------- Sello: hash real del contenido firmado ---------- */
+async function sha256(texto) {
+  if (window.crypto?.subtle) {
+    const buf = await crypto.subtle.digest('SHA-256', new TextEncoder().encode(texto));
+    return [...new Uint8Array(buf)].map((b) => b.toString(16).padStart(2, '0')).join('');
+  }
+  // Sin crypto.subtle (contextos no seguros) el demo cae a un resumen no criptográfico,
+  // solo para que la vista siga funcionando; el sistema real siempre usa SHA-256.
+  let h = 0n;
+  for (const c of texto) h = (h * 1099511628211n ^ BigInt(c.codePointAt(0))) & 0xffffffffffffffffn;
+  return (h.toString(16) + '00').repeat(4).slice(0, 64);
+}
+
+document.getElementById('sellar').addEventListener('click', async () => {
+  if (trazos === 0) {
+    document.getElementById('lienzo').style.borderColor = 'var(--bad)';
+    return;
+  }
+  document.getElementById('lienzo').style.borderColor = '';
+  const ahora = new Date();
+  const contenido = [
+    'OT-04821', document.getElementById('tec').value, document.getElementById('rec').value,
+    rutInput.value, document.getElementById('obs').value, ahora.toISOString(),
+    canvas.toDataURL('image/png').slice(0, 2000),
+  ].join('|');
+  const hash = await sha256(contenido);
+  const clave = String(Math.floor(100000 + Math.random() * 900000));
+  document.getElementById('recibo').textContent =
+`orden        : OT-04821
+receptor     : ${document.getElementById('rec').value}
+rut          : ${rutInput.value}
+tecnico      : ${document.getElementById('tec').value}
+firmado      : ${ahora.toLocaleString('es-CL')}
+dispositivo  : móvil (PWA)
+ubicación    : -33.4372, -70.6506  (coordenadas ficticias)
+sha-256      : ${hash}
+confirmación : ${clave}
+estado       : CERRADA · verificable`;
+  irA(5);
+});
+
+document.getElementById('reiniciar').addEventListener('click', () => {
+  ctx.clearRect(0, 0, canvas.width, canvas.height); trazos = 0; irA(1);
+});
+</script>
+</body>
+</html>

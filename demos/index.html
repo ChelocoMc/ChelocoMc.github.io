@@ -1,0 +1,143 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Demos — sistemas de operación y mantenimiento</title>
+<link rel="stylesheet" href="assets/demo.css">
+<style>
+  .galeria { display: grid; gap: 14px; grid-template-columns: repeat(auto-fit, minmax(270px, 1fr)); }
+  .item { display: block; text-decoration: none; color: inherit; background: var(--surface);
+          border: 1px solid var(--border); border-radius: var(--radius); padding: 16px; transition: border-color .15s, transform .15s; }
+  .item:hover { border-color: var(--accent); transform: translateY(-2px); }
+  .item .ref { font-family: var(--mono); font-size: 10.5px; letter-spacing: .12em; color: var(--text-dim); text-transform: uppercase; }
+  .item h3 { margin: 5px 0 6px; font-size: 16.5px; letter-spacing: -.01em; }
+  .item p { margin: 0 0 10px; font-size: 13.5px; color: var(--text-dim); }
+  .item .tags { margin: 0; }
+  .grupo { margin: 34px 0 14px; font-size: 13px; text-transform: uppercase; letter-spacing: .08em; color: var(--text-dim); }
+  .intro { max-width: 70ch; }
+  .intro p { color: var(--text-dim); }
+</style>
+</head>
+<body>
+<div class="demo-flag"><b>Demo</b><span>Todo lo que se ve aquí usa datos inventados, sin marca ni información de ninguna institución.</span></div>
+
+<div class="wrap">
+  <header class="page-head intro">
+    <h1>Demos de sistemas de operación y mantenimiento</h1>
+    <p>Cada demo muestra cómo se ve y se comporta una solución, con datos ficticios y sin identificar a
+       ningún cliente. Se abren en el navegador, no requieren instalación y funcionan sin conexión.
+       Lo que se implementa en cada institución se construye desde cero con sus propias fuentes de datos,
+       sus planos y sus reglas de negocio: esto es la idea funcionando, no el sistema de nadie.</p>
+  </header>
+
+  <div class="grupo">Operación diaria</div>
+  <div class="galeria">
+    <a class="item" href="panel-operacional/index.html">
+      <div class="ref">Ops-01</div>
+      <h3>Panel de control operacional</h3>
+      <p>Un solo tablero para las automatizaciones, los equipos críticos y las rondas del turno, con métricas empujadas en vivo.</p>
+      <div class="tags"><span class="tag">Flask</span><span class="tag">SSE</span><span class="tag">SQLite</span></div>
+    </a>
+    <a class="item" href="visor-planos/index.html">
+      <div class="ref">Web-07</div>
+      <h3>Visor de planos con wayfinding</h3>
+      <p>Buscas un recinto y el visor traza la ruta por el pasillo, cambia de piso y la explica paso a paso.</p>
+      <div class="tags"><span class="tag">FastAPI</span><span class="tag">OpenCV</span><span class="tag">A*</span></div>
+    </a>
+    <a class="item" href="firma-ot/index.html">
+      <div class="ref">Sign-08</div>
+      <h3>Firma digital de órdenes de trabajo</h3>
+      <p>El cierre en terreno pasa del papel a una firma en el celular, sellada con hash, hora y ubicación.</p>
+      <div class="tags"><span class="tag">Next.js</span><span class="tag">PWA</span><span class="tag">SHA-256</span></div>
+    </a>
+    <a class="item" href="validador-qr/index.html">
+      <div class="ref">QR-11</div>
+      <h3>Validador de activos por QR</h3>
+      <p>Escaneas la etiqueta del equipo y ves su ficha, su última revisión y lo que quedó pendiente. Funciona sin señal.</p>
+      <div class="tags"><span class="tag">PWA</span><span class="tag">Apps Script</span></div>
+    </a>
+  </div>
+
+  <div class="grupo">Datos, reportería y control</div>
+  <div class="galeria">
+    <a class="item" href="modelo-bi/index.html">
+      <div class="ref">BI-03</div>
+      <h3>Modelo de Business Intelligence</h3>
+      <p>El reporte ejecutivo de cumplimiento deja de armarse a mano: un modelo semántico lo actualiza solo.</p>
+      <div class="tags"><span class="tag">Power BI</span><span class="tag">DAX</span></div>
+    </a>
+    <a class="item" href="pipeline-datos/index.html">
+      <div class="ref">Data-02</div>
+      <h3>Pipeline de consolidación de datos</h3>
+      <p>Cruza dos fuentes con nombres escritos distinto, normaliza por distancia de edición y clasifica cada registro.</p>
+      <div class="tags"><span class="tag">pandas</span><span class="tag">Levenshtein</span></div>
+    </a>
+    <a class="item" href="auditoria-inventario/index.html">
+      <div class="ref">Ops-04</div>
+      <h3>Validación y auditoría de inventario</h3>
+      <p>Valida reglas sobre el Excel operativo, lo compara con el informe del auditor vía OCR y redacta el correo con las diferencias.</p>
+      <div class="tags"><span class="tag">Excel COM</span><span class="tag">OCR</span></div>
+    </a>
+    <a class="item" href="mantencion-sql/index.html">
+      <div class="ref">Data-05</div>
+      <h3>Mantenimiento de base de datos SQL Server</h3>
+      <p>Procesos nocturnos que entregaban cifras equivocadas sin fallar: dónde mentía la lógica y cómo quedó.</p>
+      <div class="tags"><span class="tag">T-SQL</span><span class="tag">SQL Agent</span></div>
+    </a>
+  </div>
+
+  <div class="grupo">Automatización de sistemas sin API</div>
+  <div class="galeria">
+    <a class="item" href="bot-avisos/index.html">
+      <div class="ref">RPA-09</div>
+      <h3>Bot de extracción de avisos</h3>
+      <p>Busca por lote en un sistema que no exporta nada y arma la planilla, con reintentos y registro de lo que falta.</p>
+      <div class="tags"><span class="tag">Playwright</span><span class="tag">openpyxl</span></div>
+    </a>
+    <a class="item" href="informe-semanal/index.html">
+      <div class="ref">RPA-10</div>
+      <h3>Generador de informe semanal</h3>
+      <p>El informe del lunes sale de una corrida: extrae, calcula indicadores y entrega el documento redactado.</p>
+      <div class="tags"><span class="tag">python-docx</span><span class="tag">pandas</span></div>
+    </a>
+    <a class="item" href="descarga-documental/index.html">
+      <div class="ref">RPA-13</div>
+      <h3>Descarga documental masiva</h3>
+      <p>Baja los respaldos de cientos de órdenes y los ordena por año y número. Reanudable si se corta.</p>
+      <div class="tags"><span class="tag">Playwright</span><span class="tag">Reanudable</span></div>
+    </a>
+  </div>
+
+  <div class="grupo">Inteligencia artificial</div>
+  <div class="galeria">
+    <a class="item" href="asistente-contractual/index.html">
+      <div class="ref">AI-06</div>
+      <h3>Asistente contractual con IA</h3>
+      <p>Preguntas en lenguaje natural sobre el contrato y responde citando la cláusula. Modelo local: nada sale de la institución.</p>
+      <div class="tags"><span class="tag">RAG</span><span class="tag">Ollama</span></div>
+    </a>
+  </div>
+
+  <div class="card" style="margin-top:34px">
+    <h3>Cómo leer estos demos</h3>
+    <p style="font-size:13.5px; margin:0 0 8px">
+      Ninguno se conecta a un servidor: la lógica que se ve corriendo —el ruteo A*, la validación de RUT,
+      el sello SHA-256, la distancia de edición— se ejecuta de verdad en el navegador, sobre datos inventados.
+      Lo que en el sistema real vive en el servidor (modelos de IA, lectura de PDF, bases de datos) aquí está
+      representado con datos de ejemplo y se indica en cada página.
+    </p>
+    <p style="font-size:13.5px; margin:0" class="muted">
+      Toda implementación se construye de cero para cada institución, con sus fuentes, sus planos y sus reglas.
+    </p>
+  </div>
+
+  <nav class="footer-nav">
+    <a href="../index.html">← Volver al portafolio</a>
+    <span>Datos ficticios en todas las vistas</span>
+  </nav>
+</div>
+
+<script src="assets/demo.js"></script>
+</body>
+</html>

@@ -1,0 +1,149 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Mantenimiento de base de datos SQL Server — Demo</title>
+<link rel="stylesheet" href="../assets/demo.css">
+<style>
+  .sql { font-family: var(--mono); font-size: 12px; background: var(--surface-2); border: 1px solid var(--border);
+         border-radius: 8px; padding: 13px; overflow-x: auto; white-space: pre; margin: 0; }
+  .antes-despues { display: grid; gap: 12px; grid-template-columns: 1fr 1fr; }
+  @media (max-width: 720px) { .antes-despues { grid-template-columns: 1fr; } }
+  .etiqueta { font-size: 11.5px; text-transform: uppercase; letter-spacing: .06em; color: var(--text-dim); margin-bottom: 6px; }
+</style>
+</head>
+<body>
+<div class="demo-flag"><b>Demo</b><span>Jobs, tablas y cifras inventados. No hay conexión a ninguna base real.</span><a href="../index.html">Todos los demos</a></div>
+
+<div class="wrap">
+  <header class="page-head">
+    <div class="ref">Ref. DATA-05</div>
+    <h1>Mantenimiento de base de datos SQL Server</h1>
+    <p>Los procesos nocturnos corrían «bien»: terminaban sin avisar de nada y entregaban cifras
+       equivocadas a la jefatura. El trabajo fue encontrar dónde mentía la lógica, corregirla y dejar
+       los jobs con guardas para que un fallo se note el mismo día.</p>
+    <div class="tags">
+      <span class="tag">SQL Server</span><span class="tag">T-SQL</span><span class="tag">SQL Agent</span>
+      <span class="tag">Índices</span>
+    </div>
+  </header>
+
+  <div class="app">
+    <div class="app-bar"><span class="dots"><i></i><i></i><i></i></span><span class="app-url">SQL Server Agent — jobs nocturnos</span></div>
+    <div class="app-body">
+      <div class="table-scroll">
+        <table>
+          <thead><tr><th>Job</th><th>Programado</th><th>Última corrida</th><th>Duración</th><th>Estado</th></tr></thead>
+          <tbody id="t-jobs"></tbody>
+        </table>
+      </div>
+      <div class="row" style="margin-top:12px">
+        <button class="btn" id="run">▶ Simular corrida nocturna</button>
+        <span class="muted" id="msg">Los tres jobs quedaron con guardas para poder re-ejecutarlos sin duplicar datos.</span>
+      </div>
+      <pre class="log" id="log" style="margin-top:12px"></pre>
+    </div>
+  </div>
+
+  <h2 style="font-size:18px; margin:28px 0 12px">Los tres errores que producían cifras equivocadas</h2>
+
+  <div class="card" style="margin-bottom:14px">
+    <h3>1 · Dos situaciones distintas contadas como una</h3>
+    <div class="antes-despues">
+      <div><div class="etiqueta">Antes</div><pre class="sql">CASE
+  WHEN prev.id IS NULL THEN 'Sin gestion'
+  ELSE 'Gestionado'
+END AS categoria</pre></div>
+      <div><div class="etiqueta">Después</div><pre class="sql">CASE
+  WHEN prev.id IS NULL      THEN 'Sin prevision asignada'
+  WHEN ot.id   IS NULL      THEN 'Con prevision, sin OT'
+  ELSE 'Gestionado'
+END AS categoria</pre></div>
+    </div>
+    <p class="note">Un equipo sin previsión asignada y un equipo con previsión pero sin orden de trabajo
+       son problemas distintos, con responsables distintos. Agrupados en una sola categoría, el informe
+       mostraba un número que no permitía actuar. Separarlos cambió las cifras que veía la jefatura.</p>
+  </div>
+
+  <div class="card" style="margin-bottom:14px">
+    <h3>2 · Conteo sobre la columna equivocada</h3>
+    <div class="antes-despues">
+      <div><div class="etiqueta">Antes</div><pre class="sql">SELECT anio,
+       COUNT(estado) AS total
+FROM  resumen_anual
+GROUP BY anio;</pre></div>
+      <div><div class="etiqueta">Después</div><pre class="sql">SELECT anio,
+       COUNT(DISTINCT aviso_id) AS total
+FROM  resumen_anual
+GROUP BY anio;</pre></div>
+    </div>
+    <p class="note">Contar por una columna repetida infla el total anual. El síntoma era una cifra que
+       nadie podía cuadrar contra el sistema origen; la causa, un <code>COUNT</code> apuntando a la
+       columna que no identifica el registro.</p>
+  </div>
+
+  <div class="card">
+    <h3>3 · Un job que fallaba todas las noches en silencio</h3>
+    <pre class="sql">-- El job de índices requiere estas opciones de sesión; sin ellas
+-- falla al tocar cualquier índice sobre columna calculada.
+SET QUOTED_IDENTIFIER ON;
+SET ANSI_NULLS ON;
+
+-- Guarda: no reconstruir si otro proceso dejó la tabla bloqueada
+IF NOT EXISTS (SELECT 1 FROM sys.dm_tran_locks WHERE resource_type = 'OBJECT'
+               AND request_mode = 'X' AND resource_associated_entity_id = OBJECT_ID('dbo.avisos'))
+BEGIN
+    ALTER INDEX ALL ON dbo.avisos REBUILD WITH (ONLINE = ON);
+END</pre>
+    <p class="note">Llevaba meses fallando por una configuración de sesión. Se corrigió y se agregaron
+       guardas para que re-ejecutarlo sea seguro, porque un job que no se puede repetir sin miedo
+       termina no ejecutándose nunca.</p>
+  </div>
+
+  <nav class="footer-nav">
+    <a href="../index.html">← Todos los demos</a>
+    <span>Jobs y datos ficticios</span>
+  </nav>
+</div>
+
+<script src="../assets/demo.js"></script>
+<script>
+const jobs = [
+  { n: 'carga_tablas_trabajo',   p: '03:45', h: '03:56', d: '00:11:20', st: 'ok'  },
+  { n: 'reconstruye_indices',    p: '04:15', h: '04:20', d: '00:04:52', st: 'ok'  },
+  { n: 'resumen_cumplimiento',   p: '04:40', h: '04:41', d: '00:02:07', st: 'ok'  },
+  { n: 'restaura_backup_pruebas',p: '05:00', h: '—',     d: '—',        st: 'off' },
+];
+const est = { ok: ['ok', 'correcto'], off: ['dim', 'deshabilitado'], err: ['bad', 'con error'] };
+function pintarJobs() {
+  document.getElementById('t-jobs').innerHTML = jobs.map((j) =>
+    `<tr><td style="font-family:var(--mono);font-size:12.5px">${j.n}</td><td>${j.p}</td><td>${j.h}</td><td>${j.d}</td>
+     <td><span class="pill ${est[j.st][0]}">${est[j.st][1]}</span></td></tr>`).join('');
+}
+pintarJobs();
+
+document.getElementById('run').addEventListener('click', async (ev) => {
+  ev.currentTarget.disabled = true;
+  const log = document.getElementById('log');
+  log.textContent = '';
+  await logLines(log, [
+    '03:45:00  carga_tablas_trabajo — inicio',
+    '03:45:02  origen validado: 18.402 filas leídas',
+    '03:56:20  categorías: 3 valores distintos (antes 2) — OK',
+    '03:56:21  carga_tablas_trabajo — correcto (00:11:20)',
+    '04:15:00  reconstruye_indices — inicio',
+    '04:15:00  SET QUOTED_IDENTIFIER ON · SET ANSI_NULLS ON',
+    '04:19:52  9 índices reconstruidos, 0 bloqueos',
+    '04:20:00  reconstruye_indices — correcto (00:04:52)',
+    '04:40:00  resumen_cumplimiento — inicio',
+    '04:41:07  COUNT(DISTINCT aviso_id) = 14.208 (cuadra con origen)',
+    '04:41:07  resumen_cumplimiento — correcto (00:02:07)',
+    '04:41:08  corrida nocturna finalizada sin errores',
+  ], 300);
+  document.getElementById('msg').textContent = 'Corrida simulada: 3 jobs, 0 errores, cifras cuadradas contra el origen.';
+  ev.currentTarget.disabled = false;
+});
+</script>
+</body>
+</html>

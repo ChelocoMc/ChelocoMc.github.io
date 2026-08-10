@@ -1,0 +1,132 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Generador de informe semanal — Demo</title>
+<link rel="stylesheet" href="../assets/demo.css">
+<style>
+  .hoja { background: #fff; color: #111; border: 1px solid var(--border); border-radius: 6px; padding: 26px 30px;
+          font-family: Georgia, "Times New Roman", serif; font-size: 13px; line-height: 1.55; box-shadow: var(--shadow); }
+  .hoja h4 { font-family: var(--sans); font-size: 15px; margin: 0 0 4px; }
+  .hoja h5 { font-family: var(--sans); font-size: 12px; text-transform: uppercase; letter-spacing: .06em;
+             color: #555; margin: 18px 0 6px; }
+  .hoja table { min-width: 0; font-family: var(--sans); font-size: 12px; }
+  .hoja th, .hoja td { border-bottom: 1px solid #ddd; color: #111; }
+  .hoja th { color: #555; }
+  .hoja .cab { border-bottom: 2px solid #111; padding-bottom: 8px; margin-bottom: 14px;
+               display: flex; justify-content: space-between; align-items: baseline; gap: 12px; flex-wrap: wrap; }
+  .hoja .marca { width: 84px; height: 22px; border: 1px dashed #bbb; border-radius: 3px; font-family: var(--sans);
+                 font-size: 9px; color: #999; display: grid; place-items: center; }
+</style>
+</head>
+<body>
+<div class="demo-flag"><b>Demo</b><span>Informe, cifras y unidades inventados. El logo va como marcador vacío a propósito.</span><a href="../index.html">Todos los demos</a></div>
+
+<div class="wrap">
+  <header class="page-head">
+    <div class="ref">Ref. RPA-10</div>
+    <h1>Generador de informe semanal</h1>
+    <p>El informe que antes se armaba a mano cada lunes — copiar del sistema, pegar en Word, redactar los
+       comentarios — sale ahora de una corrida: el bot extrae la semana, calcula los indicadores y entrega
+       el documento listo para revisar y firmar.</p>
+    <div class="tags">
+      <span class="tag">Python</span><span class="tag">Playwright</span><span class="tag">python-docx</span>
+      <span class="tag">pandas</span>
+    </div>
+  </header>
+
+  <div class="app">
+    <div class="app-bar"><span class="dots"><i></i><i></i><i></i></span><span class="app-url">informe_semanal.py — generación de documento</span></div>
+    <div class="app-body">
+      <div class="row" style="margin-bottom:14px">
+        <select id="semana" style="width:auto; min-width:220px">
+          <option>Semana 32 · 03 al 09 de agosto</option>
+          <option>Semana 31 · 27 de julio al 02 de agosto</option>
+          <option>Semana 30 · 20 al 26 de julio</option>
+        </select>
+        <button class="btn" id="run">▶ Generar informe</button>
+        <span class="muted" id="msg">Sin generar.</span>
+      </div>
+
+      <div class="grid" style="grid-template-columns:1fr 1.6fr">
+        <div class="card"><h3>Proceso</h3><pre class="log" id="log" style="max-height:320px"></pre></div>
+        <div>
+          <div class="hoja" id="hoja" hidden></div>
+          <div class="card" id="vacio"><span class="muted">El documento aparece aquí cuando corras la generación.</span></div>
+        </div>
+      </div>
+
+      <p class="note">El texto de los comentarios no es plantilla ciega: se arma según lo que muestran los
+         datos de la semana — si un indicador cae bajo la meta, el informe lo dice y nombra la unidad
+         responsable. El encabezado deja el logo como marcador para que cada institución ponga el suyo.</p>
+    </div>
+  </div>
+
+  <nav class="footer-nav">
+    <a href="../index.html">← Todos los demos</a>
+    <span>Informe ficticio</span>
+  </nav>
+</div>
+
+<script src="../assets/demo.js"></script>
+<script>
+const semanas = [
+  { n: 32, rango: '03 al 09 de agosto de 2026', avisos: 148, cerrados: 131, sla: 0.93,
+    unidades: [['Climatización', 42, 40], ['Electricidad', 31, 30], ['Transporte vertical', 18, 12], ['Agua y sanitarios', 57, 49]] },
+  { n: 31, rango: '27 de julio al 02 de agosto de 2026', avisos: 132, cerrados: 127, sla: 0.96,
+    unidades: [['Climatización', 38, 37], ['Electricidad', 27, 27], ['Transporte vertical', 15, 14], ['Agua y sanitarios', 52, 49]] },
+  { n: 30, rango: '20 al 26 de julio de 2026', avisos: 141, cerrados: 138, sla: 0.98,
+    unidades: [['Climatización', 40, 40], ['Electricidad', 29, 28], ['Transporte vertical', 17, 17], ['Agua y sanitarios', 55, 53]] },
+];
+
+document.getElementById('run').addEventListener('click', async (ev) => {
+  ev.currentTarget.disabled = true;
+  const s = semanas[document.getElementById('semana').selectedIndex];
+  const log = document.getElementById('log');
+  log.textContent = '';
+  document.getElementById('hoja').hidden = true;
+  document.getElementById('vacio').hidden = false;
+
+  await logLines(log, [
+    'sesión iniciada en el sistema de gestión',
+    `filtrando semana ${s.n} (${s.rango})`,
+    `${s.avisos} avisos leídos`,
+    'clasificando por unidad y estado',
+    'calculando cumplimiento de SLA',
+    'redactando comentarios según desviaciones',
+    'documento escrito: informe_semana_' + s.n + '.docx',
+  ], 380);
+
+  const bajo = s.unidades.filter(([, t, c]) => c / t < 0.9);
+  const comentario = bajo.length
+    ? `Se observa desviación en ${bajo.map((u) => u[0]).join(' y ')}: el cierre de avisos quedó bajo la meta del 90%. Se solicita plan de recuperación para la semana siguiente.`
+    : 'Todas las unidades cumplen la meta de cierre del 90%. No se registran desviaciones que requieran plan de acción.';
+
+  document.getElementById('hoja').innerHTML = `
+    <div class="cab">
+      <div><h4>Informe semanal de mantenimiento</h4><span style="color:#555">Semana ${s.n} · ${s.rango}</span></div>
+      <div class="marca">logo cliente</div>
+    </div>
+    <h5>1. Resumen</h5>
+    <p>Durante la semana se registraron <b>${s.avisos}</b> avisos, de los cuales se cerraron
+       <b>${s.cerrados}</b> (${Math.round((s.cerrados / s.avisos) * 100)}%). El cumplimiento de los
+       plazos comprometidos alcanzó un <b>${Math.round(s.sla * 100)}%</b>.</p>
+    <h5>2. Detalle por unidad</h5>
+    <table>
+      <thead><tr><th>Unidad</th><th>Avisos</th><th>Cerrados</th><th>%</th></tr></thead>
+      <tbody>${s.unidades.map(([u, t, c]) =>
+        `<tr><td>${u}</td><td>${t}</td><td>${c}</td><td>${Math.round((c / t) * 100)}%</td></tr>`).join('')}</tbody>
+    </table>
+    <h5>3. Observaciones</h5>
+    <p>${comentario}</p>
+    <p style="color:#777; font-size:11px; margin-top:22px">Documento generado automáticamente ·
+       datos ficticios de demostración</p>`;
+  document.getElementById('hoja').hidden = false;
+  document.getElementById('vacio').hidden = true;
+  document.getElementById('msg').textContent = `informe_semana_${s.n}.docx generado.`;
+  ev.currentTarget.disabled = false;
+});
+</script>
+</body>
+</html>
