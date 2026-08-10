@@ -638,6 +638,16 @@ nav.links a[aria-current="true"] { color: var(--accent); background: var(--accen
 }
 .demo-full:hover { background: var(--accent-soft); border-color: var(--accent); }
 .demo-full svg { width: 14px; height: 14px; }
+/* Mismo botón dentro del banco, donde va pegado al kicker y no al final. */
+.banco-full {
+  display: inline-flex; align-items: center; gap: 7px; margin-top: 12px;
+  font-family: var(--mono); font-size: .68rem; letter-spacing: .04em; text-transform: uppercase;
+  color: var(--accent); text-decoration: none;
+  padding: 6px 12px; border: 1px solid var(--accent-line); border-radius: 999px;
+  transition: background .2s var(--ease), border-color .2s var(--ease);
+}
+.banco-full:hover { background: var(--accent-soft); border-color: var(--accent); }
+.banco-full svg { width: 13px; height: 13px; }
 .galeria-nota {
   margin: 28px 0 0; font-size: .92rem; color: var(--ink-soft);
   border-top: 1px solid var(--line-soft); padding-top: 18px; max-width: 72ch;
@@ -1304,6 +1314,7 @@ input[type="range"]::-moz-range-thumb {
     <nav class="links" id="nav" aria-label="Secciones">
       <a href="#trabajo">Trabajo</a>
       <a href="#laboratorio">Laboratorio</a>
+      <a href="demos/index.html">Demos</a>
       <a href="#servicios">Servicios</a>
       <a href="#presupuesto">Presupuesto</a>
       <a href="#perfil">Perfil</a>
@@ -4430,6 +4441,16 @@ const CONTACTO = {
       elRef.textContent = p.ref;
       elTit.textContent = p.titulo;
       elKick.textContent = p.kicker;
+      /* Siete de los once tienen además demo de pantalla completa: el enlace
+         aparece solo en esos y se rehace en cada cambio de canal. */
+      const viejo = document.getElementById('bancoFull');
+      if (viejo) viejo.remove();
+      if (p.demo) {
+        elKick.insertAdjacentHTML('afterend',
+          '<a class="banco-full" id="bancoFull" href="' + p.demo + '" target="_blank" rel="noopener">' +
+          'Abrirlo en pantalla completa ' +
+          '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg></a>');
+      }
       monta.appendChild(document.getElementById('tpl-' + p.ref).content.cloneNode(true));
       initDemos(monta);
       monta.classList.remove('cambiando');
@@ -4565,7 +4586,11 @@ const CONTACTO = {
 
 (function () {
   const bar = document.getElementById('progressBar');
-  const enlaces = Array.from(document.querySelectorAll('nav.links a'));
+  /* Solo los anclas internas: en el nav también hay enlaces a otras páginas
+     (la galería de demos) y pasárselos a querySelector es un error de sintaxis
+     que dejaría muerta la barra de progreso entera. */
+  const enlaces = Array.from(document.querySelectorAll('nav.links a'))
+    .filter(function (a) { return (a.getAttribute('href') || '').charAt(0) === '#'; });
   const secciones = enlaces
     .map(function (a) { return document.querySelector(a.getAttribute('href')); })
     .filter(Boolean);

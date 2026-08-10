@@ -239,7 +239,40 @@ tbody tr:last-child td { border-bottom: none; }
 }
 .footer-nav a { text-decoration: none; }
 
+/* Botón de tema: lo inyecta tema.js en cada demo para que la elección
+   hecha en el portafolio se pueda cambiar también desde acá. */
+.tema-btn {
+  position: fixed; top: 14px; right: 14px; z-index: 60;
+  width: 36px; height: 36px; display: grid; place-items: center; cursor: pointer;
+  border: 1px solid var(--border); border-radius: 50%;
+  background: var(--surface); color: var(--text-dim); box-shadow: var(--shadow);
+  transition: color .15s, border-color .15s;
+}
+.tema-btn:hover { color: var(--accent); border-color: var(--accent); }
+.tema-btn svg { width: 17px; height: 17px; }
+
+/* Cierre común: quien llegó directo a un demo compartido tiene que poder
+   contratar sin volver a buscar el portafolio. */
+.demo-cta {
+  margin-top: 30px; padding: 20px 22px;
+  border: 1px solid var(--border); border-radius: var(--radius);
+  background: var(--surface-2);
+  display: flex; flex-wrap: wrap; gap: 14px 20px; align-items: center; justify-content: space-between;
+}
+.demo-cta p { margin: 0; font-size: 14px; max-width: 56ch; }
+.demo-cta .acciones { display: flex; flex-wrap: wrap; gap: 9px; }
+.demo-cta a {
+  text-decoration: none; font-size: 13.5px; padding: 9px 15px; border-radius: 999px;
+  border: 1px solid var(--border); color: var(--text);
+  transition: border-color .15s, color .15s;
+}
+.demo-cta a:hover { border-color: var(--accent); color: var(--accent); }
+.demo-cta a.primario { background: var(--accent); border-color: var(--accent); color: #fff; }
+.demo-cta a.primario:hover { color: #fff; opacity: .9; }
+
 @media (max-width: 640px) {
   .wrap { padding: 20px 14px 48px; }
   .page-head h1 { font-size: 22px; }
+  .tema-btn { top: 10px; right: 10px; }
+  .demo-cta { flex-direction: column; align-items: flex-start; }
 }
