@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Automatización de procesos, Power BI y Python en Chile — Marcelo Poblete</title>
-<meta name="description" content="Automatizo planillas y procesos manuales en Santiago de Chile: scripts en Python, dashboards a medida, modelos de Power BI y mantención de SQL Server. Once sistemas en producción y diagnóstico gratuito en 48 horas.">
+<meta name="description" content="Automatizo planillas y procesos manuales en Santiago de Chile: scripts en Python, dashboards a medida, modelos de Power BI y mantención de SQL Server. Dieciséis sistemas en producción y diagnóstico gratuito en 48 horas.">
 <meta name="author" content="Marcelo Poblete">
 <link rel="canonical" href="https://chelocomc.github.io/">
 <meta name="theme-color" content="#EDEAE4" media="(prefers-color-scheme: light)">
@@ -13,7 +13,7 @@
 <meta property="og:type" content="website">
 <meta property="og:url" content="https://chelocomc.github.io/">
 <meta property="og:title" content="Marcelo Poblete — Automatización de datos y sistemas de gestión">
-<meta property="og:description" content="Once sistemas en producción: dashboards, pipelines, Power BI, SQL Server, motores documentales y sitios web. Cada uno salió de un problema real, no de un tutorial.">
+<meta property="og:description" content="Dieciséis sistemas en producción: dashboards, pipelines, Power BI, SQL Server, motores documentales y sitios web. Cada uno salió de un problema real, no de un tutorial.">
 <meta property="og:locale" content="es_CL">
 <meta name="twitter:card" content="summary_large_image">
 <meta name="twitter:title" content="Marcelo Poblete — Automatización de datos y sistemas de gestión">
@@ -1305,7 +1305,7 @@ input[type="range"]::-moz-range-thumb {
         })();
         </script>
         <p class="lede">
-          Soy ingeniero en automatización y trabajo dentro de operaciones, no desde afuera: los problemas que resuelvo los he vivido en turno. Once sistemas míos corren hoy en producción en un hospital de alta complejidad — planillas, informes, conciliaciones y archivos de papel. Acá abajo puedes probarlos, no solo mirarlos.
+          Soy ingeniero en automatización y trabajo dentro de operaciones, no desde afuera: los problemas que resuelvo los he vivido en turno. Dieciséis sistemas míos corren hoy en producción en un hospital de alta complejidad — planillas, informes, conciliaciones y archivos de papel. Acá abajo puedes probarlos, no solo mirarlos.
         </p>
         <div class="cta-row">
           <a class="btn primary" href="#contacto">
@@ -1344,7 +1344,7 @@ input[type="range"]::-moz-range-thumb {
     </div>
 
     <div class="stat-strip">
-      <div class="cell"><span class="n" data-count="11">0</span><span class="d">sistemas propios corriendo hoy en producción</span></div>
+      <div class="cell"><span class="n" data-count="11" data-count-proyectos>0</span><span class="d">sistemas propios corriendo hoy en producción</span></div>
       <div class="cell"><span class="n" data-count="200000" data-suffix="+">0</span><span class="d">registros re-validados al corregir un solo pipeline</span></div>
       <div class="cell"><span class="n"><span>0</span></span><span class="d">errores de carga tras auditar un modelo de BI completo</span></div>
       <div class="cell"><span class="n" data-count="14">0</span><span class="d">pisos de planos navegables con ruta guiada</span></div>
@@ -1357,7 +1357,7 @@ input[type="range"]::-moz-range-thumb {
       <div class="rail">
         <span class="idx">§ 01</span>
         <h2 class="rail-title">Trabajo</h2>
-        <p class="rail-note">Dieciséis sistemas en uso. Elige uno y se monta en el visor: las vistas son recreaciones con datos ficticios, los originales trabajan con datos reales de la institución.</p>
+        <p class="rail-note">Dieciséis sistemas en uso. Abre cualquiera y su demo se despliega dentro de la tarjeta: son recreaciones con datos ficticios, los originales trabajan con datos reales de la institución.</p>
       </div>
       <div class="band-body">
         <p class="band-lead">Estas demos <em>calculan de verdad</em>: elige un sistema, mueve un parámetro y los números se rehacen.</p>
@@ -4619,16 +4619,36 @@ const CONTACTO = {
   const nums = Array.from(document.querySelectorAll('[data-count]'));
   const fmt = new Intl.NumberFormat('es-CL');
 
+  /* La cifra de sistemas sale del catálogo, no escrita a mano: si mañana
+     entra un proyecto nuevo, el titular no queda mintiendo. */
+  nums.forEach(function (el) {
+    if ('countProyectos' in el.dataset && typeof PROYECTOS !== 'undefined') {
+      el.dataset.count = String(PROYECTOS.length);
+    }
+  });
+
+  function fijar(el) {
+    el.textContent = fmt.format(parseInt(el.dataset.count, 10)) + (el.dataset.suffix || '');
+    el.dataset.listo = '1';
+  }
+
   function animar(el) {
+    if (el.dataset.listo) return;
     const objetivo = parseInt(el.dataset.count, 10);
     const sufijo = el.dataset.suffix || '';
-    if (reduce) { el.textContent = fmt.format(objetivo) + sufijo; return; }
+    if (reduce) { fijar(el); return; }
     const t0 = performance.now(), dur = 1400;
+    /* Red de seguridad: si requestAnimationFrame no corre —pestaña abierta
+       en segundo plano, que es como se abre un enlace compartido— la cuenta
+       se quedaba clavada en cero para siempre. El temporizador sí corre. */
+    const respaldo = setTimeout(function () { fijar(el); }, dur + 400);
     (function paso(t) {
       const k = Math.min((t - t0) / dur, 1);
       const eased = 1 - Math.pow(1 - k, 3);
+      if (el.dataset.listo) return;
       el.textContent = fmt.format(Math.round(objetivo * eased)) + (k === 1 ? sufijo : '');
       if (k < 1) requestAnimationFrame(paso);
+      else { clearTimeout(respaldo); el.dataset.listo = '1'; }
     })(t0);
   }
 
@@ -4639,6 +4659,9 @@ const CONTACTO = {
     });
   }, { threshold: 0.5 });
   nums.forEach(function (n) { io.observe(n); });
+  /* Y si nada disparó al observador tras tres segundos —el hero fuera de
+     viewport, un navegador que no lo evalúa— se pintan igual. */
+  setTimeout(function () { nums.forEach(function (n) { if (!n.dataset.listo) fijar(n); }); }, 3000);
 
   // Scroll Animations Logic
   const animateElements = document.querySelectorAll('.band-inner, .svc, .card, .hero-lead, .cell');
