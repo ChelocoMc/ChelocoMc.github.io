@@ -1307,12 +1307,33 @@ input[type="range"]::-moz-range-thumb {
     <div class="hero-inner">
       <div>
         <p class="eyebrow"><span class="pulse" aria-hidden="true"></span> Disponible para proyectos · Santiago, Chile</p>
-        <h1>
-          El cruce que te toma
-          media jornada debería
-          tomar <em>8 segundos</em>.
+        <h1 id="titular">
+          <span class="t">El cruce que te toma media jornada debería tomar <em>8 segundos</em>.</span>
           <span class="rule" aria-hidden="true"></span>
         </h1>
+        <script>
+        /* El titular rota en cada visita. El script va acá, pegado al <h1> y
+           no al final del documento, porque corre antes del primer pintado:
+           así el visitante nunca ve el titular base cambiar bajo sus ojos.
+           El primero del array es el que queda en el HTML servido y es el
+           que lee un buscador que no ejecute JavaScript, así que ese debe
+           ser siempre el mejor de todos. */
+        (function () {
+          var TITULARES = [
+            'El cruce que te toma media jornada debería tomar <em>8 segundos</em>.',
+            'Tu equipo no debería pasar el lunes <em>copiando celdas</em> de una planilla a otra.',
+            'Un proceso manual no falla el día que falla: <em>falla todos los meses</em>, callado.',
+            'Lo que hoy son tres días de conciliación, mañana es <em>un botón</em>.',
+            'Si tienes que revisar dos veces la planilla, <em>no confías en ella</em>. Con razón.',
+            'Doce mil filas cruzadas a mano <em>tienen errores</em>. Aunque todavía no los veas.',
+            'El respaldo que estás buscando está en un PDF escaneado de 2021. <em>Lo hago buscable</em>.',
+            'El informe que armas cada mes <em>ya debería estar listo</em> cuando llegas.',
+            'Automatizar no es despedir a nadie: es dejar de gastar <em>gente en trabajo de máquina</em>.'
+          ];
+          var t = document.querySelector('#titular .t');
+          if (t) t.innerHTML = TITULARES[Math.floor(Math.random() * TITULARES.length)];
+        })();
+        </script>
         <p class="lede">
           Soy ingeniero en automatización y trabajo dentro de operaciones, no desde afuera: los problemas que resuelvo los he vivido en turno. Once sistemas míos corren hoy en producción en un hospital de alta complejidad — planillas, informes, conciliaciones y archivos de papel. Acá abajo puedes probarlos, no solo mirarlos.
         </p>
