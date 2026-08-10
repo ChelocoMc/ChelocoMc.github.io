@@ -473,8 +473,8 @@ nav.links a[aria-current="true"] { color: var(--accent); background: var(--accen
 .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)); gap: 18px; }
 
 .card {
-  position: relative; display: flex; flex-direction: column; gap: 14px;
-  padding: 22px; border: 1px solid var(--line); border-radius: 16px;
+  position: relative; display: flex; flex-direction: column;
+  padding: 0; border: 1px solid var(--line); border-radius: 16px;
   background: color-mix(in srgb, var(--surface) 65%, transparent);
   backdrop-filter: blur(14px); -webkit-backdrop-filter: blur(14px);
   box-shadow: 0 4px 24px rgba(0, 0, 0, 0.04), inset 0 1px 0 rgba(255, 255, 255, 0.05);
@@ -485,13 +485,13 @@ nav.links a[aria-current="true"] { color: var(--accent); background: var(--accen
   transform-style: preserve-3d;
   will-change: transform;
 }
-.card .card-top, .card h3, .card .kicker, .card .metrics, .card .tags, .card .open {
-  transform: translateZ(30px);
-  transition: transform 0.3s ease;
+/* La cabecera es el botón que abre la demo; ocupa la tarjeta entera. */
+.card-cab {
+  display: flex; flex-direction: column; gap: 14px; width: 100%;
+  padding: 22px; border: 0; border-radius: 16px; background: none;
+  font: inherit; color: inherit; text-align: left; cursor: pointer;
 }
-.card:hover .card-top, .card:hover h3, .card:hover .kicker, .card:hover .metrics, .card:hover .tags, .card:hover .open {
-  transform: translateZ(50px);
-}
+.card-cab > * { position: relative; z-index: 11; }
 .card::before {
   content: ""; position: absolute; inset: 0; border-radius: 16px;
   background: radial-gradient(circle at var(--mx, 50%) var(--my, 50%), rgba(255,255,255,0.1) 0%, transparent 60%);
@@ -513,6 +513,28 @@ nav.links a[aria-current="true"] { color: var(--accent); background: var(--accen
 .card:hover::after, .card:focus-visible::after { transform: scaleY(1); }
 .card.hidden { display: none; }
 
+/* Tarjeta abierta: ocupa la fila completa para que la demo respire. */
+.card.abierta {
+  grid-column: 1 / -1;
+  border-color: var(--accent-line);
+  box-shadow: 0 16px 40px rgba(0,0,0,.10), inset 0 1px 0 rgba(255,255,255,.08);
+}
+.card-panel { padding: 0 22px 22px; display: grid; gap: 16px; }
+.card-panel[hidden] { display: none; }
+.card-acciones { display: flex; flex-wrap: wrap; gap: 9px; }
+.card-vacio {
+  margin: 0; padding: 26px 20px; text-align: center; font-size: 0.86rem; color: var(--ink-faint);
+  border: 1px dashed var(--line); border-radius: 10px; background: var(--paper-deep);
+}
+/* La demo montada no lleva su propio marco: la tarjeta ya es el chasis. */
+.card-panel .demo {
+  border: 0; border-radius: 0; box-shadow: none; background: none;
+  backdrop-filter: none; -webkit-backdrop-filter: none; transform: none !important;
+}
+.card-panel .demo .demo-bar, .card-panel .demo .demo-body { transform: none; }
+.card-panel .demo-bar { border-radius: 8px 8px 0 0; border: 1px solid var(--line-soft); }
+.card-panel .demo-body { border: 1px solid var(--line-soft); border-top: 0; border-radius: 0 0 8px 8px; padding: 14px; }
+
 .card-top { display: flex; align-items: flex-start; justify-content: space-between; gap: 14px; }
 .card .ref {
   font-family: var(--mono); font-size: 0.66rem; letter-spacing: 0.14em; color: var(--ink-faint);
@@ -520,11 +542,11 @@ nav.links a[aria-current="true"] { color: var(--accent); background: var(--accen
 }
 .card .glyph { width: 42px; height: 42px; flex: none; color: var(--accent); opacity: .85; }
 .card .glyph svg { width: 100%; height: 100%; }
-.card h3 { font-size: 1.42rem; line-height: 1.15; margin: 0; }
-.card .kicker { font-size: 0.9rem; color: var(--ink-soft); margin: 0; }
+.card .h3 { font-family: var(--display); font-size: 1.42rem; line-height: 1.15; margin: 0; display: block; }
+.card .kicker { font-size: 0.9rem; color: var(--ink-soft); margin: 0; display: block; }
 
 .card .metrics { display: flex; gap: 18px; flex-wrap: wrap; padding-top: 4px; }
-.card .metrics div { display: flex; flex-direction: column; }
+.card .metrics > span { display: flex; flex-direction: column; }
 .card .metrics .mv { font-family: var(--mono); font-size: 1rem; color: var(--accent); }
 .card .metrics .mk { font-size: 0.7rem; color: var(--ink-faint); }
 
@@ -540,6 +562,9 @@ nav.links a[aria-current="true"] { color: var(--accent); background: var(--accen
   font-family: var(--mono); font-size: 0.70rem; letter-spacing: 0.1em; text-transform: uppercase; color: var(--accent);
 }
 .card .open svg { width: 13px; height: 13px; transition: transform .25s var(--ease); }
+.card .open .cerrar { display: none; }
+.card.abierta .open .abrir { display: none; }
+.card.abierta .open .cerrar { display: inline; }
 .card:hover .open svg { transform: translateX(4px); }
 
 .empty-state {
@@ -638,16 +663,6 @@ nav.links a[aria-current="true"] { color: var(--accent); background: var(--accen
 }
 .demo-full:hover { background: var(--accent-soft); border-color: var(--accent); }
 .demo-full svg { width: 14px; height: 14px; }
-/* Mismo botón dentro del banco, donde va pegado al kicker y no al final. */
-.banco-full {
-  display: inline-flex; align-items: center; gap: 7px; margin-top: 12px;
-  font-family: var(--mono); font-size: .68rem; letter-spacing: .04em; text-transform: uppercase;
-  color: var(--accent); text-decoration: none;
-  padding: 6px 12px; border: 1px solid var(--accent-line); border-radius: 999px;
-  transition: background .2s var(--ease), border-color .2s var(--ease);
-}
-.banco-full:hover { background: var(--accent-soft); border-color: var(--accent); }
-.banco-full svg { width: 13px; height: 13px; }
 .galeria-nota {
   margin: 28px 0 0; font-size: .92rem; color: var(--ink-soft);
   border-top: 1px solid var(--line-soft); padding-top: 18px; max-width: 72ch;
@@ -1205,47 +1220,8 @@ input[type="range"]::-moz-range-thumb {
 .vs-tabla td.reg { color: var(--ink-faint); }
 
 /* ============================================================
-   BANCO DE ENSAYOS — los once motores en un solo chasis
-   Reemplaza al bot: en vez de un personaje paseando, un
-   instrumento con canales conmutables. La demo montada es el
-   mismo clon de plantilla que usa la ficha.
+   ACCIONES DE LA TARJETA ABIERTA
    ============================================================ */
-.banco {
-  border: 1px solid var(--line); border-radius: 14px; background: var(--surface);
-  box-shadow: var(--shadow-lift); overflow: hidden;
-}
-.banco-head {
-  display: flex; align-items: center; justify-content: space-between; gap: 12px;
-  padding: 11px 14px; border-bottom: 1px solid var(--line);
-  background: var(--surface-2);
-}
-.banco-rotulo {
-  font-family: var(--mono); font-size: 0.64rem; letter-spacing: 0.16em;
-  text-transform: uppercase; color: var(--ink-faint);
-}
-.banco-play {
-  display: inline-flex; align-items: center; gap: 8px; cursor: pointer;
-  padding: 5px 11px; border: 1px solid var(--line); border-radius: 999px;
-  background: var(--surface); color: var(--ink-faint);
-  font-family: var(--mono); font-size: 0.63rem; letter-spacing: 0.09em;
-  text-transform: uppercase; transition: color .25s var(--ease), border-color .25s var(--ease);
-}
-.banco-play:hover { color: var(--accent); border-color: var(--accent-line); }
-.banco-play .ico {
-  width: 0; height: 0; flex: none;
-  border-left: 7px solid currentColor; border-top: 4.5px solid transparent; border-bottom: 4.5px solid transparent;
-}
-.banco-play[aria-pressed="true"] { color: var(--accent); border-color: var(--accent-line); }
-.banco-play[aria-pressed="true"] .ico {
-  width: 8px; height: 9px; border: 0;
-  border-left: 3px solid currentColor; border-right: 3px solid currentColor;
-}
-
-.banco-panel { padding: 18px 20px 22px; min-width: 0; }
-.banco-panel-head { margin-bottom: 15px; }
-.banco-ref { font-family: var(--mono); font-size: 0.63rem; letter-spacing: 0.14em; color: var(--accent); }
-.banco-panel-head h3 { font-family: var(--display); font-size: 1.32rem; line-height: 1.2; margin: 3px 0 5px; }
-.banco-panel-head p { font-size: 0.85rem; color: var(--ink-faint); margin: 0; max-width: 60ch; }
 .banco-acciones { display: flex; flex-wrap: wrap; gap: 9px; margin-top: 13px; }
 .banco-accion {
   display: inline-flex; align-items: center; gap: 7px; cursor: pointer; text-decoration: none;
@@ -1258,32 +1234,9 @@ input[type="range"]::-moz-range-thumb {
 .banco-accion.primaria { color: var(--accent); border-color: var(--accent-line); background: var(--accent-soft); }
 .banco-accion.primaria:hover { border-color: var(--accent); }
 .banco-accion svg { width: 13px; height: 13px; }
-.banco-vacio {
-  margin: 0; padding: 26px 20px; text-align: center; font-size: 0.86rem; color: var(--ink-faint);
-  border: 1px dashed var(--line); border-radius: 10px; background: var(--paper-deep);
-}
-
-/* La demo montada no lleva su propio marco: el chasis ya es el banco. */
-.banco-monta .demo {
-  border: 0; border-radius: 0; box-shadow: none; background: none;
-  backdrop-filter: none; -webkit-backdrop-filter: none; transform: none !important;
-}
-.banco-monta .demo .demo-bar, .banco-monta .demo .demo-body { transform: none; }
-.banco-monta .demo-bar { border-radius: 8px 8px 0 0; border: 1px solid var(--line-soft); }
-.banco-monta .demo-body { border: 1px solid var(--line-soft); border-top: 0; border-radius: 0 0 8px 8px; padding: 14px; }
-.banco-monta.cambiando { opacity: 0; transform: translateY(6px); }
-.banco-monta { transition: opacity .28s var(--ease), transform .28s var(--ease); }
-
-/* La tarjeta cuyo sistema está montado arriba se marca, para que el
-   visitante sepa qué está viendo sin tener que subir a comprobarlo. */
-.card.activa {
-  border-color: var(--accent);
-  box-shadow: var(--shadow-lift), inset 3px 0 0 var(--accent);
-}
-.card.activa .open { color: var(--accent); }
-
 @media (max-width: 900px) {
-  .banco-panel { padding: 16px 14px 20px; }
+  .card-cab { padding: 18px; }
+  .card-panel { padding: 0 16px 18px; }
 }
 </style>
 </head>
@@ -1419,26 +1372,6 @@ input[type="range"]::-moz-range-thumb {
           <button class="chip" data-filter="web" aria-pressed="false">Web</button>
           <button class="chip" data-filter="docs" aria-pressed="false">Documentos</button>
           <span class="count" id="filterCount" aria-live="polite"></span>
-        </div>
-
-        <!-- Visor: el sistema elegido en la grilla se monta acá mismo.
-             Antes esto era una sección aparte con su propia lista de
-             canales, que repetía la grilla. Ahora hay una sola lista. -->
-        <div class="banco" id="banco">
-          <div class="banco-head">
-            <span class="banco-rotulo">Visor · <span id="bancoRef"></span></span>
-            <button class="banco-play" type="button" id="bancoPlay" aria-pressed="false">
-              <span class="ico" aria-hidden="true"></span><span class="txt">recorrer todos</span>
-            </button>
-          </div>
-          <div class="banco-panel">
-            <div class="banco-panel-head">
-              <h3 id="bancoTitulo"></h3>
-              <p id="bancoKicker"></p>
-              <div class="banco-acciones" id="bancoAcciones"></div>
-            </div>
-            <div class="banco-monta" id="bancoMonta"></div>
-          </div>
         </div>
 
         <div class="grid" id="cardGrid"></div>
@@ -2491,30 +2424,96 @@ const PROYECTOS = [
 
   const flecha = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg>';
 
-  PROYECTOS.forEach(function (p, i) {
-    const card = document.createElement('button');
-    card.type = 'button';
+  const reduceMov = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  let abierta = null;
+
+  /* La demo se abre dentro de la propia tarjeta: hacer clic no manda al
+     visitante a otra parte de la página. La tarjeta abierta ocupa la fila
+     completa y solo puede haber una a la vez. */
+  function alternar(p, card, cab, panel) {
+    if (abierta === card) { cerrarPanel(card); return; }
+    if (abierta) cerrarPanel(abierta);
+
+    const tpl = document.getElementById('tpl-' + p.ref);
+    const monta = panel.querySelector('[data-monta]');
+    monta.innerHTML = '';
+    if (tpl) {
+      monta.appendChild(tpl.content.cloneNode(true));
+      initDemos(monta);
+    } else {
+      monta.innerHTML = '<p class="card-vacio">Este sistema no tiene vista embebida: su demo se ' +
+        'recorre entero en pantalla completa, con los mismos datos ficticios.</p>';
+    }
+
+    panel.hidden = false;
+    card.classList.add('abierta');
+    cab.setAttribute('aria-expanded', 'true');
+    abierta = card;
+
+    /* Solo se corrige la posición si la tarjeta quedó fuera de vista al
+       expandirse; si ya se ve entera, moverla sería un salto gratuito. */
+    requestAnimationFrame(function () {
+      const r = card.getBoundingClientRect();
+      if (r.top < 70 || r.top > window.innerHeight - 140) {
+        window.scrollTo({ top: r.top + window.scrollY - 90, behavior: reduceMov ? 'auto' : 'smooth' });
+      }
+    });
+  }
+
+  function cerrarPanel(card) {
+    const panel = card.querySelector('.card-panel');
+    limpiarDemos('.card-panel');
+    panel.hidden = true;
+    panel.querySelector('[data-monta]').innerHTML = '';
+    card.classList.remove('abierta');
+    card.querySelector('.card-cab').setAttribute('aria-expanded', 'false');
+    if (abierta === card) abierta = null;
+  }
+
+  PROYECTOS.forEach(function (p) {
+    const card = document.createElement('article');
     card.className = 'card';
     card.dataset.ref = p.ref;
     card.dataset.areas = p.areas.join(' ');
-    card.setAttribute('aria-label', 'Montar ' + p.titulo + ' en el visor');
+
+    const idPanel = 'panel-' + p.ref;
+    const tiene = !!document.getElementById('tpl-' + p.ref);
+
     card.innerHTML =
-      '<div class="card-top">' +
-        '<div><span class="ref">REF. ' + p.ref + '</span></div>' +
-        '<span class="glyph" aria-hidden="true">' + p.glyph + '</span>' +
-      '</div>' +
-      '<h3>' + p.titulo + '</h3>' +
-      '<p class="kicker">' + p.kicker + '</p>' +
-      '<div class="metrics">' + p.metricas.map(function (m) {
-        return '<div><span class="mv">' + m.v + '</span><span class="mk">' + m.k + '</span></div>';
-      }).join('') + '</div>' +
-      '<div class="tags">' + p.tags.map(function (t) { return '<span class="tag">' + t + '</span>'; }).join('') + '</div>' +
-      '<span class="open">' + (document.getElementById('tpl-' + p.ref) ? 'Probarlo en el visor ' : 'Ver de qué se trata ') + flecha + '</span>';
-    /* La tarjeta ya no abre el modal: monta el sistema en el visor de
-       arriba, que es donde se prueba. La ficha se abre desde ahí. */
-    card.addEventListener('click', function () {
-      if (abrirEnVisor) abrirEnVisor(p, { scroll: true });
-      else abrirFicha(p, card);
+      '<button class="card-cab" type="button" aria-expanded="false" aria-controls="' + idPanel + '">' +
+        '<span class="card-top">' +
+          '<span class="ref">REF. ' + p.ref + '</span>' +
+          '<span class="glyph" aria-hidden="true">' + p.glyph + '</span>' +
+        '</span>' +
+        '<span class="h3">' + p.titulo + '</span>' +
+        '<span class="kicker">' + p.kicker + '</span>' +
+        '<span class="metrics">' + p.metricas.map(function (m) {
+          return '<span><span class="mv">' + m.v + '</span><span class="mk">' + m.k + '</span></span>';
+        }).join('') + '</span>' +
+        '<span class="tags">' + p.tags.map(function (t) { return '<span class="tag">' + t + '</span>'; }).join('') + '</span>' +
+        '<span class="open">' +
+          '<span class="abrir">' + (tiene ? 'Probar la demo aquí ' : 'Ver de qué se trata ') + flecha + '</span>' +
+          '<span class="cerrar">Cerrar la demo</span>' +
+        '</span>' +
+      '</button>' +
+      '<div class="card-panel" id="' + idPanel + '" hidden>' +
+        '<div data-monta></div>' +
+        '<div class="card-acciones">' +
+          '<button class="banco-accion primaria" type="button" data-ficha>Ver la ficha técnica ' + flecha + '</button>' +
+          (p.demo ? '<a class="banco-accion" href="' + p.demo + '" target="_blank" rel="noopener">Abrirlo en pantalla completa</a>' : '') +
+          '<button class="banco-accion" type="button" data-cerrar>Cerrar</button>' +
+        '</div>' +
+      '</div>';
+
+    const cab = card.querySelector('.card-cab');
+    const panel = card.querySelector('.card-panel');
+    cab.addEventListener('click', function () { alternar(p, card, cab, panel); });
+    panel.querySelector('[data-ficha]').addEventListener('click', function (e) {
+      abrirFicha(p, e.currentTarget);
+    });
+    panel.querySelector('[data-cerrar]').addEventListener('click', function () {
+      cerrarPanel(card);
+      cab.focus();
     });
     grid.appendChild(card);
   });
@@ -2533,6 +2532,9 @@ const PROYECTOS = [
     Array.from(grid.children).forEach(function (card) {
       const ok = f === 'todos' || card.dataset.areas.split(' ').indexOf(f) !== -1;
       card.classList.toggle('hidden', !ok);
+      /* Una tarjeta abierta que el filtro esconde seguiría con su demo
+         corriendo detrás de un display:none. */
+      if (!ok && card.classList.contains('abierta')) cerrarPanel(card);
       if (ok) visibles++;
     });
     empty.hidden = visibles > 0;
@@ -2651,7 +2653,7 @@ const LIMPIEZAS = [];
    guarda a qué contenedor pertenece: la ficha y el visor pueden tener la
    misma demo montada a la vez, y cerrar la ficha no debe dejar muerta la
    copia que sigue corriendo arriba. */
-const HOSTS = ['#sheetBody', '#bancoMonta'];
+const HOSTS = ['#sheetBody', '.card-panel'];
 function alCerrar(root, fn) {
   const host = HOSTS.filter(function (h) { return root.closest(h); })[0];
   if (host) LIMPIEZAS.push({ host: host, fn: fn });
@@ -4483,106 +4485,7 @@ const CONTACTO = {
   });
 })();
 
-/* ============================================================
-   VISOR DE SISTEMAS — un solo chasis para los dieciséis
-   Antes esto era un banco con su propia lista de canales, que
-   repetía la grilla de tarjetas. Ahora la lista es la grilla: la
-   tarjeta elegida monta acá su motor, y al cambiar se apagan los
-   temporizadores del anterior. Los que no tienen motor embebido
-   muestran su acceso al demo de pantalla completa.
-   ============================================================ */
-var abrirEnVisor = null;   /* lo usa la grilla; se asigna abajo */
-(function () {
-  const banco = document.getElementById('banco');
-  if (!banco) return;
-  const monta = document.getElementById('bancoMonta');
-  const elRef = document.getElementById('bancoRef');
-  const elTit = document.getElementById('bancoTitulo');
-  const elKick = document.getElementById('bancoKicker');
-  const acciones = document.getElementById('bancoAcciones');
-  const play = document.getElementById('bancoPlay');
-  const reduce = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
-  const flecha = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg>';
-
-  let activo = null, recorriendo = null;
-
-  /* El recorrido automático solo pasa por lo que tiene algo moviéndose:
-     una ficha sin motor embebido no aporta al desfile. */
-  function conMotor() {
-    return PROYECTOS.filter(function (p) { return document.getElementById('tpl-' + p.ref); });
-  }
-
-  function montar(p, opciones) {
-    if (!p || p === activo) return;
-    activo = p;
-    const tpl = document.getElementById('tpl-' + p.ref);
-
-    limpiarDemos('#bancoMonta');
-    monta.classList.add('cambiando');
-
-    Array.prototype.forEach.call(document.querySelectorAll('.card'), function (c) {
-      c.classList.toggle('activa', c.dataset.ref === p.ref);
-    });
-
-    const pintar = function () {
-      monta.innerHTML = '';
-      elRef.textContent = p.ref;
-      elTit.textContent = p.titulo;
-      elKick.textContent = p.kicker;
-
-      acciones.innerHTML =
-        '<button class="banco-accion primaria" type="button" data-ficha>Ver la ficha técnica ' + flecha + '</button>' +
-        (p.demo ? '<a class="banco-accion" href="' + p.demo + '" target="_blank" rel="noopener">Abrirlo en pantalla completa</a>' : '');
-      const bf = acciones.querySelector('[data-ficha]');
-      if (bf) bf.addEventListener('click', function () { abrirFicha(p, bf); });
-
-      if (tpl) {
-        monta.appendChild(tpl.content.cloneNode(true));
-        initDemos(monta);
-      } else {
-        monta.innerHTML =
-          '<p class="banco-vacio">Este sistema no tiene vista embebida: su demo se recorre entero en pantalla ' +
-          'completa, con los mismos datos ficticios.</p>';
-      }
-      monta.classList.remove('cambiando');
-    };
-    if (reduce) pintar(); else setTimeout(pintar, 180);
-
-    if (opciones && opciones.scroll) {
-      const y = banco.getBoundingClientRect().top + window.scrollY - 90;
-      window.scrollTo({ top: y, behavior: reduce ? 'auto' : 'smooth' });
-    }
-  }
-
-  abrirEnVisor = montar;
-
-  function detener() {
-    if (!recorriendo) return;
-    clearInterval(recorriendo);
-    recorriendo = null;
-    play.setAttribute('aria-pressed', 'false');
-    play.querySelector('.txt').textContent = 'recorrer todos';
-  }
-
-  play.addEventListener('click', function () {
-    if (recorriendo) { detener(); return; }
-    play.setAttribute('aria-pressed', 'true');
-    play.querySelector('.txt').textContent = 'detener recorrido';
-    recorriendo = setInterval(function () {
-      const lista = conMotor();
-      const i = lista.indexOf(activo);
-      montar(lista[(i + 1) % lista.length]);
-    }, 9000);
-  });
-
-  /* Cualquier clic dentro del panel es alguien probando la demo:
-     el recorrido automático deja de robarle el control. */
-  monta.addEventListener('click', detener);
-  monta.addEventListener('input', detener);
-
-  montar(PROYECTOS[0]);
-})();
 
 
 /* ============================================================
@@ -4764,6 +4667,7 @@ document.getElementById('year').textContent = new Date().getFullYear();
   
   tiltElements.forEach(el => {
     el.addEventListener('mousemove', e => {
+      if (el.classList.contains('abierta')) return;
       const rect = el.getBoundingClientRect();
       const x = e.clientX - rect.left;
       const y = e.clientY - rect.top;
