@@ -1241,31 +1241,27 @@ input[type="range"]::-moz-range-thumb {
   border-left: 3px solid currentColor; border-right: 3px solid currentColor;
 }
 
-.banco-cuerpo { display: grid; grid-template-columns: 208px 1fr; }
-.banco-canales {
-  border-right: 1px solid var(--line); background: var(--paper-deep);
-  max-height: 620px; overflow-y: auto;
-}
-.banco-canal {
-  display: grid; gap: 2px; width: 100%; text-align: left; cursor: pointer;
-  padding: 10px 13px 10px 15px; border: 0; border-bottom: 1px solid var(--line-soft);
-  background: none; color: var(--ink-faint);
-  border-left: 2px solid transparent;
-  transition: background .2s var(--ease), color .2s var(--ease), border-color .2s var(--ease);
-}
-.banco-canal .r { font-family: var(--mono); font-size: 0.6rem; letter-spacing: 0.1em; }
-.banco-canal .t { font-size: 0.83rem; line-height: 1.3; color: var(--ink); }
-.banco-canal:hover { background: var(--surface); }
-.banco-canal[aria-selected="true"] {
-  background: var(--surface); border-left-color: var(--accent); color: var(--accent);
-}
-.banco-canal[aria-selected="true"] .t { color: var(--ink); font-weight: 500; }
-
 .banco-panel { padding: 18px 20px 22px; min-width: 0; }
 .banco-panel-head { margin-bottom: 15px; }
 .banco-ref { font-family: var(--mono); font-size: 0.63rem; letter-spacing: 0.14em; color: var(--accent); }
 .banco-panel-head h3 { font-family: var(--display); font-size: 1.32rem; line-height: 1.2; margin: 3px 0 5px; }
 .banco-panel-head p { font-size: 0.85rem; color: var(--ink-faint); margin: 0; max-width: 60ch; }
+.banco-acciones { display: flex; flex-wrap: wrap; gap: 9px; margin-top: 13px; }
+.banco-accion {
+  display: inline-flex; align-items: center; gap: 7px; cursor: pointer; text-decoration: none;
+  font-family: var(--mono); font-size: 0.66rem; letter-spacing: 0.07em; text-transform: uppercase;
+  padding: 7px 13px; border-radius: 999px;
+  border: 1px solid var(--line); background: var(--surface); color: var(--ink-faint);
+  transition: color .2s var(--ease), border-color .2s var(--ease), background .2s var(--ease);
+}
+.banco-accion:hover { color: var(--accent); border-color: var(--accent-line); }
+.banco-accion.primaria { color: var(--accent); border-color: var(--accent-line); background: var(--accent-soft); }
+.banco-accion.primaria:hover { border-color: var(--accent); }
+.banco-accion svg { width: 13px; height: 13px; }
+.banco-vacio {
+  margin: 0; padding: 26px 20px; text-align: center; font-size: 0.86rem; color: var(--ink-faint);
+  border: 1px dashed var(--line); border-radius: 10px; background: var(--paper-deep);
+}
 
 /* La demo montada no lleva su propio marco: el chasis ya es el banco. */
 .banco-monta .demo {
@@ -1278,19 +1274,15 @@ input[type="range"]::-moz-range-thumb {
 .banco-monta.cambiando { opacity: 0; transform: translateY(6px); }
 .banco-monta { transition: opacity .28s var(--ease), transform .28s var(--ease); }
 
+/* La tarjeta cuyo sistema está montado arriba se marca, para que el
+   visitante sepa qué está viendo sin tener que subir a comprobarlo. */
+.card.activa {
+  border-color: var(--accent);
+  box-shadow: var(--shadow-lift), inset 3px 0 0 var(--accent);
+}
+.card.activa .open { color: var(--accent); }
+
 @media (max-width: 900px) {
-  .banco-cuerpo { grid-template-columns: 1fr; }
-  .banco-canales {
-    display: flex; overflow-x: auto; max-height: none;
-    border-right: 0; border-bottom: 1px solid var(--line);
-    scroll-snap-type: x mandatory;
-  }
-  .banco-canal {
-    flex: 0 0 auto; min-width: 148px; scroll-snap-align: start;
-    border-bottom: 0; border-right: 1px solid var(--line-soft);
-    border-left: 0; border-top: 2px solid transparent;
-  }
-  .banco-canal[aria-selected="true"] { border-left-color: transparent; border-top-color: var(--accent); }
   .banco-panel { padding: 16px 14px 20px; }
 }
 </style>
@@ -1313,8 +1305,6 @@ input[type="range"]::-moz-range-thumb {
     </a>
     <nav class="links" id="nav" aria-label="Secciones">
       <a href="#trabajo">Trabajo</a>
-      <a href="#laboratorio">Laboratorio</a>
-      <a href="demos/index.html">Demos</a>
       <a href="#servicios">Servicios</a>
       <a href="#presupuesto">Presupuesto</a>
       <a href="#perfil">Perfil</a>
@@ -1413,11 +1403,11 @@ input[type="range"]::-moz-range-thumb {
     <div class="wrap band-inner">
       <div class="rail">
         <span class="idx">§ 01</span>
-        <h2 class="rail-title">Trabajo reciente</h2>
-        <p class="rail-note">Once sistemas en uso. Las vistas son recreaciones con datos ficticios: los originales trabajan con datos reales de la institución.</p>
+        <h2 class="rail-title">Trabajo</h2>
+        <p class="rail-note">Dieciséis sistemas en uso. Elige uno y se monta en el visor: las vistas son recreaciones con datos ficticios, los originales trabajan con datos reales de la institución.</p>
       </div>
       <div class="band-body">
-        <p class="band-lead">Cada tarjeta es una <em>ficha técnica</em>: el problema, lo que construí y el bug real que costó encontrar.</p>
+        <p class="band-lead">Estas demos <em>calculan de verdad</em>: elige un sistema, mueve un parámetro y los números se rehacen.</p>
 
         <div class="filters" role="group" aria-label="Filtrar proyectos por tecnología">
           <button class="chip" data-filter="todos" aria-pressed="true">Todos</button>
@@ -1431,46 +1421,28 @@ input[type="range"]::-moz-range-thumb {
           <span class="count" id="filterCount" aria-live="polite"></span>
         </div>
 
-        <div class="grid" id="cardGrid"></div>
-        <div class="empty-state" id="emptyState" hidden>Ningún proyecto usa esa tecnología todavía.</div>
-
-        <p class="galeria-nota">Varios de estos sistemas tienen además un <a href="demos/index.html">demo de pantalla completa</a>
-          que se puede recorrer entero: doce vistas con datos ficticios, incluidos la firma digital de órdenes de trabajo,
-          el validador de activos por QR y los bots de extracción.</p>
-      </div>
-    </div>
-  </section>
-
-  <!-- ══════════════ LABORATORIO ══════════════ -->
-  <section class="band" id="laboratorio">
-    <div class="wrap band-inner">
-      <div class="rail">
-        <span class="idx">§ 02</span>
-        <h2 class="rail-title">Laboratorio</h2>
-        <p class="rail-note">Los once motores en un mismo banco. Elige un canal y el motor se monta acá: es el mismo código que corre dentro de la ficha del proyecto, sobre datos ficticios.</p>
-      </div>
-      <div class="band-body">
-        <p class="band-lead">Estas demos <em>calculan de verdad</em>: mueve un parámetro y los números se rehacen.</p>
-
+        <!-- Visor: el sistema elegido en la grilla se monta acá mismo.
+             Antes esto era una sección aparte con su propia lista de
+             canales, que repetía la grilla. Ahora hay una sola lista. -->
         <div class="banco" id="banco">
           <div class="banco-head">
-            <span class="banco-rotulo">Banco de ensayos</span>
+            <span class="banco-rotulo">Visor · <span id="bancoRef"></span></span>
             <button class="banco-play" type="button" id="bancoPlay" aria-pressed="false">
-              <span class="ico" aria-hidden="true"></span><span class="txt">recorrer los 11</span>
+              <span class="ico" aria-hidden="true"></span><span class="txt">recorrer todos</span>
             </button>
           </div>
-          <div class="banco-cuerpo">
-            <div class="banco-canales" id="bancoCanales" role="tablist" aria-label="Motores disponibles"></div>
-            <div class="banco-panel">
-              <div class="banco-panel-head">
-                <span class="banco-ref" id="bancoRef"></span>
-                <h3 id="bancoTitulo"></h3>
-                <p id="bancoKicker"></p>
-              </div>
-              <div class="banco-monta" id="bancoMonta"></div>
+          <div class="banco-panel">
+            <div class="banco-panel-head">
+              <h3 id="bancoTitulo"></h3>
+              <p id="bancoKicker"></p>
+              <div class="banco-acciones" id="bancoAcciones"></div>
             </div>
+            <div class="banco-monta" id="bancoMonta"></div>
           </div>
         </div>
+
+        <div class="grid" id="cardGrid"></div>
+        <div class="empty-state" id="emptyState" hidden>Ningún proyecto usa esa tecnología todavía.</div>
       </div>
     </div>
   </section>
@@ -1479,7 +1451,7 @@ input[type="range"]::-moz-range-thumb {
   <section class="band" id="servicios">
     <div class="wrap band-inner">
       <div class="rail">
-        <span class="idx">§ 03</span>
+        <span class="idx">§ 02</span>
         <h2 class="rail-title">Servicios</h2>
         <p class="rail-note">Trabajo por proyecto cerrado cuando el alcance está claro, y por bloque mensual cuando es soporte.</p>
       </div>
@@ -1563,7 +1535,7 @@ input[type="range"]::-moz-range-thumb {
   <section class="band" id="presupuesto">
     <div class="wrap band-inner">
       <div class="rail">
-        <span class="idx">§ 04</span>
+        <span class="idx">§ 03</span>
         <h2 class="rail-title">Presupuesto</h2>
         <p class="rail-note">Un cálculo honesto para que sepas el orden de magnitud antes de escribirme. No reemplaza mirar tus archivos: eso siempre cambia algo.</p>
       </div>
@@ -1578,7 +1550,7 @@ input[type="range"]::-moz-range-thumb {
   <section class="band" id="perfil">
     <div class="wrap band-inner">
       <div class="rail">
-        <span class="idx">§ 05</span>
+        <span class="idx">§ 04</span>
         <h2 class="rail-title">Perfil</h2>
         <p class="rail-note">Ingeniero en Automatización y Control Industrial. Un pie en la operación y otro en el código.</p>
       </div>
@@ -1661,7 +1633,7 @@ input[type="range"]::-moz-range-thumb {
   <section class="band" id="metodo">
     <div class="wrap band-inner">
       <div class="rail">
-        <span class="idx">§ 06</span>
+        <span class="idx">§ 05</span>
         <h2 class="rail-title">Cómo trabajo</h2>
         <p class="rail-note">Tres reglas que no negocio, y las respuestas a lo que siempre me preguntan.</p>
       </div>
@@ -1727,7 +1699,7 @@ input[type="range"]::-moz-range-thumb {
   <!-- ══════════════ CONTACTO ══════════════ -->
   <section id="contacto">
     <div class="wrap contact">
-      <span class="tag-label">§ 07 — Contacto</span>
+      <span class="tag-label">§ 06 — Contacto</span>
       <h2>Diagnóstico gratis:<br>tu proceso en <em>48 horas</em>.</h2>
       <p>Cuéntame el proceso que le está comiendo las horas a tu equipo. Dentro de 48 horas te respondo tres cosas por escrito y sin costo: si conviene automatizarlo, qué parte automatizaría primero y en qué rango de precio y plazo se mueve. Si la respuesta es que no vale la pena, también te la digo.</p>
 
@@ -1777,7 +1749,7 @@ input[type="range"]::-moz-range-thumb {
 
 <footer class="wrap foot">
   <span>© <span id="year">2026</span> Marcelo Poblete — Automatización de datos</span>
-  <span>Hecho a mano, sin frameworks · <a href="https://github.com/chelocomc" target="_blank" rel="noopener">github.com/chelocomc</a></span>
+  <span><a href="demos/index.html">Todos los demos en pantalla completa</a> · <a href="https://github.com/chelocomc" target="_blank" rel="noopener">github.com/chelocomc</a></span>
 </footer>
 
 <!-- ══════════════ FICHA TÉCNICA (modal) ══════════════ -->
@@ -2375,6 +2347,112 @@ const PROYECTOS = [
     resultado: 'Respaldo completo y ordenado para cada peso facturado, y <b>dos brechas de cobro</b> detectadas que llevaban meses pasando inadvertidas.'
   },
   {
+    ref: 'SIGN-08', demo: 'demos/firma-ot/index.html', areas: ['web', 'docs'],
+    titulo: 'Firma digital de órdenes de trabajo',
+    kicker: 'El cierre en terreno se firmaba en papel, y el papel se perdía antes de llegar a la carpeta.',
+    glyph: '<svg viewBox="0 0 48 48" fill="none" stroke="currentColor" stroke-width="1.6"><rect x="10" y="4" width="28" height="40" rx="3"/><path d="M16 12h16M16 18h16"/><path d="M16 32c4-6 8 4 12-2 2-3 3-1 4 0"/><path d="M16 38h16"/></svg>',
+    metricas: [{ v: '5', k: 'pasos en terreno' }, { v: 'SHA-256', k: 'sello por orden' }, { v: '0', k: 'hojas impresas' }],
+    tags: ['Next.js', 'TypeScript', 'Prisma', 'PWA', 'SHA-256', 'Ley 19.799'],
+    contexto: 'El técnico cerraba la orden haciendo firmar una hoja al receptor del servicio. Esa hoja tenía que volver a oficina, escanearse y archivarse; cuando alguien la reclamaba meses después, la mitad de las veces no aparecía, y la firma escaneada no probaba gran cosa.',
+    solucion: 'Una aplicación instalable en el celular que el técnico ya tiene. Carga el PDF de la orden, el sistema extrae número, equipo y fecha del propio documento, el receptor valida su RUT y firma con el dedo. La orden queda sellada con hash, hora, ubicación y clave de confirmación.',
+    cita: 'Una imagen de firma pegada sobre un PDF no prueba nada. El sello sí: vincula a esa persona con ese documento exacto.',
+    proceso: [
+      { t: 'Leer la ley antes que el framework', d: 'El flujo se diseñó contra los requisitos de firma electrónica simple de la Ley 19.799: vínculo entre firmante y documento, integridad verificable y registro de auditoría. Eso definió qué guardar, no la comodidad de programar.' },
+      { t: 'Sacar el tipeo del medio', d: 'El técnico solo carga el PDF. Número, equipo y fecha se extraen del documento, así que no hay campos escritos a mano que después no cuadren con el papel.' },
+      { t: 'Diseñar para el dedo, no para el mouse', d: 'El lienzo de firma tiene trazo grueso, área amplia y ningún control pequeño, porque se firma de pie en un pasillo y con una mano ocupada.' },
+      { t: 'Instalable sin tienda', d: 'Se resolvió como PWA: se instala desde el navegador, sin pasar por App Store ni Play, que en una institución significa semanas de gestión.' }
+    ],
+    detalle: [
+      { t: 'El sello, no la imagen. ', d: 'Se guarda el hash SHA-256 del documento firmado junto a hora, ubicación y clave de confirmación. Cualquier cambio posterior en el PDF rompe el hash y queda a la vista.' },
+      { t: 'Extracción desde el propio PDF. ', d: 'Los datos de la orden salen del documento, así que el registro digital y el papel siempre dicen lo mismo.' }
+    ],
+    resultado: 'El cierre pasa de una hoja que puede perderse a un <b>registro verificable</b>, firmado en terreno y disponible el mismo minuto en que se cierra la orden.'
+  },
+  {
+    ref: 'QR-11', demo: 'demos/validador-qr/index.html', areas: ['web', 'datos'],
+    titulo: 'Validador de activos por QR',
+    kicker: 'Saber cuándo se revisó por última vez un equipo obligaba a volver a la oficina y abrir la planilla.',
+    glyph: '<svg viewBox="0 0 48 48" fill="none" stroke="currentColor" stroke-width="1.6"><rect x="6" y="6" width="14" height="14" rx="2"/><rect x="28" y="6" width="14" height="14" rx="2"/><rect x="6" y="28" width="14" height="14" rx="2"/><path d="M28 28h6v6h-6zM40 28v6M28 40h6M40 40v2"/></svg>',
+    metricas: [{ v: '1', k: 'escaneo por equipo' }, { v: 'offline', k: 'sin cobertura' }, { v: '0', k: 'formularios que llenar' }],
+    tags: ['PWA', 'JavaScript', 'Google Apps Script', 'Google Sheets'],
+    contexto: 'Cada equipo tiene su etiqueta, pero el historial vivía en una planilla que solo se abría en oficina. En terreno nadie sabía si la revisión pendiente ya se había hecho, y la ronda se registraba en un formulario que después alguien transcribía.',
+    solucion: 'El técnico escanea la etiqueta con el celular y ve al instante de qué activo se trata, cuándo se revisó por última vez y qué quedó pendiente. Su paso queda registrado por el solo hecho de escanear, sin llenar nada.',
+    cita: 'Un validador que exige conexión para funcionar simplemente no se usa: las salas de máquinas no tienen señal.',
+    proceso: [
+      { t: 'Partir por dónde falla', d: 'El problema no era la falta de sistema, era el subterráneo. Cualquier solución que dependiera de tener señal iba a quedar abandonada la primera semana.' },
+      { t: 'Guardar primero, sincronizar después', d: 'Las lecturas se guardan en el dispositivo y suben solas cuando aparece cobertura. El técnico nunca espera a que cargue.' },
+      { t: 'Respaldo sobre planilla', d: 'El registro corre sobre una hoja de cálculo, así que la institución puede auditar y exportar sin depender de un servidor propio ni de una licencia.' }
+    ],
+    detalle: [
+      { t: 'Registro implícito. ', d: 'El escaneo es el registro: no hay formulario que llenar, y por eso los datos existen. Los formularios opcionales no se llenan nunca.' },
+      { t: 'Cero infraestructura. ', d: 'Apps Script y una planilla bastan para el volumen real de rondas, sin costo mensual ni servidor que mantener.' }
+    ],
+    resultado: 'La ficha completa del equipo <b>en el bolsillo del técnico</b>, con o sin señal, y la ronda registrada sin que nadie transcriba nada.'
+  },
+  {
+    ref: 'RPA-09', demo: 'demos/bot-avisos/index.html', areas: ['python', 'datos'],
+    titulo: 'Bot de extracción de avisos',
+    kicker: 'El sistema de mantenimiento no exporta nada: había que buscar aviso por aviso en un formulario web.',
+    glyph: '<svg viewBox="0 0 48 48" fill="none" stroke="currentColor" stroke-width="1.6"><rect x="9" y="14" width="30" height="22" rx="4"/><circle cx="19" cy="24" r="2.4"/><circle cx="29" cy="24" r="2.4"/><path d="M20 30h8M24 14V7M18 7h12M4 21v8M44 21v8"/></svg>',
+    metricas: [{ v: '400', k: 'avisos por corrida' }, { v: '1', k: 'archivo de selectores' }, { v: '0', k: 'corridas caídas' }],
+    tags: ['Python', 'Playwright', 'pandas', 'openpyxl'],
+    contexto: 'La información que se necesitaba para cualquier análisis estaba en un sistema de gestión sin API ni exportación útil. La única vía era escribir el número en un formulario web, esperar, copiar los campos y repetir. Cuatrocientas veces.',
+    solucion: 'Un bot que hace esa búsqueda por lotes, arma la planilla con los campos que importan y deja registro escrito de lo que no encontró, en vez de entregar un archivo incompleto sin avisar.',
+    cita: 'Una corrida de cuatrocientos avisos no se puede caer por uno.',
+    proceso: [
+      { t: 'Asumir que el sistema va a cambiar', d: 'Automatizar un sistema ajeno es frágil porque el formulario cambia sin aviso. Todos los selectores viven en un solo archivo de configuración: cuando cambian, se edita ahí y no en el código.' },
+      { t: 'Reintentos con espera creciente', d: 'Cada búsqueda reintenta con espera progresiva. La mayoría de los fallos son de red y se resuelven solos en el segundo intento.' },
+      { t: 'Fallar sin detenerse', d: 'Si un aviso no aparece, el bot lo anota y sigue. Al final entrega la planilla más la lista de lo que faltó, que es información útil y no un error.' }
+    ],
+    detalle: [
+      { t: 'Configuración separada del código. ', d: 'Los selectores del formulario están en un archivo aparte, que es lo único que hay que tocar cuando el proveedor cambia la pantalla.' },
+      { t: 'La lista de faltantes es una entrega. ', d: 'Saber qué avisos no existen en el sistema suele ser tan valioso como los que sí: ahí aparecen los errores de digitación.' }
+    ],
+    resultado: 'Lo que era una tarde completa de copiar y pegar queda en <b>una corrida desatendida</b>, con planilla lista y registro de lo que no cuadró.'
+  },
+  {
+    ref: 'RPA-10', demo: 'demos/informe-semanal/index.html', areas: ['python', 'docs'],
+    titulo: 'Generador de informe semanal',
+    kicker: 'Cada lunes se copiaba del sistema, se pegaba en Word y se redactaban los comentarios a mano.',
+    glyph: '<svg viewBox="0 0 48 48" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M12 4h16l8 8v32H12Z"/><path d="M28 4v9h8"/><path d="M18 22h12M18 28h12M18 34h7"/></svg>',
+    metricas: [{ v: '1', k: 'corrida' }, { v: 'lunes', k: 'listo al llegar' }, { v: '0', k: 'copiar y pegar' }],
+    tags: ['Python', 'Playwright', 'python-docx', 'pandas'],
+    contexto: 'El informe de la semana se armaba de forma manual: entrar al sistema, copiar los datos, pegarlos en la plantilla de Word, calcular los indicadores en una planilla aparte y escribir los comentarios. Media jornada del lunes, todas las semanas.',
+    solucion: 'Una sola corrida extrae la semana, calcula los indicadores y entrega el documento redactado, listo para revisar y firmar. Lo que queda para la persona es el juicio, no la transcripción.',
+    cita: 'El texto no es una plantilla ciega: si un indicador cae bajo la meta, el informe lo dice y nombra a la unidad responsable.',
+    proceso: [
+      { t: 'Separar dato de redacción', d: 'Primero la extracción y el cálculo, después la escritura. Mezclar las dos cosas es lo que hace que un generador de informes sea imposible de corregir.' },
+      { t: 'Comentarios condicionados por los datos', d: 'Las frases se arman según lo que muestran los indicadores de la semana, no según un texto fijo con huecos. Un informe que dice lo mismo siempre no lo lee nadie.' },
+      { t: 'Plantilla neutra', d: 'El encabezado deja el logo como marcador, para que cada institución ponga el suyo sin tocar el código.' }
+    ],
+    detalle: [
+      { t: 'El documento sale en Word. ', d: 'No en PDF ni en HTML: sale en el formato que la persona que firma va a querer editar antes de firmar.' },
+      { t: 'Los indicadores se recalculan. ', d: 'No se copian del sistema: se calculan desde los datos crudos, que es donde estaban los errores del informe manual.' }
+    ],
+    resultado: 'El informe del lunes <b>ya está redactado</b> cuando alguien llega a la oficina, y el tiempo se va en revisarlo y no en armarlo.'
+  },
+  {
+    ref: 'RPA-13', demo: 'demos/descarga-documental/index.html', areas: ['python', 'docs'],
+    titulo: 'Descarga documental masiva',
+    kicker: 'Cuando llegaba una auditoría había que bajar cientos de respaldos, uno por uno, desde el sistema.',
+    glyph: '<svg viewBox="0 0 48 48" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M6 12h14l4 5h18v25H6Z"/><path d="M24 22v12M19 29l5 5 5-5"/></svg>',
+    metricas: [{ v: '100%', k: 'respaldos bajados' }, { v: 'año/n°', k: 'orden en carpetas' }, { v: '1', k: 'corrida reanudable' }],
+    tags: ['Python', 'Playwright', 'Reanudable', 'Variables de entorno'],
+    contexto: 'Las fotos, informes y actas que respaldan cada orden de trabajo viven dentro del sistema de gestión, accesibles de a uno y sin forma de exportarlos. Cuando llegaba una auditoría, alguien pasaba días descargando a mano.',
+    solucion: 'Un bot que baja los respaldos por lote y los deja ordenados en carpetas por año y número de orden, listos para entregar tal cual al auditor.',
+    cita: 'Si la corrida se corta en la orden 300, se retoma en la 300. Empezar de nuevo no es una opción cuando son cientos.',
+    proceso: [
+      { t: 'Credenciales fuera del código', d: 'Se leen de variables de entorno y nunca quedan escritas en el archivo, que es lo primero que se filtra cuando el script se comparte por correo.' },
+      { t: 'Saltarse lo ya bajado', d: 'Cada archivo existente se omite, así que la corrida es reanudable y volver a lanzarla no duplica nada.' },
+      { t: 'Estructura pensada para el auditor', d: 'Las carpetas se ordenan por año y número de orden, que es como el auditor pide los respaldos, no como los devuelve el sistema.' }
+    ],
+    detalle: [
+      { t: 'Reanudable por diseño. ', d: 'El estado no se guarda en memoria sino en el propio disco: lo que ya está bajado es el registro de avance.' },
+      { t: 'Sin secretos en el repositorio. ', d: 'Variables de entorno, no constantes: el mismo script sirve en otra institución cambiando el entorno y nada más.' }
+    ],
+    resultado: 'Días de descarga manual convertidos en <b>una corrida desatendida</b>, con los respaldos ordenados como los pide la auditoría.'
+  },
+  {
     ref: 'WEB-11', areas: ['web'],
     titulo: 'Sitios web sin dependencias',
     kicker: 'Esta misma página: un archivo, sin build, sin framework y sin costo de hosting.',
@@ -2419,7 +2497,7 @@ const PROYECTOS = [
     card.className = 'card';
     card.dataset.ref = p.ref;
     card.dataset.areas = p.areas.join(' ');
-    card.setAttribute('aria-label', 'Abrir ficha técnica de ' + p.titulo);
+    card.setAttribute('aria-label', 'Montar ' + p.titulo + ' en el visor');
     card.innerHTML =
       '<div class="card-top">' +
         '<div><span class="ref">REF. ' + p.ref + '</span></div>' +
@@ -2431,8 +2509,13 @@ const PROYECTOS = [
         return '<div><span class="mv">' + m.v + '</span><span class="mk">' + m.k + '</span></div>';
       }).join('') + '</div>' +
       '<div class="tags">' + p.tags.map(function (t) { return '<span class="tag">' + t + '</span>'; }).join('') + '</div>' +
-      '<span class="open">Abrir ficha técnica ' + flecha + '</span>';
-    card.addEventListener('click', function () { abrirFicha(p, card); });
+      '<span class="open">' + (document.getElementById('tpl-' + p.ref) ? 'Probarlo en el visor ' : 'Ver de qué se trata ') + flecha + '</span>';
+    /* La tarjeta ya no abre el modal: monta el sistema en el visor de
+       arriba, que es donde se prueba. La ficha se abre desde ahí. */
+    card.addEventListener('click', function () {
+      if (abrirEnVisor) abrirEnVisor(p, { scroll: true });
+      else abrirFicha(p, card);
+    });
     grid.appendChild(card);
   });
 
@@ -2531,7 +2614,7 @@ function abrirFicha(p, origen) {
     sheet.classList.remove('open');
     backdrop.classList.remove('open');
     document.body.style.overflow = '';
-    limpiarDemos();
+    limpiarDemos('#sheetBody');
     document.getElementById('sheetBody').innerHTML = '';
     if (ultimoFoco) ultimoFoco.focus();
   }
@@ -2564,13 +2647,21 @@ const MOTORES = {};
 const LIMPIEZAS = [];
 
 /* Los motores que dejan temporizadores corriendo dentro de la ficha o del
-   banco de ensayos registran acá cómo apagarse cuando se los desmonta.
-   Sin esto, cambiar de canal deja intervalos latiendo sobre nodos muertos. */
+   visor registran acá cómo apagarse cuando se los desmonta. Cada limpieza
+   guarda a qué contenedor pertenece: la ficha y el visor pueden tener la
+   misma demo montada a la vez, y cerrar la ficha no debe dejar muerta la
+   copia que sigue corriendo arriba. */
+const HOSTS = ['#sheetBody', '#bancoMonta'];
 function alCerrar(root, fn) {
-  if (root.closest('#sheetBody') || root.closest('#bancoMonta')) LIMPIEZAS.push(fn);
+  const host = HOSTS.filter(function (h) { return root.closest(h); })[0];
+  if (host) LIMPIEZAS.push({ host: host, fn: fn });
 }
-function limpiarDemos() {
-  LIMPIEZAS.splice(0).forEach(function (f) { try { f(); } catch (e) {} });
+function limpiarDemos(host) {
+  for (let i = LIMPIEZAS.length - 1; i >= 0; i--) {
+    if (host && LIMPIEZAS[i].host !== host) continue;
+    const l = LIMPIEZAS.splice(i, 1)[0];
+    try { l.fn(); } catch (e) {}
+  }
 }
 
 const $1 = function (r, s) { return r.querySelector(s); };
@@ -4393,77 +4484,85 @@ const CONTACTO = {
 })();
 
 /* ============================================================
-   BANCO DE ENSAYOS — conmutador de motores
-   Los once motores comparten un solo chasis: al cambiar de canal
-   se apagan los temporizadores del anterior, se clona la plantilla
-   del siguiente y se monta con el mismo initDemos de las fichas.
+   VISOR DE SISTEMAS — un solo chasis para los dieciséis
+   Antes esto era un banco con su propia lista de canales, que
+   repetía la grilla de tarjetas. Ahora la lista es la grilla: la
+   tarjeta elegida monta acá su motor, y al cambiar se apagan los
+   temporizadores del anterior. Los que no tienen motor embebido
+   muestran su acceso al demo de pantalla completa.
    ============================================================ */
+var abrirEnVisor = null;   /* lo usa la grilla; se asigna abajo */
 (function () {
   const banco = document.getElementById('banco');
   if (!banco) return;
-  const canales = document.getElementById('bancoCanales');
   const monta = document.getElementById('bancoMonta');
   const elRef = document.getElementById('bancoRef');
   const elTit = document.getElementById('bancoTitulo');
   const elKick = document.getElementById('bancoKicker');
+  const acciones = document.getElementById('bancoAcciones');
   const play = document.getElementById('bancoPlay');
   const reduce = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
-  const lista = PROYECTOS.filter(function (p) { return document.getElementById('tpl-' + p.ref); });
-  if (!lista.length) { banco.remove(); return; }
+  const flecha = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg>';
 
-  let activo = -1, recorriendo = null;
+  let activo = null, recorriendo = null;
 
-  lista.forEach(function (p, i) {
-    const b = document.createElement('button');
-    b.type = 'button';
-    b.className = 'banco-canal';
-    b.setAttribute('role', 'tab');
-    b.setAttribute('aria-selected', 'false');
-    b.innerHTML = '<span class="r">' + esc(p.ref) + '</span><span class="t">' + esc(p.titulo) + '</span>';
-    b.addEventListener('click', function () { detener(); montar(i); });
-    canales.appendChild(b);
-  });
+  /* El recorrido automático solo pasa por lo que tiene algo moviéndose:
+     una ficha sin motor embebido no aporta al desfile. */
+  function conMotor() {
+    return PROYECTOS.filter(function (p) { return document.getElementById('tpl-' + p.ref); });
+  }
 
-  const botones = $n(canales, '.banco-canal');
+  function montar(p, opciones) {
+    if (!p || p === activo) return;
+    activo = p;
+    const tpl = document.getElementById('tpl-' + p.ref);
 
-  function montar(i) {
-    if (i === activo) return;
-    activo = i;
-    const p = lista[i];
-    botones.forEach(function (b, k) { b.setAttribute('aria-selected', k === i ? 'true' : 'false'); });
-
-    limpiarDemos();
+    limpiarDemos('#bancoMonta');
     monta.classList.add('cambiando');
+
+    Array.prototype.forEach.call(document.querySelectorAll('.card'), function (c) {
+      c.classList.toggle('activa', c.dataset.ref === p.ref);
+    });
 
     const pintar = function () {
       monta.innerHTML = '';
       elRef.textContent = p.ref;
       elTit.textContent = p.titulo;
       elKick.textContent = p.kicker;
-      /* Siete de los once tienen además demo de pantalla completa: el enlace
-         aparece solo en esos y se rehace en cada cambio de canal. */
-      const viejo = document.getElementById('bancoFull');
-      if (viejo) viejo.remove();
-      if (p.demo) {
-        elKick.insertAdjacentHTML('afterend',
-          '<a class="banco-full" id="bancoFull" href="' + p.demo + '" target="_blank" rel="noopener">' +
-          'Abrirlo en pantalla completa ' +
-          '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg></a>');
+
+      acciones.innerHTML =
+        '<button class="banco-accion primaria" type="button" data-ficha>Ver la ficha técnica ' + flecha + '</button>' +
+        (p.demo ? '<a class="banco-accion" href="' + p.demo + '" target="_blank" rel="noopener">Abrirlo en pantalla completa</a>' : '');
+      const bf = acciones.querySelector('[data-ficha]');
+      if (bf) bf.addEventListener('click', function () { abrirFicha(p, bf); });
+
+      if (tpl) {
+        monta.appendChild(tpl.content.cloneNode(true));
+        initDemos(monta);
+      } else {
+        monta.innerHTML =
+          '<p class="banco-vacio">Este sistema no tiene vista embebida: su demo se recorre entero en pantalla ' +
+          'completa, con los mismos datos ficticios.</p>';
       }
-      monta.appendChild(document.getElementById('tpl-' + p.ref).content.cloneNode(true));
-      initDemos(monta);
       monta.classList.remove('cambiando');
     };
     if (reduce) pintar(); else setTimeout(pintar, 180);
+
+    if (opciones && opciones.scroll) {
+      const y = banco.getBoundingClientRect().top + window.scrollY - 90;
+      window.scrollTo({ top: y, behavior: reduce ? 'auto' : 'smooth' });
+    }
   }
+
+  abrirEnVisor = montar;
 
   function detener() {
     if (!recorriendo) return;
     clearInterval(recorriendo);
     recorriendo = null;
     play.setAttribute('aria-pressed', 'false');
-    play.querySelector('.txt').textContent = 'recorrer los 11';
+    play.querySelector('.txt').textContent = 'recorrer todos';
   }
 
   play.addEventListener('click', function () {
@@ -4471,11 +4570,9 @@ const CONTACTO = {
     play.setAttribute('aria-pressed', 'true');
     play.querySelector('.txt').textContent = 'detener recorrido';
     recorriendo = setInterval(function () {
-      montar((activo + 1) % lista.length);
-      const b = botones[activo];
-      if (b && canales.scrollWidth > canales.clientWidth) {
-        canales.scrollTo({ left: b.offsetLeft - 20, behavior: reduce ? 'auto' : 'smooth' });
-      }
+      const lista = conMotor();
+      const i = lista.indexOf(activo);
+      montar(lista[(i + 1) % lista.length]);
     }, 9000);
   });
 
@@ -4484,7 +4581,7 @@ const CONTACTO = {
   monta.addEventListener('click', detener);
   monta.addEventListener('input', detener);
 
-  montar(0);
+  montar(PROYECTOS[0]);
 })();
 
 
