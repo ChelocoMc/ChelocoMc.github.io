@@ -74,6 +74,9 @@
 <script>
   /* Aplica el tema guardado antes del primer pintado para evitar el parpadeo. */
   (function(){try{var t=localStorage.getItem('theme');if(t)document.documentElement.setAttribute('data-theme',t);}catch(e){}})();
+  /* Los efectos de cine se encienden acá, antes de pintar, para que la
+     entrada del hero no muestre primero el estado final. */
+  if (!(window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches)) document.documentElement.classList.add('cine');
 </script>
 
 <style>
@@ -319,6 +322,9 @@ nav.links a[aria-current="true"] { color: var(--accent); background: var(--accen
    ============================================================ */
 .band { border-top: 1px solid var(--line-soft); padding: clamp(56px, 8vw, 104px) 0; }
 .band-inner { display: grid; grid-template-columns: var(--rail) 1fr; gap: var(--gap); }
+/* Sin esto la tabla comparativa ensancha la columna y en móvil el texto
+   de Servicios se sale de la pantalla. */
+.band-body { min-width: 0; }
 
 .rail { position: sticky; top: 104px; align-self: start; }
 .rail .idx {
@@ -924,6 +930,192 @@ nav.links a[aria-current="true"] { color: var(--accent); background: var(--accen
 .principle p { margin: 0; font-size: 0.88rem; color: var(--ink-soft); }
 @media (max-width: 760px) { .principles { grid-template-columns: 1fr; } }
 
+/* ============================================================
+   PÁGINAS WEB — escena guiada por el scroll
+   La columna izquierda son los cuatro pasos; la derecha, una maqueta
+   de navegador que se queda fija y se va armando según el paso activo
+   (data-paso en .web-escena). --p es el avance 0→1 de toda la escena.
+   ============================================================ */
+.web-pasos4 {
+  display: grid; grid-template-columns: repeat(4, 1fr); gap: 1px;
+  background: var(--line-soft); border: 1px solid var(--line-soft);
+  border-radius: 14px; overflow: hidden; margin-bottom: clamp(40px, 6vw, 72px);
+}
+.web-pasos4 > div { background: color-mix(in srgb, var(--paper) 80%, transparent); padding: 18px 16px; }
+.web-pasos4 .n { font-family: var(--mono); font-size: 0.66rem; letter-spacing: 0.16em; color: var(--accent); }
+.web-pasos4 h3 { margin: 4px 0 4px; font-size: 1.25rem; }
+.web-pasos4 p { margin: 0; font-size: 0.82rem; color: var(--ink-soft); line-height: 1.45; }
+@media (max-width: 760px) { .web-pasos4 { grid-template-columns: repeat(2, 1fr); } }
+
+.web-escena { --p: 0; display: grid; grid-template-columns: 1fr 1.1fr; gap: clamp(24px, 4vw, 56px); }
+.web-texto { display: grid; }
+.web-paso {
+  min-height: 62vh; display: flex; flex-direction: column; justify-content: center;
+  opacity: .28; transition: opacity .5s var(--ease);
+}
+.web-paso:last-child { min-height: 48vh; }
+.web-paso.activo { opacity: 1; }
+.web-paso .num { font-family: var(--mono); font-size: 0.70rem; letter-spacing: 0.16em; color: var(--accent); }
+.web-paso h3 { font-size: clamp(1.6rem, 3vw, 2.3rem); line-height: 1.1; margin: 8px 0 12px; }
+.web-paso p { margin: 0; color: var(--ink-soft); max-width: 42ch; }
+
+.web-lienzo {
+  position: sticky; top: 18vh; align-self: start; height: 64vh; min-height: 360px;
+  display: grid; place-items: center; perspective: 1400px;
+}
+.maqueta {
+  position: relative; width: 100%; max-width: 520px; aspect-ratio: 4 / 3;
+  border: 1px solid var(--line); border-radius: 14px; overflow: hidden;
+  background: var(--surface-2);
+  box-shadow: 0 40px 80px -40px rgba(0,0,0,.55), 0 0 0 1px var(--line-soft);
+  transform-style: preserve-3d;
+  transform: rotateX(calc(18deg - var(--p) * 18deg)) rotateY(calc(-24deg + var(--p) * 24deg)) rotateZ(calc(4deg - var(--p) * 4deg));
+  transition: max-width .7s var(--ease), aspect-ratio .7s var(--ease), border-radius .7s var(--ease);
+}
+.maq-barra {
+  display: flex; align-items: center; gap: 6px; padding: 9px 12px;
+  border-bottom: 1px solid var(--line-soft); background: var(--surface);
+}
+.maq-barra i { width: 8px; height: 8px; border-radius: 50%; background: var(--line); }
+.maq-url {
+  margin-left: 10px; flex: 1; font-family: var(--mono); font-size: 0.64rem; color: var(--ink-faint);
+  background: var(--paper); border-radius: 999px; padding: 3px 10px;
+  white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+}
+.maq-url b { color: var(--ok); font-weight: 500; }
+.maq-cuerpo { position: relative; padding: 16px; display: grid; gap: 10px; }
+.maq-bloque {
+  border-radius: 7px; border: 1px dashed var(--line); background: transparent;
+  transition: background .6s var(--ease), border-color .6s var(--ease), transform .8s var(--ease), opacity .6s var(--ease);
+}
+.maq-hero { height: 88px; display: grid; align-content: center; gap: 7px; padding: 0 16px; }
+.maq-hero s { display: block; height: 10px; border-radius: 3px; background: var(--line); text-decoration: none; transition: background .6s var(--ease); }
+.maq-hero s:nth-child(1) { width: 62%; height: 14px; }
+.maq-hero s:nth-child(2) { width: 44%; }
+.maq-hero s:nth-child(3) { width: 22%; height: 16px; border-radius: 999px; }
+.maq-fila { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; }
+.maq-fila .maq-bloque { height: 64px; }
+.maq-pie { height: 26px; }
+.maq-orbe {
+  position: absolute; right: 22px; top: 26px; width: 74px; height: 74px; border-radius: 50%;
+  background: radial-gradient(circle at 32% 30%, #fff 0%, var(--accent) 38%, color-mix(in srgb, var(--accent) 40%, #000) 100%);
+  box-shadow: 0 18px 30px -12px color-mix(in srgb, var(--accent) 70%, transparent);
+  opacity: 0; transform: translateZ(60px) scale(.4);
+  transition: opacity .6s var(--ease), transform .8s var(--ease);
+}
+.maq-codigo {
+  position: absolute; inset: auto 12px 12px auto; width: 54%;
+  font-family: var(--mono); font-size: 0.6rem; line-height: 1.55; color: var(--ink-soft);
+  background: color-mix(in srgb, var(--paper-deep) 92%, transparent); border: 1px solid var(--line);
+  border-radius: 8px; padding: 9px 11px; opacity: 0; transform: translateY(14px) translateZ(40px);
+  transition: opacity .5s var(--ease), transform .6s var(--ease);
+}
+.maq-codigo span { color: var(--accent); }
+.maq-sello {
+  position: absolute; left: 50%; bottom: 16px; transform: translateX(-50%) translateZ(50px) scale(.8);
+  display: flex; align-items: center; gap: 8px; white-space: nowrap;
+  font-family: var(--mono); font-size: 0.66rem; letter-spacing: 0.08em; text-transform: uppercase;
+  background: var(--ink); color: var(--paper); border-radius: 999px; padding: 7px 14px;
+  opacity: 0; transition: opacity .5s var(--ease), transform .6s var(--ease);
+}
+.maq-sello .pulse { background: var(--ok); }
+
+/* Paso 1 — Diseño: el boceto toma color y tipografía */
+.web-escena[data-paso="1"] .maq-bloque,
+.web-escena[data-paso="2"] .maq-bloque,
+.web-escena[data-paso="3"] .maq-bloque { border-style: solid; border-color: var(--line-soft); background: var(--surface); }
+.web-escena:not([data-paso="0"]) .maq-hero { background: var(--accent-soft); border-color: var(--accent-line); }
+.web-escena:not([data-paso="0"]) .maq-hero s:nth-child(1) { background: var(--ink); }
+.web-escena:not([data-paso="0"]) .maq-hero s:nth-child(3) { background: var(--accent); }
+/* Paso 2 — Movimiento: las piezas se separan en profundidad y aparece el 3D */
+.web-escena[data-paso="2"] .maq-fila .maq-bloque:nth-child(1) { transform: translateZ(30px) translateY(-6px); }
+.web-escena[data-paso="2"] .maq-fila .maq-bloque:nth-child(2) { transform: translateZ(50px) translateY(-12px); }
+.web-escena[data-paso="2"] .maq-fila .maq-bloque:nth-child(3) { transform: translateZ(70px) translateY(-18px); }
+.web-escena[data-paso="2"] .maq-orbe,
+.web-escena[data-paso="3"] .maq-orbe { opacity: 1; transform: translateZ(60px) scale(1); animation: orbe 5s ease-in-out infinite; }
+@keyframes orbe { 50% { transform: translateZ(60px) translateY(-8px) scale(1.04); } }
+/* Paso 3 — Construcción: el código real aparece encima */
+.web-escena[data-paso="3"] .maq-codigo { opacity: 1; transform: translateY(0) translateZ(40px); }
+/* Paso 4 — Publicación */
+.web-escena[data-paso="4"] .maq-bloque { border-style: solid; border-color: var(--line-soft); background: var(--surface); }
+.web-escena[data-paso="4"] .maq-orbe { opacity: 1; transform: translateZ(60px) scale(1); }
+.web-escena[data-paso="4"] .maq-sello { opacity: 1; transform: translateX(-50%) translateZ(50px) scale(1); }
+
+@media (max-width: 880px) {
+  .web-escena { grid-template-columns: 1fr; }
+  .web-lienzo { position: sticky; top: 118px; height: auto; min-height: 0; padding: 6px 0 18px; z-index: 3;
+    background: linear-gradient(var(--paper) 82%, transparent); order: -1; }
+  .maqueta { max-width: 360px; }
+  .web-paso { min-height: 46vh; }
+}
+
+.web-oferta { display: grid; grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); gap: 14px; margin-top: clamp(48px, 7vw, 88px); }
+.web-item {
+  padding: 22px; border: 1px solid var(--line); border-radius: 16px;
+  background: color-mix(in srgb, var(--surface) 65%, transparent);
+  transition: border-color .25s var(--ease), transform .25s var(--ease), box-shadow .25s var(--ease);
+}
+.web-item:hover { border-color: var(--accent-line); transform: translateY(-3px); box-shadow: 0 0 20px color-mix(in srgb, var(--accent) 18%, transparent); }
+.web-item .n { font-family: var(--mono); font-size: 0.68rem; color: var(--accent); letter-spacing: .12em; }
+.web-item h3 { margin: 6px 0 10px; font-size: 1.3rem; line-height: 1.15; }
+.web-item ul { margin: 0; padding: 0; list-style: none; display: grid; gap: 6px; font-size: 0.86rem; color: var(--ink-soft); }
+.web-item li::before { content: "—"; color: var(--accent); margin-right: 8px; }
+
+.web-fases { position: relative; margin-top: clamp(48px, 7vw, 88px); display: grid; gap: 26px; padding-left: 34px; }
+.web-fases::before { content: ""; position: absolute; left: 7px; top: 6px; bottom: 6px; width: 1px; background: var(--line); }
+.web-fases .linea {
+  position: absolute; left: 7px; top: 6px; width: 1px; height: calc((100% - 12px) * var(--f, 0));
+  background: var(--accent); box-shadow: 0 0 10px var(--accent-line);
+}
+.web-fase { position: relative; }
+.web-fase::before {
+  content: ""; position: absolute; left: -33px; top: 7px; width: 13px; height: 13px; border-radius: 50%;
+  border: 1px solid var(--accent-line); background: var(--paper); transition: background .4s var(--ease), box-shadow .4s var(--ease);
+}
+.web-fase.hecha::before { background: var(--accent); box-shadow: 0 0 0 5px var(--accent-soft); }
+.web-fase .num { font-family: var(--mono); font-size: 0.70rem; letter-spacing: .14em; color: var(--accent); }
+.web-fase h3 { margin: 4px 0 6px; font-size: 1.45rem; }
+.web-fase p { margin: 0; color: var(--ink-soft); max-width: 60ch; }
+
+.web-cta {
+  margin-top: clamp(40px, 6vw, 64px); padding: clamp(24px, 4vw, 36px);
+  border: 1px solid var(--accent-line); border-radius: 18px; background: var(--accent-soft);
+  display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 18px;
+}
+.web-cta p { margin: 0; font-family: var(--display); font-size: clamp(1.3rem, 2.4vw, 1.75rem); line-height: 1.2; max-width: 30ch; }
+.web-cta p small { display: block; font-family: var(--body); font-size: 0.86rem; color: var(--ink-soft); margin-top: 8px; }
+
+@media (prefers-reduced-motion: reduce) {
+  .maqueta { transform: none; transition: none; }
+  .maq-bloque, .maq-orbe, .maq-codigo, .maq-sello, .web-paso { transition: none; }
+  .web-escena .maq-orbe { animation: none !important; }
+}
+
+/* ============================================================
+   CINE — entrada del hero, titulares palabra a palabra, riel
+   Solo se activa con html.cine (lo pone el script si el visitante
+   no pidió movimiento reducido), así sin JS todo queda visible.
+   ============================================================ */
+html.cine .hero-inner > div > *,
+html.cine .hero .telemetry {
+  animation: entra 1s cubic-bezier(.16, 1, .3, 1) both;
+}
+html.cine .hero-inner > div > :nth-child(1) { animation-delay: .05s; }
+html.cine .hero-inner > div > :nth-child(2) { animation-delay: .15s; }
+html.cine .hero-inner > div > :nth-child(4) { animation-delay: .3s; }
+html.cine .hero-inner > div > :nth-child(5) { animation-delay: .42s; }
+html.cine .hero .telemetry { animation-delay: .5s; }
+@keyframes entra { from { opacity: 0; transform: translateY(28px); filter: blur(6px); } }
+
+html.cine .hero-inner { transform: translateY(calc(var(--h, 0) * 90px)); opacity: calc(1 - var(--h, 0) * 0.9); will-change: transform, opacity; }
+
+html.cine .pal { display: inline-block; overflow: hidden; vertical-align: bottom; padding-bottom: .08em; margin-bottom: -.08em; }
+html.cine .pal > span { display: inline-block; transform: translateY(105%); transition: transform .9s cubic-bezier(.16, 1, .3, 1); transition-delay: calc(var(--i) * 45ms); }
+html.cine .revelado .pal > span { transform: none; }
+
+html.cine .rail::before { width: 0; transition: width .9s cubic-bezier(.16, 1, .3, 1) .2s; }
+html.cine .scrolled-in .rail::before { width: 46px; }
+
 .faq { border-bottom: 1px solid var(--line-soft); }
 .faq summary {
   cursor: pointer; list-style: none; padding: 17px 4px;
@@ -1259,6 +1451,7 @@ input[type="range"]::-moz-range-thumb {
     <nav class="links" id="nav" aria-label="Secciones">
       <a href="#trabajo">Trabajo</a>
       <a href="#servicios">Servicios</a>
+      <a href="#webs">Webs</a>
       <a href="#presupuesto">Presupuesto</a>
       <a href="#perfil">Perfil</a>
       <a href="#metodo">Método</a>
@@ -1450,7 +1643,7 @@ input[type="range"]::-moz-range-thumb {
           <div class="svc"><span class="n">04</span><h3>Integración y mantención SQL Server</h3><p>Reviso jobs, consultas T-SQL y lógica de negocio que entrega cifras equivocadas sin que el sistema marque error en ninguna parte.</p></div>
           <div class="svc"><span class="n">05</span><h3>Asistentes de IA aplicados</h3><p>Agentes con acceso real a tus archivos y herramientas, con opción de correr en local cuando los datos no pueden salir de la red.</p></div>
           <div class="svc"><span class="n">06</span><h3>Diagnóstico de un sistema existente</h3><p>Algo ya construido falla y el que lo hizo no está. Reviso el código o el modelo, encuentro la causa raíz y te la dejo documentada, con o sin arreglo.</p></div>
-          <div class="svc"><span class="n">07</span><h3>Páginas web a medida</h3><p>Sitios institucionales, landings, catálogos y currículums navegables. Rápidos, responsivos y sin suscripción mensual: publicados gratis y editables sin una cadena de herramientas detrás.</p></div>
+          <div class="svc"><span class="n">07</span><h3>Páginas web a medida</h3><p>Sitios institucionales, landings, catálogos y currículums navegables. Rápidos, responsivos y sin suscripción mensual: publicados gratis y editables sin una cadena de herramientas detrás. <a href="#webs">Ver cómo trabajo las webs →</a></p></div>
           <div class="svc"><span class="n">08</span><h3>Archivos de papel que se pueden buscar</h3><p>Miles de PDF escaneados convertidos en una base consultable con OCR, indexados y cruzados contra tus registros para saber qué documento respalda cada cosa.</p></div>
           <div class="svc"><span class="n">09</span><h3>Extracción de datos desde documentos</h3><p>Sacar de facturas, informes y cartas los números que después alguien teclea a mano en una planilla: cantidades, tarifas, folios y fechas, con las reglas del negocio incorporadas.</p></div>
           <div class="svc"><span class="n">10</span><h3>Conciliación de facturación</h3><p>Cruzar lo que te facturan contra lo que respalda cada cobro, mes a mes, y dejar por escrito dónde no cuadra y cuánto vale esa diferencia.</p></div>
@@ -1464,11 +1657,109 @@ input[type="range"]::-moz-range-thumb {
     </div>
   </section>
 
+  <!-- ══════════════ PÁGINAS WEB ══════════════ -->
+  <section class="band" id="webs">
+    <div class="wrap band-inner">
+      <div class="rail">
+        <span class="idx">§ 03</span>
+        <h2 class="rail-title">Páginas web</h2>
+        <p class="rail-note">Diseño, movimiento, construcción y publicación con una sola persona. Hecha a medida, nunca desde una plantilla.</p>
+      </div>
+      <div class="band-body">
+        <p class="band-lead">Tu web en línea <em>en una o dos semanas</em>, hecha a mano de principio a fin.</p>
+
+        <div class="web-pasos4">
+          <div><span class="n">01</span><h3>Diseño</h3><p>A medida y con tu marca. Pulido y reconocible.</p></div>
+          <div><span class="n">02</span><h3>Movimiento</h3><p>Animación suave que acompaña y nunca distrae.</p></div>
+          <div><span class="n">03</span><h3>Construcción</h3><p>Rápida, confiable y lista para cualquier pantalla.</p></div>
+          <div><span class="n">04</span><h3>Publicación</h3><p>En línea en 1–2 semanas y con soporte después.</p></div>
+        </div>
+
+        <div class="web-escena" id="webEscena" data-paso="0">
+          <div class="web-texto">
+            <div class="web-paso" data-paso="1">
+              <span class="num">Paso 01 — Diseño</span>
+              <h3>Primero, que se vea tuyo.</h3>
+              <p>Partimos del boceto y lo llevamos a tu identidad: tipografía, color, ritmo y jerarquía. Nada de plantillas recoloreadas: cada sección se diseña para lo que tu cliente necesita encontrar.</p>
+            </div>
+            <div class="web-paso" data-paso="2">
+              <span class="num">Paso 02 — Movimiento</span>
+              <h3>Después, que se sienta vivo.</h3>
+              <p>Transiciones al hacer scroll, detalles que responden al cursor y, si el proyecto lo pide, 3D interactivo en el propio navegador para mostrar un producto o un espacio.</p>
+            </div>
+            <div class="web-paso" data-paso="3">
+              <span class="num">Paso 03 — Construcción</span>
+              <h3>Código limpio, carga inmediata.</h3>
+              <p>Se programa a mano, liviano y accesible: funciona en teléfono, tablet y escritorio, respeta a quien prefiere menos movimiento y aparece bien en buscadores.</p>
+            </div>
+            <div class="web-paso" data-paso="4">
+              <span class="num">Paso 04 — Publicación</span>
+              <h3>En línea, y no te dejo solo.</h3>
+              <p>Dominio, publicación y ajustes finales. Sin suscripción mensual obligatoria, fácil de actualizar, y conmigo disponible cuando necesites cambiar algo.</p>
+            </div>
+          </div>
+
+          <div class="web-lienzo" aria-hidden="true">
+            <div class="maqueta">
+              <div class="maq-barra"><i></i><i></i><i></i><span class="maq-url" id="maqUrl">boceto — sin título</span></div>
+              <div class="maq-cuerpo">
+                <div class="maq-bloque maq-hero"><s></s><s></s><s></s></div>
+                <div class="maq-fila"><div class="maq-bloque"></div><div class="maq-bloque"></div><div class="maq-bloque"></div></div>
+                <div class="maq-bloque maq-pie"></div>
+              </div>
+              <div class="maq-orbe"></div>
+              <pre class="maq-codigo"><span>&lt;section</span> class="hero"&gt;
+  &lt;h1&gt;Tu marca&lt;/h1&gt;
+<span>&lt;/section&gt;</span>
+<span>@media</span> (max-width: 620px)</pre>
+              <div class="maq-sello"><span class="pulse"></span> Publicado · 100/100</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="web-oferta">
+          <div class="web-item"><span class="n">A</span><h3>Diseño y marca</h3><ul><li>Diseño a medida</li><li>Identidad visual</li><li>Pensado primero para el teléfono</li></ul></div>
+          <div class="web-item"><span class="n">B</span><h3>Animación y movimiento</h3><ul><li>Efectos al hacer scroll</li><li>Transiciones suaves</li><li>Detalles finos al interactuar</li></ul></div>
+          <div class="web-item"><span class="n">C</span><h3>3D interactivo</h3><ul><li>Vitrinas de producto</li><li>Escenas inmersivas</li><li>Corre en el navegador, sin instalar nada</li></ul></div>
+          <div class="web-item"><span class="n">D</span><h3>Sitios y aplicaciones</h3><ul><li>Landings, institucionales y catálogos</li><li>Formularios y paneles</li><li>Pensados para crecer</li></ul></div>
+          <div class="web-item"><span class="n">E</span><h3>Publicación y soporte</h3><ul><li>Optimizado para velocidad</li><li>Fácil de actualizar</li><li>Soporte después de publicar</li></ul></div>
+        </div>
+
+        <div class="web-fases" id="webFases">
+          <span class="linea" aria-hidden="true"></span>
+          <div class="web-fase">
+            <span class="num">Fase 01 · días 1–2</span>
+            <h3>Conversamos y afinamos tu marca</h3>
+            <p>Una llamada corta para entender a quién le hablas y qué tiene que pasar cuando alguien entra. Sales con estructura, tono y referencias visuales acordadas.</p>
+          </div>
+          <div class="web-fase">
+            <span class="num">Fase 02 · días 3–8</span>
+            <h3>Diseño y construcción a mano</h3>
+            <p>Te muestro avances navegables, no imágenes estáticas: pruebas el sitio en tu propio teléfono y comentas sobre algo real.</p>
+          </div>
+          <div class="web-fase">
+            <span class="num">Fase 03 · semana 2</span>
+            <h3>En línea</h3>
+            <p>Publicación, dominio, revisión de velocidad y buscadores. Te entrego todo a tu nombre, con instrucciones para hacer cambios simples tú mismo.</p>
+          </div>
+        </div>
+
+        <div class="web-cta">
+          <p>¿Tienes una idea o una web que ya no te representa?<small>Este mismo sitio es la muestra: lo diseñé y programé yo.</small></p>
+          <a class="btn primary" id="webCta" href="#contacto">
+            Cotizar mi web
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
+          </a>
+        </div>
+      </div>
+    </div>
+  </section>
+
   <!-- ══════════════ PRESUPUESTO ══════════════ -->
   <section class="band" id="presupuesto">
     <div class="wrap band-inner">
       <div class="rail">
-        <span class="idx">§ 03</span>
+        <span class="idx">§ 04</span>
         <h2 class="rail-title">Presupuesto</h2>
         <p class="rail-note">Un cálculo honesto para que sepas el orden de magnitud antes de escribirme. No reemplaza mirar tus archivos: eso siempre cambia algo.</p>
       </div>
@@ -1483,7 +1774,7 @@ input[type="range"]::-moz-range-thumb {
   <section class="band" id="perfil">
     <div class="wrap band-inner">
       <div class="rail">
-        <span class="idx">§ 04</span>
+        <span class="idx">§ 05</span>
         <h2 class="rail-title">Perfil</h2>
         <p class="rail-note">Ingeniero en Automatización y Control Industrial. Un pie en la operación y otro en el código.</p>
       </div>
@@ -1566,7 +1857,7 @@ input[type="range"]::-moz-range-thumb {
   <section class="band" id="metodo">
     <div class="wrap band-inner">
       <div class="rail">
-        <span class="idx">§ 05</span>
+        <span class="idx">§ 06</span>
         <h2 class="rail-title">Cómo trabajo</h2>
         <p class="rail-note">Tres reglas que no negocio, y las respuestas a lo que siempre me preguntan.</p>
       </div>
@@ -1632,7 +1923,7 @@ input[type="range"]::-moz-range-thumb {
   <!-- ══════════════ CONTACTO ══════════════ -->
   <section id="contacto">
     <div class="wrap contact">
-      <span class="tag-label">§ 06 — Contacto</span>
+      <span class="tag-label">§ 07 — Contacto</span>
       <h2>Diagnóstico gratis:<br>tu proceso en <em>48 horas</em>.</h2>
       <p>Cuéntame el proceso que le está comiendo las horas a tu equipo. Dentro de 48 horas te respondo tres cosas por escrito y sin costo: si conviene automatizarlo, qué parte automatizaría primero y en qué rango de precio y plazo se mueve. Si la respuesta es que no vale la pena, también te la digo.</p>
 
@@ -4721,6 +5012,111 @@ document.getElementById('year').textContent = new Date().getFullYear();
       el.style.transition = 'opacity .6s var(--ease), border-color .25s var(--ease), background .25s var(--ease), box-shadow .25s var(--ease)'; // remove transform transition for instant tracking
     });
   });
+})();
+</script>
+
+<script>
+/* ============================================================
+   CINE Y PÁGINAS WEB — todo lo que se mueve con el scroll
+   ============================================================ */
+(function () {
+  const cine = document.documentElement.classList.contains('cine');
+
+  /* Titulares palabra a palabra. Se recorren solo los nodos de texto para
+     no romper los <em> ni los <br> que llevan dentro. */
+  if (cine && 'IntersectionObserver' in window) {
+    const titulares = document.querySelectorAll('.band-lead, .contact h2');
+    titulares.forEach(function (h) {
+      let i = 0;
+      const textos = [];
+      const w = document.createTreeWalker(h, NodeFilter.SHOW_TEXT);
+      while (w.nextNode()) textos.push(w.currentNode);
+      textos.forEach(function (nodo) {
+        const frag = document.createDocumentFragment();
+        nodo.textContent.split(/(\s+)/).forEach(function (trozo) {
+          if (!trozo) return;
+          if (/^\s+$/.test(trozo)) { frag.appendChild(document.createTextNode(trozo)); return; }
+          const pal = document.createElement('span');
+          pal.className = 'pal';
+          const dentro = document.createElement('span');
+          dentro.style.setProperty('--i', i++);
+          dentro.textContent = trozo;
+          pal.appendChild(dentro);
+          frag.appendChild(pal);
+        });
+        nodo.parentNode.replaceChild(frag, nodo);
+      });
+    });
+    const io = new IntersectionObserver(function (entries) {
+      entries.forEach(function (e) {
+        if (e.isIntersecting) { e.target.classList.add('revelado'); io.unobserve(e.target); }
+      });
+    }, { threshold: 0.3 });
+    titulares.forEach(function (h) { io.observe(h); });
+    /* Mismo resguardo que los contadores: nada queda escondido para siempre. */
+    setTimeout(function () {
+      titulares.forEach(function (h) { if (h.getBoundingClientRect().top < innerHeight) h.classList.add('revelado'); });
+    }, 2500);
+  }
+
+  /* El CTA de webs abre WhatsApp con el mensaje escrito, reutilizando el
+     número que ya configuró el bloque de contacto. */
+  const wsp = document.querySelector('[data-canal="wsp"]');
+  const num = wsp && !wsp.hidden && (wsp.href.match(/wa\.me\/(\d+)/) || [])[1];
+  const cta = document.getElementById('webCta');
+  if (num && cta) {
+    cta.href = 'https://wa.me/' + num + '?text=' +
+      encodeURIComponent('Hola Marcelo, vi tu portafolio y quiero cotizar una página web.');
+    cta.target = '_blank';
+    cta.rel = 'noopener';
+  }
+
+  const hero = document.querySelector('.hero');
+  const escena = document.getElementById('webEscena');
+  const pasos = escena ? Array.from(escena.querySelectorAll('.web-paso')) : [];
+  const url = document.getElementById('maqUrl');
+  const URLS = ['boceto — sin título', 'diseño — tu-marca.cl', 'movimiento — tu-marca.cl', 'localhost:5173', '🔒 tu-marca.cl <b>● en línea</b>'];
+  const fases = document.getElementById('webFases');
+  const puntos = fases ? Array.from(fases.querySelectorAll('.web-fase')) : [];
+  let pasoActual = -1, tick = false;
+
+  function cuadro() {
+    tick = false;
+    const vh = window.innerHeight;
+
+    if (cine && hero) {
+      const h = Math.min(Math.max(window.scrollY / (hero.offsetHeight || 1), 0), 1);
+      hero.style.setProperty('--h', h.toFixed(3));
+    }
+
+    if (escena) {
+      const r = escena.getBoundingClientRect();
+      const p = Math.min(Math.max((vh * 0.6 - r.top) / (r.height - vh * 0.4), 0), 1);
+      escena.style.setProperty('--p', cine ? p.toFixed(3) : 1);
+      let activo = 0;
+      pasos.forEach(function (s, k) { if (s.getBoundingClientRect().top < vh * 0.6) activo = k + 1; });
+      if (activo !== pasoActual) {
+        pasoActual = activo;
+        escena.dataset.paso = String(activo);
+        pasos.forEach(function (s, k) { s.classList.toggle('activo', k + 1 === activo); });
+        if (url) url.innerHTML = URLS[activo];
+      }
+    }
+
+    if (fases) {
+      const r = fases.getBoundingClientRect();
+      const f = Math.min(Math.max((vh * 0.7 - r.top) / r.height, 0), 1);
+      fases.style.setProperty('--f', f.toFixed(3));
+      const tope = r.top + r.height * f;
+      puntos.forEach(function (d) { d.classList.toggle('hecha', d.getBoundingClientRect().top + 8 <= tope); });
+    }
+  }
+
+  window.addEventListener('scroll', function () {
+    if (!tick) { tick = true; requestAnimationFrame(cuadro); }
+  }, { passive: true });
+  window.addEventListener('resize', cuadro);
+  cuadro();
 })();
 </script>
 
