@@ -76,7 +76,11 @@
   (function(){try{var t=localStorage.getItem('theme');if(t)document.documentElement.setAttribute('data-theme',t);}catch(e){}})();
   /* Los efectos de cine se encienden acá, antes de pintar, para que la
      entrada del hero no muestre primero el estado final. */
-  if (!(window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches)) document.documentElement.classList.add('cine');
+  if (!(window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches)) {
+    document.documentElement.classList.add('cine');
+    /* El telón solo en la primera página vista de la sesión: la segunda vez estorba. */
+    try { if (!sessionStorage.getItem('intro')) { document.documentElement.classList.add('con-intro'); sessionStorage.setItem('intro', '1'); } } catch (e) {}
+  }
 </script>
 
 <style>
@@ -198,6 +202,8 @@ body::before {
 }
 
 main, header, footer { position: relative; z-index: 2; }
+/* La aurora del hero se sale por la derecha a propósito: se recorta acá. */
+main { overflow-x: clip; }
 
 h1, h2, h3 { font-family: var(--display); font-weight: 400; letter-spacing: -0.01em; text-wrap: balance; }
 p { text-wrap: pretty; }
@@ -257,24 +263,6 @@ header.top {
   display: grid; place-items: center; background: var(--surface);
   overflow: hidden;
 }
-
-/* Scroll Animations */
-.scroll-anim-hidden {
-  opacity: 0;
-  transform: translateY(30px);
-  transition: opacity 0.8s cubic-bezier(0.16, 1, 0.3, 1), transform 0.8s cubic-bezier(0.16, 1, 0.3, 1);
-}
-.scrolled-in {
-  opacity: 1;
-  transform: translateY(0);
-}
-/* Staggered children animations */
-.scrolled-in:nth-child(1) { transition-delay: 0.0s; }
-.scrolled-in:nth-child(2) { transition-delay: 0.1s; }
-.scrolled-in:nth-child(3) { transition-delay: 0.2s; }
-.scrolled-in:nth-child(4) { transition-delay: 0.3s; }
-.scrolled-in:nth-child(5) { transition-delay: 0.4s; }
-.scrolled-in:nth-child(6) { transition-delay: 0.5s; }
 
 .brand-mark svg { width: 36px; height: 26px; }
 .brand-mark .setpoint { stroke: var(--ink-faint); stroke-width: .8; stroke-dasharray: 2 2.5; opacity: .55; }
@@ -1114,7 +1102,160 @@ html.cine .pal > span { display: inline-block; transform: translateY(105%); tran
 html.cine .revelado .pal > span { transform: none; }
 
 html.cine .rail::before { width: 0; transition: width .9s cubic-bezier(.16, 1, .3, 1) .2s; }
-html.cine .scrolled-in .rail::before { width: 46px; }
+html.cine .visto .rail::before { width: 46px; }
+
+/* Revelado general: el script marca con .rv lo que entra con el scroll y
+   le da a cada hermano un --d para que lleguen escalonados. */
+html.cine .rv {
+  opacity: 0; transform: translateY(26px); filter: blur(5px);
+  transition: opacity .9s cubic-bezier(.16, 1, .3, 1), transform 1s cubic-bezier(.16, 1, .3, 1), filter .9s cubic-bezier(.16, 1, .3, 1);
+  transition-delay: calc(var(--d, 0) * 70ms);
+}
+html.cine .rv.lado { transform: translateX(-34px); }
+html.cine .rv.zoom { transform: scale(.94) translateY(20px); }
+html.cine .rv.visto { opacity: 1; transform: none; filter: none; }
+/* Las filas de tabla no aceptan bien transform ni filtros: solo opacidad. */
+html.cine tr.rv { transform: none; filter: none; }
+
+/* Principios: la raya superior se dibuja de izquierda a derecha. */
+.principle { border-top-color: transparent; position: relative; }
+.principle::before {
+  content: ""; position: absolute; left: 0; right: 0; top: -2px; height: 2px; background: var(--accent);
+  transform-origin: left; transition: transform 1.1s cubic-bezier(.16, 1, .3, 1); transition-delay: calc(var(--d, 0) * 120ms + .15s);
+}
+html.cine .principle.rv:not(.visto)::before { transform: scaleX(0); }
+
+/* ---------- Telón de entrada (una vez por sesión) ---------- */
+html.con-intro body::after {
+  content: ""; position: fixed; inset: 0; z-index: 200; pointer-events: none;
+  background: var(--ink);
+  animation: telon 1.35s cubic-bezier(.76, 0, .24, 1) forwards;
+}
+html.con-intro::after {
+  content: "Marcelo Poblete"; position: fixed; inset: 0; z-index: 201; pointer-events: none;
+  display: grid; place-items: center;
+  font-family: var(--display); font-style: italic; font-size: clamp(2.2rem, 7vw, 5rem); color: var(--paper);
+  animation: telon-txt 1.35s cubic-bezier(.76, 0, .24, 1) forwards;
+}
+@keyframes telon { 0%, 55% { clip-path: inset(0 0 0 0); } 100% { clip-path: inset(0 0 100% 0); } }
+@keyframes telon-txt {
+  0% { opacity: 0; transform: translateY(30px); }
+  28%, 48% { opacity: 1; transform: none; }
+  75%, 100% { opacity: 0; transform: translateY(-40px); }
+}
+html.con-intro .hero-inner > div > *, html.con-intro .hero .telemetry { animation-delay: calc(.85s + var(--hd, 0s)) !important; }
+html.con-intro .hero-inner > div > :nth-child(2) { --hd: .1s; }
+html.con-intro .hero-inner > div > :nth-child(4) { --hd: .22s; }
+html.con-intro .hero-inner > div > :nth-child(5) { --hd: .34s; }
+html.con-intro .hero .telemetry { --hd: .42s; }
+
+/* ---------- Aurora del hero y foco que sigue al cursor ---------- */
+.hero { position: relative; }
+html.cine .hero::before {
+  content: ""; position: absolute; z-index: -1; pointer-events: none;
+  width: min(760px, 90vw); aspect-ratio: 1; right: -12%; top: -18%;
+  background: radial-gradient(circle at 40% 40%, color-mix(in srgb, var(--accent) 34%, transparent), transparent 62%),
+              radial-gradient(circle at 70% 65%, color-mix(in srgb, var(--ok) 20%, transparent), transparent 58%);
+  filter: blur(40px); opacity: .75;
+  animation: aurora 18s ease-in-out infinite alternate;
+}
+@keyframes aurora {
+  0%   { transform: translate(0, 0) rotate(0deg) scale(1); }
+  50%  { transform: translate(-8%, 6%) rotate(40deg) scale(1.08); }
+  100% { transform: translate(4%, -4%) rotate(-20deg) scale(.96); }
+}
+/* El foco ocupa la pantalla y mueve solo el centro del degradado: una caja
+   que se desplaza con el cursor ensancharía la página por la derecha. */
+.foco {
+  position: fixed; inset: 0; z-index: 1; pointer-events: none;
+  background: radial-gradient(260px circle at var(--fx, -999px) var(--fy, -999px), color-mix(in srgb, var(--accent) 14%, transparent), transparent);
+  opacity: 0; transition: opacity .6s var(--ease);
+}
+.foco.on { opacity: 1; }
+
+/* ---------- Numeral gigante de cada capítulo ---------- */
+.band { position: relative; overflow-x: clip; }
+.capitulo {
+  position: absolute; right: -0.04em; top: clamp(20px, 4vw, 60px); z-index: 0; pointer-events: none;
+  font-family: var(--display); font-style: italic; line-height: .8;
+  font-size: clamp(7rem, 22vw, 19rem); color: transparent;
+  -webkit-text-stroke: 1px var(--line); letter-spacing: -0.04em;
+  transform: translate3d(0, var(--cy, 0px), 0);
+}
+.band > .wrap { position: relative; z-index: 1; }
+@media (max-width: 620px) { .capitulo { font-size: 7.5rem; top: 12px; } }
+
+/* ---------- Lectura guiada: el texto se enciende al pasar ---------- */
+html.cine .lee .w { color: color-mix(in srgb, var(--ink-soft) 30%, transparent); transition: color .35s var(--ease); }
+html.cine .lee .w.on { color: var(--ink-soft); }
+html.cine .lee b .w.on, html.cine .lee strong .w.on { color: var(--ink); }
+
+/* ---------- Experiencia como línea de tiempo ---------- */
+.exp { position: relative; }
+@media (min-width: 761px) {
+  .exp { padding-left: 30px; }
+  .exp::before { content: ""; position: absolute; left: 6px; top: 22px; bottom: 22px; width: 1px; background: var(--line); }
+  .exp .linea { position: absolute; left: 6px; top: 22px; width: 1px; height: calc((100% - 44px) * var(--f, 0)); background: var(--accent); box-shadow: 0 0 10px var(--accent-line); }
+  .exp-item { position: relative; }
+  .exp-item::before {
+    content: ""; position: absolute; left: -30px; top: 24px; width: 13px; height: 13px; border-radius: 50%;
+    border: 1px solid var(--accent-line); background: var(--paper); transition: background .4s var(--ease), box-shadow .4s var(--ease);
+  }
+  .exp-item.hecha::before { background: var(--accent); box-shadow: 0 0 0 5px var(--accent-soft); }
+}
+@media (max-width: 760px) { .exp .linea { display: none; } }
+
+/* ---------- Servicios: barrido de acento al pasar ---------- */
+.svc { position: relative; overflow: hidden; }
+.svc::before {
+  content: ""; position: absolute; left: 0; top: 0; bottom: 0; width: 3px; background: var(--accent);
+  transform: scaleY(0); transform-origin: top; transition: transform .35s var(--ease);
+}
+.svc:hover::before { transform: scaleY(1); }
+.svc:hover h3 { color: var(--accent); }
+.svc h3 { transition: color .25s var(--ease); }
+.vs-tabla td.mia { position: relative; }
+
+/* ---------- FAQ: la respuesta se despliega en vez de aparecer de golpe ---------- */
+.faq[open] p { animation: faq .45s cubic-bezier(.16, 1, .3, 1); }
+@keyframes faq { from { opacity: 0; transform: translateY(-8px); } }
+
+/* ---------- Cinta de tecnologías ---------- */
+.cinta {
+  position: relative; z-index: 2; overflow: hidden; border-block: 1px solid var(--line-soft);
+  padding: clamp(18px, 3vw, 30px) 0; white-space: nowrap;
+  mask-image: linear-gradient(90deg, transparent, #000 8%, #000 92%, transparent);
+}
+.cinta-pista { display: inline-flex; gap: 0; will-change: transform; transform: translate3d(var(--cx, 0px), 0, 0) skewX(var(--sk, 0deg)); }
+.cinta-pista span {
+  font-family: var(--display); font-size: clamp(2.2rem, 6vw, 4.6rem); line-height: 1; padding-right: .5em;
+  display: inline-flex; align-items: center; gap: .5em;
+}
+.cinta-pista span::after { content: "✦"; font-size: .4em; color: var(--accent); }
+.cinta-pista span:nth-child(even) { font-style: italic; color: transparent; -webkit-text-stroke: 1px var(--ink-faint); }
+
+/* ---------- Firma gigante al pie ---------- */
+.firma {
+  position: relative; z-index: 2; overflow: hidden; text-align: center; user-select: none;
+  font-family: var(--display); font-style: italic; letter-spacing: -0.03em; line-height: .9;
+  font-size: clamp(3.2rem, 13.5vw, 13rem); padding: clamp(30px, 5vw, 60px) 0 .06em;
+  color: transparent; -webkit-text-stroke: 1px var(--line);
+  background: linear-gradient(90deg, var(--accent), var(--accent)) no-repeat left / calc(var(--fi, 0) * 100%) 100%;
+  -webkit-background-clip: text; background-clip: text;
+}
+
+/* ---------- Botones magnéticos ---------- */
+.iman { transition: transform .35s cubic-bezier(.16, 1, .3, 1), background .2s var(--ease), border-color .2s var(--ease), color .2s var(--ease) !important; }
+
+/* Lenis: el scroll suave lo hace la librería, no el CSS. */
+html.lenis, html.lenis body { height: auto; }
+.lenis.lenis-smooth { scroll-behavior: auto !important; }
+.lenis.lenis-stopped { overflow: hidden; }
+
+@media (prefers-reduced-motion: reduce) {
+  .foco, .capitulo { display: none; }
+  .cinta-pista { transform: none; }
+}
 
 .faq { border-bottom: 1px solid var(--line-soft); }
 .faq summary {
@@ -1402,7 +1543,7 @@ input[type="range"]::-moz-range-thumb {
 .vs-tabla thead th.mia { color: var(--accent); }
 .vs-tabla tbody tr + tr th, .vs-tabla tbody tr + tr td { border-top: 1px solid var(--line-soft); }
 .vs-tabla tbody th { font-weight: 500; color: var(--ink); min-width: 160px; }
-.vs-tabla td { color: var(--ink-faint); min-width: 190px; }
+.vs-tabla td { color: var(--ink-faint); min-width: 176px; }
 /* La columna propia se lee sola: fondo tenue y una regla de acento al costado. */
 .vs-tabla td.mia {
   color: var(--ink); background: var(--accent-soft);
@@ -1435,6 +1576,7 @@ input[type="range"]::-moz-range-thumb {
 
 <body>
 <div class="grain" aria-hidden="true"></div>
+<div class="foco" id="foco" aria-hidden="true"></div>
 <div class="progress" aria-hidden="true"><i id="progressBar"></i></div>
 
 <header class="top">
@@ -1920,6 +2062,13 @@ input[type="range"]::-moz-range-thumb {
     </div>
   </section>
 
+  <!-- ══════════════ CINTA ══════════════ -->
+  <div class="cinta" aria-hidden="true">
+    <div class="cinta-pista" id="cintaPista">
+      <span>Python</span><span>Power BI</span><span>SQL Server</span><span>Automatización</span><span>Páginas web</span><span>IA aplicada</span><span>3D interactivo</span><span>OCR</span>
+    </div>
+  </div>
+
   <!-- ══════════════ CONTACTO ══════════════ -->
   <section id="contacto">
     <div class="wrap contact">
@@ -1970,6 +2119,8 @@ input[type="range"]::-moz-range-thumb {
   </section>
 
 </main>
+
+<div class="firma" id="firma" aria-hidden="true">Marcelo Poblete</div>
 
 <footer class="wrap foot">
   <span>© <span id="year">2026</span> Marcelo Poblete — Automatización de datos</span>
@@ -4954,21 +5105,6 @@ const CONTACTO = {
      viewport, un navegador que no lo evalúa— se pintan igual. */
   setTimeout(function () { nums.forEach(function (n) { if (!n.dataset.listo) fijar(n); }); }, 3000);
 
-  // Scroll Animations Logic
-  const animateElements = document.querySelectorAll('.band-inner, .svc, .card, .hero-lead, .cell');
-  const scrollObserver = new IntersectionObserver((entries, observer) => {
-    entries.forEach(entry => {
-      if (entry.isIntersecting) {
-        entry.target.classList.add('scrolled-in');
-        observer.unobserve(entry.target);
-      }
-    });
-  }, { threshold: 0.1, rootMargin: '0px 0px -50px 0px' });
-  
-  animateElements.forEach(el => {
-    el.classList.add('scroll-anim-hidden');
-    scrollObserver.observe(el);
-  });
 })();
 
 document.getElementById('year').textContent = new Date().getFullYear();
@@ -5071,6 +5207,179 @@ document.getElementById('year').textContent = new Date().getFullYear();
     cta.rel = 'noopener';
   }
 
+  const finoPuntero = window.matchMedia && window.matchMedia('(pointer: fine)').matches;
+
+  /* Numeral gigante de cada capítulo, sacado del propio "§ 0x" del riel. */
+  const capitulos = [];
+  document.querySelectorAll('section.band').forEach(function (sec) {
+    const idx = sec.querySelector('.idx');
+    const n = idx && (idx.textContent.match(/\d+/) || [])[0];
+    if (!n) return;
+    const c = document.createElement('span');
+    c.className = 'capitulo';
+    c.setAttribute('aria-hidden', 'true');
+    c.textContent = n;
+    sec.prepend(c);
+    capitulos.push(c);
+  });
+
+  /* Línea de tiempo de la experiencia: misma mecánica que las fases de webs. */
+  const exp = document.querySelector('.exp');
+  const expItems = exp ? Array.from(exp.querySelectorAll('.exp-item')) : [];
+  if (exp) {
+    const l = document.createElement('span');
+    l.className = 'linea';
+    l.setAttribute('aria-hidden', 'true');
+    exp.prepend(l);
+  }
+
+  /* Lectura guiada del perfil: cada palabra se enciende al pasar. */
+  const lectura = document.querySelector('.about > div:first-child');
+  let palabras = [], encendidas = -1;
+  if (cine && lectura) {
+    lectura.classList.add('lee');
+    const textos = [];
+    const w = document.createTreeWalker(lectura, NodeFilter.SHOW_TEXT);
+    while (w.nextNode()) textos.push(w.currentNode);
+    textos.forEach(function (nodo) {
+      const frag = document.createDocumentFragment();
+      nodo.textContent.split(/(\s+)/).forEach(function (trozo) {
+        if (!trozo) return;
+        if (/^\s+$/.test(trozo)) { frag.appendChild(document.createTextNode(trozo)); return; }
+        const s = document.createElement('span');
+        s.className = 'w';
+        s.textContent = trozo;
+        frag.appendChild(s);
+      });
+      nodo.parentNode.replaceChild(frag, nodo);
+    });
+    palabras = Array.from(lectura.querySelectorAll('.w'));
+  }
+
+  /* Revelado escalonado. Cada grupo lleva su variante; --d es la posición
+     del elemento entre los de su mismo grupo dentro del mismo padre. */
+  if (cine && 'IntersectionObserver' in window) {
+    const GRUPOS = [
+      ['.stat-strip .cell', 'zoom'], ['.rail', ''], ['.filters', ''],
+      ['.vs-scroll', ''], ['.vs-tabla tbody tr', ''], ['.svc', 'lado'], ['.svc-cta', ''],
+      ['.web-pasos4 > div', ''], ['.web-item', 'zoom'], ['.web-fase', 'lado'], ['.web-cta', 'zoom'],
+      ['#presupuesto [data-mount-directo]', ''], ['.about > div', ''], ['.exp-item', 'lado'],
+      ['.skill-row', 'lado'], ['.principle', ''], ['.faq', ''], ['.contact > p', ''],
+      ['.ctc-form', 'zoom'], ['.ctc-canal', ''], ['.foot', '']
+    ];
+    const todos = [];
+    GRUPOS.forEach(function (g) {
+      const porPadre = new Map();
+      document.querySelectorAll(g[0]).forEach(function (el) {
+        const k = porPadre.get(el.parentNode) || 0;
+        porPadre.set(el.parentNode, k + 1);
+        el.classList.add('rv');
+        if (g[1]) el.classList.add(g[1]);
+        el.style.setProperty('--d', Math.min(k, 8));
+        todos.push(el);
+      });
+    });
+    const ioRv = new IntersectionObserver(function (entries) {
+      entries.forEach(function (e) {
+        if (e.isIntersecting) { e.target.classList.add('visto'); ioRv.unobserve(e.target); }
+      });
+    }, { threshold: 0.12, rootMargin: '0px 0px -6% 0px' });
+    todos.forEach(function (el) { ioRv.observe(el); });
+    document.querySelectorAll('section.band').forEach(function (s) { ioRv.observe(s); });
+    /* Nada puede quedar invisible: lo que ya está a la vista o por encima
+       (se llegó por un ancla) se muestra sin esperar al observador. */
+    function barrer() {
+      todos.forEach(function (el) { if (el.getBoundingClientRect().top < innerHeight) el.classList.add('visto'); });
+    }
+    setTimeout(barrer, 2500);
+    window.addEventListener('hashchange', function () { setTimeout(barrer, 900); });
+  }
+
+  /* Cinta de tecnologías: se duplica para dar la vuelta sin costura, avanza
+     sola y se acelera e inclina con la velocidad del scroll. */
+  const pista = document.getElementById('cintaPista');
+  let cintaX = 0, cintaAncho = 0, cintaViva = false, ultimoY = window.scrollY, velocidad = 0;
+  if (pista) {
+    const base = pista.innerHTML;
+    pista.innerHTML = base + base + base;
+    cintaAncho = pista.scrollWidth / 3;
+    if (cine && 'IntersectionObserver' in window) {
+      new IntersectionObserver(function (entries) {
+        cintaViva = entries[0].isIntersecting;
+        if (cintaViva) requestAnimationFrame(girarCinta);
+      }).observe(pista.parentNode);
+    }
+  }
+  function girarCinta() {
+    if (!cintaViva) return;
+    const y = window.scrollY;
+    velocidad += ((y - ultimoY) - velocidad) * 0.12;
+    ultimoY = y;
+    cintaX -= 0.6 + Math.abs(velocidad) * 0.35;
+    if (cintaAncho && cintaX <= -cintaAncho) cintaX += cintaAncho;
+    pista.style.setProperty('--cx', cintaX.toFixed(1) + 'px');
+    pista.style.setProperty('--sk', Math.max(-10, Math.min(10, -velocidad * 0.4)).toFixed(2) + 'deg');
+    requestAnimationFrame(girarCinta);
+  }
+  window.addEventListener('resize', function () { if (pista) cintaAncho = pista.scrollWidth / 3; });
+
+  /* Foco que sigue al cursor, con un poco de inercia. */
+  const foco = document.getElementById('foco');
+  if (cine && finoPuntero && foco) {
+    let fx = -999, fy = -999, tx = -999, ty = -999, andando = false;
+    function seguir() {
+      fx += (tx - fx) * 0.14; fy += (ty - fy) * 0.14;
+      foco.style.setProperty('--fx', fx.toFixed(1) + 'px');
+      foco.style.setProperty('--fy', fy.toFixed(1) + 'px');
+      if (Math.abs(tx - fx) + Math.abs(ty - fy) > 0.5) requestAnimationFrame(seguir); else andando = false;
+    }
+    window.addEventListener('pointermove', function (e) {
+      if (fx < -900) { fx = e.clientX; fy = e.clientY; }
+      tx = e.clientX; ty = e.clientY;
+      foco.classList.add('on');
+      if (!andando) { andando = true; requestAnimationFrame(seguir); }
+    }, { passive: true });
+    document.addEventListener('pointerleave', function () { foco.classList.remove('on'); });
+  } else if (foco) {
+    foco.remove();
+  }
+
+  /* Botones magnéticos: se inclinan hacia el cursor unos pocos píxeles. */
+  if (cine && finoPuntero) {
+    document.querySelectorAll('.btn.primary, .theme-toggle, .ctc-canal').forEach(function (b) {
+      b.classList.add('iman');
+      b.addEventListener('pointermove', function (e) {
+        const r = b.getBoundingClientRect();
+        const dx = e.clientX - (r.left + r.width / 2), dy = e.clientY - (r.top + r.height / 2);
+        b.style.transform = 'translate(' + (dx * 0.22).toFixed(1) + 'px,' + (dy * 0.32).toFixed(1) + 'px)';
+      });
+      b.addEventListener('pointerleave', function () { b.style.transform = ''; });
+    });
+  }
+
+  /* Scroll suave con inercia (Lenis). Solo con mouse o trackpad: en el
+     teléfono el scroll nativo ya es bueno y no conviene tocarlo. Si el CDN
+     no responde, el sitio sigue con el scroll normal. */
+  if (cine && finoPuntero) {
+    const sc = document.createElement('script');
+    sc.src = 'https://cdn.jsdelivr.net/npm/lenis@1.3.26/dist/lenis.min.js';
+    sc.async = true;
+    sc.onload = function () {
+      if (typeof Lenis === 'undefined') return;
+      const lenis = new Lenis({ autoRaf: true, lerp: 0.1, anchors: { offset: -96 }, allowNestedScroll: true });
+      /* Con la ficha técnica abierta el fondo no debe moverse. */
+      const sheet = document.getElementById('sheet');
+      if (sheet) {
+        sheet.setAttribute('data-lenis-prevent', '');
+        new MutationObserver(function () {
+          if (sheet.classList.contains('open')) lenis.stop(); else lenis.start();
+        }).observe(sheet, { attributes: true, attributeFilter: ['class'] });
+      }
+    };
+    document.head.appendChild(sc);
+  }
+
+  const firma = document.getElementById('firma');
   const hero = document.querySelector('.hero');
   const escena = document.getElementById('webEscena');
   const pasos = escena ? Array.from(escena.querySelectorAll('.web-paso')) : [];
@@ -5109,6 +5418,40 @@ document.getElementById('year').textContent = new Date().getFullYear();
       fases.style.setProperty('--f', f.toFixed(3));
       const tope = r.top + r.height * f;
       puntos.forEach(function (d) { d.classList.toggle('hecha', d.getBoundingClientRect().top + 8 <= tope); });
+    }
+
+    if (exp) {
+      const r = exp.getBoundingClientRect();
+      const f = Math.min(Math.max((vh * 0.7 - r.top) / r.height, 0), 1);
+      exp.style.setProperty('--f', f.toFixed(3));
+      const tope = r.top + r.height * f;
+      expItems.forEach(function (d) { d.classList.toggle('hecha', d.getBoundingClientRect().top + 20 <= tope); });
+    }
+
+    if (cine) {
+      capitulos.forEach(function (c) {
+        const r = c.parentNode.getBoundingClientRect();
+        if (r.bottom < -200 || r.top > vh + 200) return;
+        c.style.setProperty('--cy', ((r.top - vh * 0.3) * -0.22).toFixed(1) + 'px');
+      });
+    }
+
+    if (palabras.length) {
+      const r = lectura.getBoundingClientRect();
+      const p = Math.min(Math.max((vh * 0.82 - r.top) / (r.height + vh * 0.2), 0), 1);
+      const n = Math.round(p * palabras.length);
+      if (n !== encendidas) {
+        palabras.forEach(function (w, k) { w.classList.toggle('on', k < n); });
+        encendidas = n;
+      }
+    }
+
+    if (firma) {
+      const r = firma.getBoundingClientRect();
+      /* Se completa justo al tocar fondo, sea cual sea el alto del pie. */
+      const tope = r.top + (document.documentElement.scrollHeight - vh - window.scrollY);
+      const fi = Math.min(Math.max((vh - r.top) / Math.max(vh - tope, 1), 0), 1);
+      firma.style.setProperty('--fi', fi.toFixed(3));
     }
   }
 
